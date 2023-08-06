@@ -1,0 +1,9 @@
+WeaponData
+{//死神火箭
+	MP_BASE
+	{
+		"damage_near_value_titanarmor"				"150"
+		"damage_far_value_titanarmor" 				"150"
+		"explosion_damage_heavy_armor"				"100"
+	}
+}

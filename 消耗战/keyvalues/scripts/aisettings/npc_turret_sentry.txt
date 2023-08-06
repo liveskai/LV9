@@ -1,0 +1,15 @@
+npc_turret_sentry
+{
+	Health							5000 [$mp]
+
+	maxEnemyDist					20000
+	maxEnemyDistHeavyArmor			20000
+	maxEnemyDistForAttacker 			80000
+	maxEnemyDistHeavyArmorForAttacker	80000
+
+	LookDistDefault_Idle			25000
+	LookDistDefault_Alert			30000
+	LookDistDefault_Combat			40000
+	MaxTurretYaw        			360
+	magneticRange					900
+}

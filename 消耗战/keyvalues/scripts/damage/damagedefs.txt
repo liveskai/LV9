@@ -1,0 +1,42 @@
+DamageDefs
+{
+	damagedef_unknown
+	{
+	}
+	damagedef_unknownBugIt
+	{
+	}
+	damagedef_suicide
+	{
+	}
+	damagedef_despawn
+	{
+	}
+	damagedef_titan_step
+	{
+	}
+	damagedef_crush
+	{
+	}
+	damagedef_nuclear_core
+	{
+	}
+	damagedef_titan_fall
+	{
+		"damage" 			"0"
+		"damage_heavy_armor"		"0"
+	}
+
+	damagedef_titan_hotdrop
+	{
+		"damage" 			"0"
+		"damage_heavy_armor"		"0"
+	}
+
+	damagedef_reaper_fall
+	{
+		"damage" 			"50"
+		"damage_heavy_armor"		"0"
+	}
+
+}
