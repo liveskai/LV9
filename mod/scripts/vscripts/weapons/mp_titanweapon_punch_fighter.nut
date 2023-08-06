@@ -1,7 +1,7 @@
 global function MpTitanWeaponPunch_Fighter_Init
 
-const MELEE_SHIELD_REGEN_HEAVY = 500
-const MELEE_SHIELD_REGEN_OTHER = 250
+const MELEE_SHIELD_REGEN_HEAVY = 1000
+const MELEE_SHIELD_REGEN_OTHER = 500
 
 void function MpTitanWeaponPunch_Fighter_Init()
 {
