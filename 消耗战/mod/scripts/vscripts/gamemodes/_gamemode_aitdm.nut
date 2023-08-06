@@ -4,7 +4,7 @@ global function GamemodeAITdm_Init
 // these are now default settings
 const int SQUADS_PER_TEAM = 8
 
-const int REAPERS_PER_TEAM = 2
+const int REAPERS_PER_TEAM = 4
 
 const int LEVEL_SPECTRES = 12
 const int LEVEL_STALKERS = 38
