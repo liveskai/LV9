@@ -1,0 +1,14 @@
+#base "npc_turret_sentry.txt"
+npc_turret_sentry_burn_card_at
+{//重型炮塔
+	DefaultModelName		"models/robots/turret_plasma/turret_plasma.mdl"
+	DefaultWeapon			"mp_weapon_turretplasma"
+	title 					"#NPC_TURRET_SENTRY_AT"
+
+	maxEnemyDist			20000
+
+	Health							600 [$sp]
+	Health							2500 [$mp]
+
+	turret_lifetime			60.0 
+}

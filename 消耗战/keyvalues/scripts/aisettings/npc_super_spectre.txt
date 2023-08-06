@@ -1,0 +1,4 @@
+npc_super_spectre
+{
+	collideWithPlayer				0//移除死神的体积碰撞
+}
