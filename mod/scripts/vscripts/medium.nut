@@ -41,7 +41,8 @@ void function OnTitanfall( entity titan )
 													//因为当泰坦死亡或者摧毁时，它的soul会变成null，理所应当的，soul.s里的内容也会null
 	if( !IsValid( soul ) )	//如果soul == null，我们应该直接return，防止执行后面的soul.s.TitanHasBeenChange <- true时报错
 		return
-
+		
+	foreach ( entity weapon in titan.GetMainWeapons() )
 	if( titan.GetModelName() == $"models/titans/light/titan_light_northstar_prime.mdl" )	//检查玩家的模型
 	{
 		soul.s.TitanHasBeenChange <- true
@@ -49,19 +50,16 @@ void function OnTitanfall( entity titan )
 		soul.s.titanTitle <- "野獸"	//众所周知，当玩家上泰坦时不会按照我们的意愿设置标题的，所以这边整个变量让玩家上泰坦时读取这个然后写上
 		soul.soul.titanLoadout.titanExecution = "execution_northstar_prime"
 
-		array<entity> weapons = titan.GetMainWeapons()
-        foreach( entity weapon in weapons )
-        {
-            titan.TakeWeaponNow( weapon.GetWeaponClassName() )
-        }
+        titan.TakeWeaponNow( weapon.GetWeaponClassName() )
         titan.TakeOffhandWeapon( OFFHAND_ORDNANCE )
 		titan.TakeOffhandWeapon( OFFHAND_TITAN_CENTER )
         titan.TakeOffhandWeapon( OFFHAND_SPECIAL )
 		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
+		
         titan.GiveWeapon( "mp_titanweapon_rocketeer_rocketstream",["sp_s2s_settings"] )
 		titan.GiveOffhandWeapon( "mp_titanweapon_vortex_shield_ion", OFFHAND_SPECIAL,["normal"] )
 		titan.GiveOffhandWeapon( "mp_titanability_hover", OFFHAND_TITAN_CENTER )
-      		titan.GiveOffhandWeapon( "mp_titanweapon_shoulder_rockets", OFFHAND_ORDNANCE,["extended_smart_ammo_range"] )
+      	titan.GiveOffhandWeapon( "mp_titanweapon_shoulder_rockets", OFFHAND_ORDNANCE,["extended_smart_ammo_range"] )
 		titan.GiveOffhandWeapon( "mp_titancore_flight_core", OFFHAND_EQUIPMENT )
 
 		array<int> passives = [ ePassives.PAS_NORTHSTAR_WEAPON,
@@ -79,16 +77,13 @@ void function OnTitanfall( entity titan )
 		soul.s.TitanHasBeenChange <- true
 		SendHudMessage(player, "已切换为远征，取消\"边境帝王\"皮肤以使用原版帝王",  -1, 0.3, 200, 200, 225, 0, 0.15, 12, 1);
 		soul.s.titanTitle <- "遠征"
-
-		array<entity> weapons = titan.GetMainWeapons()
-        foreach( entity weapon in weapons )
-        {
-            titan.TakeWeaponNow( weapon.GetWeaponClassName() )
-        }
+		
+        titan.TakeWeaponNow( weapon.GetWeaponClassName() )
         titan.TakeOffhandWeapon( OFFHAND_ORDNANCE )
 		titan.TakeOffhandWeapon( OFFHAND_TITAN_CENTER )
         titan.TakeOffhandWeapon( OFFHAND_SPECIAL )
 		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
+		
 		titan.GiveWeapon( "mp_titanweapon_xo16_shorty",["fast_reload"] )
 		titan.GiveOffhandWeapon( "mp_titanweapon_vortex_shield_ion", OFFHAND_SPECIAL,["normal"] )
 		titan.GiveOffhandWeapon( "mp_titanability_smoke", OFFHAND_TITAN_CENTER,["burn_mod_titan_smoke"] )
@@ -119,16 +114,14 @@ void function OnTitanfall( entity titan )
 		SendHudMessage(player, "取消至尊泰坦以使用原版军团",  -1, 0.3, 200, 200, 225, 0, 0.15, 5, 1);
 		soul.s.titanTitle <- "至尊軍團"
 
-		array<entity> weapons = titan.GetMainWeapons()
-        foreach( entity weapon in weapons )
-        {
-            titan.TakeWeaponNow( weapon.GetWeaponClassName() )
-        }
+        titan.TakeWeaponNow( weapon.GetWeaponClassName() )
 		titan.GiveWeapon( "mp_titanweapon_xo16_shorty", [ "accelerator" ] )
+		
 		titan.TakeOffhandWeapon( OFFHAND_ORDNANCE )
 		titan.TakeOffhandWeapon( OFFHAND_TITAN_CENTER )
         titan.TakeOffhandWeapon( OFFHAND_SPECIAL )
 		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
+		
 		titan.GiveOffhandWeapon( "mp_weapon_frag_drone", OFFHAND_TITAN_CENTER,["pas_ordnance_pack","all_ticks"])
 		titan.GiveOffhandWeapon( "mp_titanability_particle_wall", OFFHAND_SPECIAL)
 		titan.GiveOffhandWeapon( "mp_titanweapon_orbital_strike", OFFHAND_ORDNANCE,["burn_mod_titan_salvo_rockets"] )
@@ -140,22 +133,18 @@ void function OnTitanfall( entity titan )
 		SendHudMessage(player, "取消至尊泰坦以使用原版强力",  -1, 0.3, 200, 200, 225, 0, 0.15, 5, 1);
 		soul.s.titanTitle <- "至尊強力"
 
-		array<entity> weapons = titan.GetMainWeapons()
-        foreach( entity weapon in weapons )
-        {
-            titan.TakeWeaponNow( weapon.GetWeaponClassName() )
-        }
+        titan.TakeWeaponNow( weapon.GetWeaponClassName() )
 		titan.GiveWeapon( "mp_titanweapon_sticky_40mm", [ "splasher_rounds","extended_ammo","burn_mod_titan_40mm","fast_reload","sur_level_1"] )
+		
 		titan.TakeOffhandWeapon( OFFHAND_ORDNANCE )
 		titan.TakeOffhandWeapon( OFFHAND_TITAN_CENTER )
         titan.TakeOffhandWeapon( OFFHAND_SPECIAL )
 		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
+		
 		titan.GiveOffhandWeapon( "mp_titanweapon_vortex_shield_ion", OFFHAND_SPECIAL)
 		titan.GiveOffhandWeapon( "mp_ability_holopilot_nova", OFFHAND_TITAN_CENTER,["dev_mod_low_recharge"])
 		titan.GiveOffhandWeapon( "mp_titanweapon_homing_rockets", OFFHAND_ORDNANCE,["burn_mod_titan_homing_rockets","mod_ordnance_core"] )
 		titan.GiveOffhandWeapon( "mp_titancore_salvo_core", OFFHAND_EQUIPMENT)
-
-
 
 		array<int> passives = [ ePassives.PAS_TONE_WEAPON,
 								ePassives.PAS_TONE_ROCKETS,
@@ -173,16 +162,14 @@ void function OnTitanfall( entity titan )
 		SendHudMessage(player, "取消至尊泰坦以使用原版离子",  -1, 0.3, 200, 200, 225, 0, 0.15, 5, 1);
 		soul.s.titanTitle <- "至尊離子"
 
-		array<entity> weapons = titan.GetMainWeapons()
-        foreach( entity weapon in weapons )
-        {
-            titan.TakeWeaponNow( weapon.GetWeaponClassName() )
-        }
+        titan.TakeWeaponNow( weapon.GetWeaponClassName() )
 		titan.GiveWeapon( "mp_titanweapon_particle_accelerator" )
+		
 		titan.TakeOffhandWeapon( OFFHAND_ORDNANCE )
 		titan.TakeOffhandWeapon( OFFHAND_TITAN_CENTER )
         titan.TakeOffhandWeapon( OFFHAND_SPECIAL )
 		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
+		
 		titan.GiveOffhandWeapon( "mp_titanweapon_vortex_shield", OFFHAND_SPECIAL)
 		titan.GiveOffhandWeapon( "mp_ability_shifter", OFFHAND_TITAN_CENTER,["long_last_shifter","pas_power_cell"])
 		titan.GiveOffhandWeapon( "mp_titanweapon_stun_laser", OFFHAND_ORDNANCE)
@@ -203,16 +190,13 @@ void function OnTitanfall( entity titan )
 		soul.s.TitanHasBeenChange <- true
 		SendHudMessage(player, "切换为疾风，取消当前皮肤以使用原版帝王",  -1, 0.3, 200, 200, 225, 0, 0.15, 12, 1);
 		soul.s.titanTitle <- "疾風"
-
-		array<entity> weapons = titan.GetMainWeapons()
-        foreach( entity weapon in weapons )
-        {
-            titan.TakeWeaponNow( weapon.GetWeaponClassName() )
-        }
+	
+		titan.TakeWeaponNow( weapon.GetWeaponClassName() )
         titan.TakeOffhandWeapon( OFFHAND_ORDNANCE )
 		titan.TakeOffhandWeapon( OFFHAND_TITAN_CENTER )
         titan.TakeOffhandWeapon( OFFHAND_SPECIAL )
 		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
+		
 		titan.GiveWeapon( "mp_titanweapon_xo16_vanguard",["battle_rifle","battle_rifle_icon"] )
 		titan.GiveOffhandWeapon( "mp_titanweapon_vortex_shield", OFFHAND_SPECIAL,["vortex_extended_effect_and_no_use_penalty"] )
 		titan.GiveOffhandWeapon( "mp_titanability_phase_dash", OFFHAND_TITAN_CENTER,["pas_defensive_core"])
@@ -242,15 +226,12 @@ void function OnTitanfall( entity titan )
 		SendHudMessage(player, "使用离子装备，取消当前皮肤以使用原版帝王",  -1, 0.3, 200, 200, 225, 0, 0.15, 12, 1);
 		soul.s.titanTitle <- "BT離子"
 
-		array<entity> weapons = titan.GetMainWeapons()
-        foreach( entity weapon in weapons )
-        {
-            titan.TakeWeaponNow( weapon.GetWeaponClassName() )
-        }
+		titan.TakeWeaponNow( weapon.GetWeaponClassName() )
         titan.TakeOffhandWeapon( OFFHAND_ORDNANCE )
 		titan.TakeOffhandWeapon( OFFHAND_TITAN_CENTER )
         titan.TakeOffhandWeapon( OFFHAND_SPECIAL )
 		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
+		
 		titan.GiveWeapon( "mp_titanweapon_xo16_shorty",["electric_rounds"] )
 		titan.GiveWeapon( "mp_titanweapon_particle_accelerator",["burn_mod_titan_particle_accelerator"] )		
 		titan.GiveOffhandWeapon( "mp_titanweapon_vortex_shield", OFFHAND_SPECIAL,["slow_recovery_vortex","pas_defensive_core","sur_level_3"] )
@@ -282,17 +263,14 @@ void function OnTitanfall( entity titan )
 		SendHudMessage(player, "使用强力装备，取消当前皮肤以使用原版帝王",  -1, 0.3, 200, 200, 225, 0, 0.15, 12, 1);
 		soul.s.titanTitle <- "BT強力"
 
-		array<entity> weapons = titan.GetMainWeapons()
-        foreach( entity weapon in weapons )
-        {
-            titan.TakeWeaponNow( weapon.GetWeaponClassName() )
-        }
+         titan.TakeWeaponNow( weapon.GetWeaponClassName() )
         titan.TakeOffhandWeapon( OFFHAND_ORDNANCE )
 		titan.TakeOffhandWeapon( OFFHAND_TITAN_CENTER )
         titan.TakeOffhandWeapon( OFFHAND_SPECIAL )
 		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
+		
 		titan.GiveWeapon( "mp_titanweapon_xo16_shorty",["extended_ammo"] )
-			titan.GiveWeapon( "mp_titanweapon_sticky_40mm",["mortar_shots","sur_level_3","fast_reload"] )
+		titan.GiveWeapon( "mp_titanweapon_sticky_40mm",["mortar_shots","sur_level_3","fast_reload"] )
 		titan.GiveOffhandWeapon( "mp_titanability_particle_wall", OFFHAND_SPECIAL,["pas_defensive_core"] )
 		titan.GiveOffhandWeapon( "mp_titanability_sonar_pulse", OFFHAND_TITAN_CENTER)
 		titan.GiveOffhandWeapon( "mp_titanweapon_homing_rockets", OFFHAND_ORDNANCE,["burn_mod_titan_homing_rockets"] )
@@ -322,15 +300,12 @@ void function OnTitanfall( entity titan )
 		SendHudMessage(player, "使用烈焰装备，取消当前皮肤以使用原版帝王",  -1, 0.3, 200, 200, 225, 0, 0.15, 12, 1);
 		soul.s.titanTitle <- "BT烈焰"
 
-		array<entity> weapons = titan.GetMainWeapons()
-        foreach( entity weapon in weapons )
-        {
-            titan.TakeWeaponNow( weapon.GetWeaponClassName() )
-        }
+		titan.TakeWeaponNow( weapon.GetWeaponClassName() )
         titan.TakeOffhandWeapon( OFFHAND_ORDNANCE )
 		titan.TakeOffhandWeapon( OFFHAND_TITAN_CENTER )
         titan.TakeOffhandWeapon( OFFHAND_SPECIAL )
 		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
+		
 		titan.GiveWeapon( "mp_titanweapon_xo16_shorty",["burn_mod_titan_xo16"] )
 		titan.GiveWeapon( "mp_titanweapon_meteor",["fd_wpn_upgrade_1"] )
 		titan.GiveOffhandWeapon( "mp_titanweapon_heat_shield", OFFHAND_SPECIAL )
@@ -362,17 +337,14 @@ void function OnTitanfall( entity titan )
 		SendHudMessage(player, "使用北极星装备，取消当前皮肤以使用原版帝王",  -1, 0.3, 200, 200, 225, 0, 0.15, 12, 1);
 		soul.s.titanTitle <- "BT北極星"
 
-		array<entity> weapons = titan.GetMainWeapons()
-        foreach( entity weapon in weapons )
-        {
-            titan.TakeWeaponNow( weapon.GetWeaponClassName() )
-        }
+		titan.TakeWeaponNow( weapon.GetWeaponClassName() )
         titan.TakeOffhandWeapon( OFFHAND_ORDNANCE )
 		titan.TakeOffhandWeapon( OFFHAND_TITAN_CENTER )
         titan.TakeOffhandWeapon( OFFHAND_SPECIAL )
 		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
+		
 		titan.GiveWeapon( "mp_titanweapon_xo16_shorty",["burst"] )
-			titan.GiveWeapon( "mp_titanweapon_sniper",["fd_upgrade_charge","power_shot","burn_mod_titan_sniper"] )
+		titan.GiveWeapon( "mp_titanweapon_sniper",["fd_upgrade_charge","power_shot","burn_mod_titan_sniper"] )
 		titan.GiveOffhandWeapon( "mp_titanability_tether_trap", OFFHAND_SPECIAL,["fd_trap_charges"] )
 		titan.GiveOffhandWeapon( "mp_titanability_hover", OFFHAND_TITAN_CENTER)
 		titan.GiveOffhandWeapon( "mp_titanweapon_dumbfire_rockets", OFFHAND_ORDNANCE,["burn_mod_titan_dumbfire_rockets"] )
@@ -403,16 +375,13 @@ void function OnTitanfall( entity titan )
 		soul.s.titanTitle <- "野牛"
 		soul.soul.titanLoadout.titanExecution = "execution_scorch_prime"
 
-		array<entity> weapons = titan.GetMainWeapons()
-        foreach( entity weapon in weapons )
-        {
-            titan.TakeWeaponNow( weapon.GetWeaponClassName() )
-        }
+		titan.TakeWeaponNow( weapon.GetWeaponClassName() )
         titan.TakeOffhandWeapon( OFFHAND_ORDNANCE )
 		titan.TakeOffhandWeapon( OFFHAND_TITAN_CENTER )
         titan.TakeOffhandWeapon( OFFHAND_SPECIAL )
 		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
 		titan.TakeOffhandWeapon( OFFHAND_MELEE )
+		
 		titan.GiveOffhandWeapon( "mp_ability_cloak", OFFHAND_SPECIAL,["bc_super_cloak","dev_mod_short_cloak","amped_tacticals"])
 		titan.GiveOffhandWeapon( "mp_ability_heal", OFFHAND_TITAN_CENTER,["bc_super_stim","bc_long_stim1","amped_tacticals","pas_power_cell"])
 		titan.GiveOffhandWeapon( "mp_ability_holopilot_nova", OFFHAND_ORDNANCE,["dev_mod_low_recharge"])
@@ -436,16 +405,14 @@ void function OnTitanfall( entity titan )
 		SendHudMessage(player, "已切换为电弧，取消当前皮肤以使用原版浪人",  -1, 0.3, 200, 200, 225, 0, 0.15, 5, 1);
 		soul.s.titanTitle <- "電弧"
 
-		array<entity> weapons = titan.GetMainWeapons()
-        foreach( entity weapon in weapons )
-        {
-            titan.TakeWeaponNow( weapon.GetWeaponClassName() )
-        }
+		 titan.TakeWeaponNow( weapon.GetWeaponClassName() )
 		titan.GiveWeapon( "mp_titanweapon_leadwall",["sur_level_0"] )
+		
 		titan.TakeOffhandWeapon( OFFHAND_ORDNANCE )
 		titan.TakeOffhandWeapon( OFFHAND_TITAN_CENTER )
         titan.TakeOffhandWeapon( OFFHAND_SPECIAL )
 		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
+		
 		titan.GiveOffhandWeapon( "mp_ability_swordblock", OFFHAND_SPECIAL,["pm0"] )
 		titan.GiveOffhandWeapon( "mp_titanability_smoke", OFFHAND_TITAN_CENTER)
 		titan.GiveOffhandWeapon( "mp_titanweapon_arc_wave", OFFHAND_ORDNANCE )
@@ -467,16 +434,13 @@ void function OnTitanfall( entity titan )
 		SendHudMessage(player, "使用浪人装备，取消当前皮肤以使用原版帝王",  -1, 0.3, 200, 200, 225, 0, 0.15, 12, 1);
 		soul.s.titanTitle <- "BT浪人"
 
-		array<entity> weapons = titan.GetMainWeapons()
-        foreach( entity weapon in weapons )
-        {
-            titan.TakeWeaponNow( weapon.GetWeaponClassName() )
-        }
+		titan.TakeWeaponNow( weapon.GetWeaponClassName() )
         titan.TakeOffhandWeapon( OFFHAND_ORDNANCE )
 		titan.TakeOffhandWeapon( OFFHAND_TITAN_CENTER )
         titan.TakeOffhandWeapon( OFFHAND_SPECIAL )
 		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
 		titan.TakeOffhandWeapon( OFFHAND_MELEE )
+		
 		titan.GiveWeapon( "mp_titanweapon_leadwall",["sur_level_0"] )
 		titan.GiveWeapon( "mp_titanweapon_xo16_shorty",["electric_rounds"] )
 		titan.GiveOffhandWeapon( "mp_ability_swordblock", OFFHAND_SPECIAL )
@@ -484,7 +448,6 @@ void function OnTitanfall( entity titan )
 		titan.GiveOffhandWeapon( "mp_titanweapon_arc_wave", OFFHAND_ORDNANCE,["dev_mod_low_recharge"] )
 		titan.GiveOffhandWeapon( "mp_titancore_shift_core", OFFHAND_EQUIPMENT)
 		titan.GiveOffhandWeapon( "melee_titan_sword", OFFHAND_MELEE )
-		titan.SetActiveWeaponByName( "melee_titan_sword" )
 
 		array<int> passives = [ ePassives.PAS_VANGUARD_COREMETER,
 								ePassives.PAS_VANGUARD_SHIELD,
@@ -510,16 +473,14 @@ void function OnTitanfall( entity titan )
 		SendHudMessage(player, "已切换为影杀，取消当前皮肤以使用原版浪人",  -1, 0.3, 200, 200, 225, 0, 0.15, 5, 1);
 		soul.s.titanTitle <- "影殺"
 
-		array<entity> weapons = titan.GetMainWeapons()
-        foreach( entity weapon in weapons )
-        {
-            titan.TakeWeaponNow( weapon.GetWeaponClassName() )
-        }
+		titan.TakeWeaponNow( weapon.GetWeaponClassName() )
 		titan.GiveWeapon( "mp_titanweapon_triplethreat", [ "rolling_rounds","burn_mod_titan_triple_threat"] )
+		
 		titan.TakeOffhandWeapon( OFFHAND_ORDNANCE )
 		titan.TakeOffhandWeapon( OFFHAND_TITAN_CENTER )
         titan.TakeOffhandWeapon( OFFHAND_SPECIAL )
 		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
+		
 		titan.GiveOffhandWeapon( "mp_ability_swordblock", OFFHAND_SPECIAL,["pm0"] )
 		titan.GiveOffhandWeapon( "mp_titanability_phase_dash", OFFHAND_TITAN_CENTER)
 		titan.GiveOffhandWeapon( "mp_titanweapon_arc_wave", OFFHAND_ORDNANCE )
