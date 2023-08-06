@@ -1,0 +1,63 @@
+WeaponData
+{
+	Mods
+	{
+		accelerator
+		{
+			"vortex_drain"							"0.03"
+			"damage_near_value_titanarmor"					"*1.2"
+			"damage_far_value_titanarmor" 					"*1.2"
+			"spread_stand_hip"						"*0.2"
+			"spread_stand_hip_run"						"*0.2"
+			"spread_stand_hip_sprint"                      			"*0.2"
+			"spread_crouch_hip"   						"*0.2"
+			"spread_air_hip"  						"*0.2"
+			"spread_stand_ads"						"*0.2"
+			"spread_crouch_ads"   						"*0.2"
+			"spread_air_ads"  						"*0.2"
+			"spread_max_kick_stand_hip"					"*0.2"
+			"spread_max_kick_stand_ads"					"*0.2"
+			"spread_max_kick_crouch_hip"  					"*0.2"
+			"spread_max_kick_crouch_ads"  					"*0.2"
+			"spread_max_kick_air_hip" 					"*0.2"
+			"spread_max_kick_air_ads" 					"*0.2"
+		}
+		electric_rounds
+		{
+		}
+		fast_reload
+		{
+			"damage_near_value_titanarmor"					"150"
+			"damage_far_value_titanarmor" 					"120"
+		}
+		extended_ammo
+		{
+		}
+		burst
+		{
+			"damage_near_value_titanarmor"					"*2"
+			"damage_far_value_titanarmor" 					"*2"
+			"spread_stand_hip"						"*0.1"
+			"spread_stand_hip_run"                      			"*0.1"
+			"spread_crouch_hip"   						"*0.1"
+			"spread_air_hip"  						"*0.1"
+			"spread_stand_ads"						"*0.1"
+			"spread_crouch_ads"   						"*0.1"
+			"spread_air_ads"  						"*0.1"
+			"spread_max_kick_stand_hip"					"*0.1"
+			"spread_max_kick_stand_ads"					"*0.1"
+			"spread_max_kick_crouch_hip"  					"*0.1"
+			"spread_max_kick_crouch_ads"  					"*0.1"
+			"spread_max_kick_air_hip" 					"*0.1"
+			"spread_max_kick_air_ads" 					"*0.1"
+		}
+		fire_rate_max_zoom
+		{
+		}
+		burn_mod_titan_xo16
+		{
+			"damage_near_value_titanarmor"					"*1.5"
+			"damage_far_value_titanarmor" 					"*1.5"
+		}
+	}
+}

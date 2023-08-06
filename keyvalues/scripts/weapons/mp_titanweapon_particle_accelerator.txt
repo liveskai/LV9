@@ -1,0 +1,19 @@
+WeaponData
+{//分裂枪
+	Mods
+	{
+		proto_particle_accelerator
+		{
+		}
+		proto_particle_accelerator_pas
+		{
+		}
+		sticky_rounds
+		{
+		}
+		burn_mod_titan_particle_accelerator
+		{
+			"shared_energy_cost"				"-1"
+		}
+	}
+}

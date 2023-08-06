@@ -1,0 +1,18 @@
+WeaponData
+{
+	Mods
+	{
+		pas_ion_lasercannon
+		{
+		}
+		fd_laser_cannon
+		{
+		}
+		fd_balance
+		{
+		}
+		super_laser_core
+		{
+		}
+	}
+}

@@ -1,0 +1,7 @@
+WeaponData
+{
+	"holster_time"									"0.1"
+	"deploy_time" 									"0.1"
+	"lower_time"  									"0.1"
+	"raise_time"  									"0.1"
+}

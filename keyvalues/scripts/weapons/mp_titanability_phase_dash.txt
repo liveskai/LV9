@@ -1,0 +1,12 @@
+WeaponData
+{//相位
+
+	Mods
+	{
+		pas_defensive_core
+		{
+			"regen_ammo_refill_rate"			"*3"
+			"fire_duration"                                 "2"
+		}
+	}
+}

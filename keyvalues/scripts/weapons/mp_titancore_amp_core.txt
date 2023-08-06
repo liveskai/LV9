@@ -1,0 +1,4 @@
+WeaponData
+{//爆发核心
+	"damage_near_value_titanarmor"					"180"
+}

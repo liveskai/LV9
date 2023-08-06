@@ -1,0 +1,40 @@
+WeaponData
+{//加特林
+"ammo_no_remove_from_clip"						"1"
+	Mods
+	{
+		LongRangeAmmo
+		{
+			"damage_near_value_titanarmor"					"*1.2"
+			"damage_far_value_titanarmor" 					"*1.2"
+		}
+		Smart_Core
+		{
+			"damage_near_value_titanarmor"					"*1.2"
+			"damage_far_value_titanarmor" 					"*1.2"
+		}
+		CloseRangePowerShot
+		{
+		}
+		pas_CloseRangePowerShot
+		{
+		}
+		fd_closerange_helper
+		{
+
+		}
+		fd_CloseRangePowerShot
+		{
+			
+		}
+		LongRangePowerShot
+		{
+		}
+		pas_LongRangePowerShot
+		{
+			"damage_near_value_titanarmor"					"*1"
+			"damage_far_value_titanarmor"					"*1"
+		}
+
+	}
+}

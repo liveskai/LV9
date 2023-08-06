@@ -1,0 +1,38 @@
+WeaponData
+{//剑核心
+	"charge_time" 									"0.1"
+	"projectilemodel" 								"models/dev/empty_model.mdl"
+
+	"projectile_ignores_vortex"						"mirror"
+	"vortex_drain"									"0.0"
+	"vortex_refire_behavior"  						"absorb"
+
+	"wave_max_count"								"15"
+	"wave_step_dist"								"112.0"
+	"charge_wave_max_count"							"15"
+	"charge_wave_step_dist"							"112.0"
+	"charge_sound_1p"								"Weapon_ShoulderLaser_StutterBuild_02"
+	"charge_sound_3p"								"ronin_sword_draw_02_3p"
+	"critical_hit"									"0"
+	Mods
+	{
+		fd_duration
+		{
+		}
+		dash_core
+		{
+		//冲刺核心
+		}
+		tcp_arc_wave
+		{
+			"charge_time" 						"0.5"
+			"core_duration"						"3"
+			"charge_cooldown_delay"   					"3"
+			"damage_near_value"					"75"
+			"damage_near_value_titanarmor"		"1000"
+		}
+		triple_wave
+		{
+		}
+	}
+}

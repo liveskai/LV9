@@ -1,0 +1,10 @@
+WeaponData
+{//粒子护盾
+	Mods
+	{
+		pas_defensive_core
+		{
+			"regen_ammo_refill_rate"			"*2"
+		}
+	}
+}

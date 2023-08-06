@@ -1,0 +1,13 @@
+WeaponData
+{//弹群核心
+	"core_duration"								"6"
+	Mods
+	{
+		fd_salvo_core
+		{
+			"burst_fire_count"								"++0"
+			"damage_near_value_titanarmor"					"200"
+			"damage_far_value_titanarmor" 					"200"
+		}
+	}
+}

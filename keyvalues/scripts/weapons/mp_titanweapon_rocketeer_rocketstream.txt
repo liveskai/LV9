@@ -1,0 +1,18 @@
+WeaponData
+{
+	MP_BASE
+	{
+		"damage_near_value"   							"200"
+		"damage_far_value"								"200"
+		"damage_near_value_titanarmor"					"400"
+		"damage_far_value_titanarmor" 					"400"
+		"explosionradius" 								"300"
+	}
+	Mods
+	{
+		rocketstream_fast
+		{
+			"fire_rate"   					"*3"
+		}
+	}
+}
