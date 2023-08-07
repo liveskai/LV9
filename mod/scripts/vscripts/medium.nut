@@ -474,7 +474,7 @@ void function OnTitanfall( entity titan )
 		soul.s.titanTitle <- "影殺"
 
 		titan.TakeWeaponNow( weapon.GetWeaponClassName() )
-		titan.GiveWeapon( "mp_titanweapon_triplethreat", [ "rolling_rounds","burn_mod_titan_triple_threat"] )
+		titan.GiveWeapon( "mp_titanweapon_triplethreat", [ "rolling_rounds","burn_mod_titan_triple_threat","impact_fuse"] )
 		
 		titan.TakeOffhandWeapon( OFFHAND_ORDNANCE )
 		titan.TakeOffhandWeapon( OFFHAND_TITAN_CENTER )
