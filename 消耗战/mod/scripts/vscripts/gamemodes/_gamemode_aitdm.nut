@@ -49,8 +49,8 @@ void function GamemodeAITdm_Init()
 	if ( GetCurrentPlaylistVarInt( "aitdm_archer_grunts", 0 ) == 0 )
 	{
 		AiGameModes_SetNPCWeapons( "npc_soldier", [ "mp_weapon_rspn101", "mp_weapon_dmr", "mp_weapon_r97", "mp_weapon_lmg"] )
-		AiGameModes_SetNPCWeapons( "npc_spectre", [ "mp_weapon_hemlok_smg", "mp_weapon_doubletake", "mp_weapon_mastiff","mp_weapon_sniper", "mp_weapon_dmr"] )
-		AiGameModes_SetNPCWeapons( "npc_stalker", [ "mp_weapon_epg" ] )
+		AiGameModes_SetNPCWeapons( "npc_spectre", [ "mp_weapon_hemlok_smg", "mp_weapon_doubletake", "mp_weapon_mastiff","mp_weapon_sniper", "mp_weapon_dmr","mp_weapon_wingman_n"] )
+		AiGameModes_SetNPCWeapons( "npc_stalker", [ "mp_weapon_hemlok","mp_weapon_g2","mp_weapon_lstar","mp_weapon_shotgun","mp_weapon_shotgun_pistol"] )
 	}
 	else
 	{
@@ -115,7 +115,7 @@ void function OnPlayerConnected( entity player )
 void function HandleScoreEvent( entity victim, entity attacker, var damageInfo )
 {
 	// Basic checks
-	if ( victim == attacker || !( attacker.IsPlayer() || attacker.IsTitan() ) || GetGameState() != eGameState.Playing )
+	if ( victim == attacker || !( attacker.IsPlayer() || attacker.IsTitan() )  )
 		return
 	// Hacked spectre filter
 	if ( victim.GetOwner() == attacker )
@@ -171,10 +171,6 @@ void function HandleScoreEvent( entity victim, entity attacker, var damageInfo )
 	
 	
 	teamScore = playerScore
-	
-	// Check score so we dont go over max
-	if ( GameRules_GetTeamScore(attacker.GetTeam()) + teamScore > GetScoreLimit_FromPlaylist() )
-		teamScore = GetScoreLimit_FromPlaylist() - GameRules_GetTeamScore(attacker.GetTeam())
 	
 	// Add score + update network int to trigger the "Score +n" popup
 	AddTeamScore( attacker.GetTeam(), teamScore )
