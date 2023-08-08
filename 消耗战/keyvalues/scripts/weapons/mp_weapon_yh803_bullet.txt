@@ -1,0 +1,14 @@
+WeaponData
+{//轻型炮塔武器
+	MP_BASE
+	{
+		"npc_rest_time_between_bursts_min"				"0.1"
+		"npc_rest_time_between_bursts_max"				"0.2"
+		//散布
+		"proficiency_poor_spreadscale"				"0.5"
+		"proficiency_average_spreadscale" 				"0.5"
+		"proficiency_good_spreadscale"				"0.5"
+		"proficiency_very_good_spreadscale"   				"0.5"
+		"proficiency_perfect_spreadscale" 				"0.5"
+	}
+}
