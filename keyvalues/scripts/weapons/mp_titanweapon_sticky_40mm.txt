@@ -1,0 +1,23 @@
+WeaponData
+{//40毫米炮
+	Mods
+	{
+		gunship_gunner
+		{
+		}
+		splasher_rounds
+		{
+		}
+		fast_reload
+		{
+		}
+		extended_ammo
+		{
+		}
+		mortar_shots
+		{
+			"explosion_inner_radius"  						"300"
+			"explosionradius" 							"500"
+		}
+	}
+}
