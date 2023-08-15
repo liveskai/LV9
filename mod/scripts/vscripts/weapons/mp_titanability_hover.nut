@@ -69,7 +69,7 @@ void function FlyerHovers( entity player, HoverSounds soundInfo, float flightTim
 	const float DEFAULT_HORIZ_SPEED = 250 // 水平速度限制，毒蛇推进器速度+40%
 	const float DEFAULT_HORIZ_ACCEL = 540 //水平加速度
 	
-	const float DEFAULT_VERTI_SPEED = 30 //垂直速度限制
+	const float DEFAULT_VERTI_SPEED = 300 //垂直速度限制
 	const float DEFAULT_VERTI_ACCEL = 20 //垂直加速度
 	
 	const float DEFAULT_RISE_VEL = 450 //上升速度
