@@ -1,10 +1,10 @@
 untyped //entity.s need this
 global function medium_Init
 
-const DAMAGE_AGAINST_TITANS 			= 40
-const DAMAGE_AGAINST_PILOTS 			= 15
+const DAMAGE_AGAINST_TITANS 			= 15
+const DAMAGE_AGAINST_PILOTS 			= 10
 
-const EMP_DAMAGE_TICK_RATE = 0.3
+const EMP_DAMAGE_TICK_RATE = 0.1
 const FX_EMP_FIELD						= $"P_xo_emp_field"
 const FX_EMP_FIELD_1P					= $"P_body_emp_1P"
 
@@ -382,7 +382,7 @@ void function OnTitanfall( entity titan )
 		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
 		titan.TakeOffhandWeapon( OFFHAND_MELEE )
 		
-		titan.GiveOffhandWeapon( "mp_ability_cloak", OFFHAND_SPECIAL,["bc_super_cloak","dev_mod_short_cloak","amped_tacticals"])
+		titan.GiveOffhandWeapon( "mp_ability_cloak", OFFHAND_SPECIAL,["amped_tacticals"])
 		titan.GiveOffhandWeapon( "mp_ability_heal", OFFHAND_TITAN_CENTER,["bc_super_stim","bc_long_stim1","amped_tacticals","pas_power_cell"])
 		titan.GiveOffhandWeapon( "mp_ability_holopilot_nova", OFFHAND_ORDNANCE,["dev_mod_low_recharge"])
 		titan.GiveOffhandWeapon( "mp_titancore_flame_wave", OFFHAND_EQUIPMENT,["ground_slam"] )
@@ -441,10 +441,9 @@ void function OnTitanfall( entity titan )
 		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
 		titan.TakeOffhandWeapon( OFFHAND_MELEE )
 		
-		titan.GiveWeapon( "mp_titanweapon_leadwall",["sur_level_0"] )
 		titan.GiveWeapon( "mp_titanweapon_xo16_shorty",["electric_rounds"] )
 		titan.GiveOffhandWeapon( "mp_ability_swordblock", OFFHAND_SPECIAL )
-		titan.GiveOffhandWeapon( "mp_titanability_phase_dash", OFFHAND_TITAN_CENTER,["burn_mod_titan_smoke"])
+		titan.GiveOffhandWeapon( "mp_titanability_phase_dash", OFFHAND_TITAN_CENTER)
 		titan.GiveOffhandWeapon( "mp_titanweapon_arc_wave", OFFHAND_ORDNANCE,["dev_mod_low_recharge"] )
 		titan.GiveOffhandWeapon( "mp_titancore_shift_core", OFFHAND_EQUIPMENT)
 		titan.GiveOffhandWeapon( "melee_titan_sword", OFFHAND_MELEE )
