@@ -1,8 +1,8 @@
 untyped //entity.s need this
 global function medium_Init
 
-const DAMAGE_AGAINST_TITANS 			= 15
-const DAMAGE_AGAINST_PILOTS 			= 10
+const DAMAGE_AGAINST_TITANS 			= 30
+const DAMAGE_AGAINST_PILOTS 			= 12
 
 const EMP_DAMAGE_TICK_RATE = 0.1
 const FX_EMP_FIELD						= $"P_xo_emp_field"
