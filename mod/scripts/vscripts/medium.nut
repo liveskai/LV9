@@ -1,7 +1,7 @@
 untyped //entity.s need this
 global function medium_Init
 
-const DAMAGE_AGAINST_TITANS 			= 30
+const DAMAGE_AGAINST_TITANS 			= 40
 const DAMAGE_AGAINST_PILOTS 			= 12
 
 const EMP_DAMAGE_TICK_RATE = 0.1
@@ -171,7 +171,7 @@ void function OnTitanfall( entity titan )
 		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
 		
 		titan.GiveOffhandWeapon( "mp_titanweapon_vortex_shield", OFFHAND_SPECIAL)
-		titan.GiveOffhandWeapon( "mp_ability_shifter", OFFHAND_TITAN_CENTER,["long_last_shifter","pas_power_cell"])
+		titan.GiveOffhandWeapon( "mp_ability_shifter", OFFHAND_TITAN_CENTER,["long_last_shifter","pas_power_cell","all_phase"])
 		titan.GiveOffhandWeapon( "mp_titanweapon_stun_laser", OFFHAND_ORDNANCE)
 		titan.GiveOffhandWeapon( "mp_titancore_shift_core", OFFHAND_EQUIPMENT,["dash_core"])
 
@@ -382,8 +382,8 @@ void function OnTitanfall( entity titan )
 		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
 		titan.TakeOffhandWeapon( OFFHAND_MELEE )
 		
-		titan.GiveOffhandWeapon( "mp_ability_cloak", OFFHAND_SPECIAL,["amped_tacticals"])
-		titan.GiveOffhandWeapon( "mp_ability_heal", OFFHAND_TITAN_CENTER,["bc_super_stim","bc_long_stim1","amped_tacticals","pas_power_cell"])
+		titan.GiveOffhandWeapon( "mp_ability_cloak", OFFHAND_SPECIAL,["pas_power_cell"])
+		titan.GiveOffhandWeapon( "mp_ability_heal", OFFHAND_TITAN_CENTER,["bc_super_stim","bc_long_stim1","bc_long_stim2","amped_tacticals","pas_power_cell"])
 		titan.GiveOffhandWeapon( "mp_ability_holopilot_nova", OFFHAND_ORDNANCE,["dev_mod_low_recharge"])
 		titan.GiveOffhandWeapon( "mp_titancore_flame_wave", OFFHAND_EQUIPMENT,["ground_slam"] )
 		titan.GiveOffhandWeapon( "melee_titan_punch_fighter", OFFHAND_MELEE, ["berserker", "allow_as_primary"] )
