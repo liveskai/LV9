@@ -9,6 +9,7 @@ struct
 void function Titan_Shield_Damage_Init()
 {
     AddSpawnCallback( "npc_titan", OnTitanSpawn )
+    AddSpawnCallback( "player", OnTitanSpawn )
 }
 
 void function TrackTitanShieldDamageInPlayerGameStat( int playerGameStat )
