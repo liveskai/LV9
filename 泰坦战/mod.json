@@ -1,0 +1,29 @@
+{
+    "Name": "LV9TTDM",
+    "Description": "更多泰坦",
+    "LoadPriority": 101,
+    "RequiredOnClient": false,
+    "Scripts": [
+		{
+			"Path": "medium.nut",
+			"RunOn": "SERVER && MP",
+			"ServerCallback": {
+				"After": "medium_Init"
+			}
+		},
+		{
+			"Path": "weapons/mp_titanweapon_punch_fighter.nut",
+			"RunOn":"SERVER && MP",
+			"ServerCallback":{
+				"After": "MpTitanWeaponPunch_Fighter_Init"
+			}
+		},
+		{
+			"Path": "gamemodes/_damage_shield.nut",
+			"RunOn": "SERVER && MP",
+			"ServerCallback": {
+				"After": "Titan_Shield_Damage_Init"
+			}
+		}
+    ]
+}
