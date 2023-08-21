@@ -14,6 +14,8 @@ WeaponData
 	"charge_sound_1p"								"Weapon_ShoulderLaser_StutterBuild_02"
 	"charge_sound_3p"								"ronin_sword_draw_02_3p"
 	"critical_hit"									"0"
+
+	"passive"										"PAS_FUSION_CORE"
 	Mods
 	{
 		fd_duration
@@ -21,7 +23,7 @@ WeaponData
 		}
 		dash_core
 		{
-		//冲刺核心
+			//冲刺核心
 		}
 		tcp_arc_wave
 		{
