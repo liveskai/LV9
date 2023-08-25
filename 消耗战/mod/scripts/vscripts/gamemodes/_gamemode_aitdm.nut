@@ -115,7 +115,7 @@ void function OnPlayerConnected( entity player )
 void function HandleScoreEvent( entity victim, entity attacker, var damageInfo )
 {
 	// Basic checks
-	if ( victim == attacker || !( attacker.IsPlayer() || attacker.IsTitan() ) /*|| GetGameState() != eGameState.Playing 游戏结束后仍然获得分数*/ )
+	if ( victim == attacker || !( attacker.IsPlayer() || attacker.IsTitan() ))
 		return
 	// Hacked spectre filter
 	if ( victim.GetOwner() == attacker )
@@ -171,10 +171,6 @@ void function HandleScoreEvent( entity victim, entity attacker, var damageInfo )
 	
 	
 	teamScore = playerScore
-	
-	// Check score so we dont go over max
-	if ( GameRules_GetTeamScore(attacker.GetTeam()) + teamScore > GetScoreLimit_FromPlaylist() )
-		teamScore = GetScoreLimit_FromPlaylist() - GameRules_GetTeamScore(attacker.GetTeam())
 	
 	// Add score + update network int to trigger the "Score +n" popup
 	AddTeamScore( attacker.GetTeam(), teamScore )
