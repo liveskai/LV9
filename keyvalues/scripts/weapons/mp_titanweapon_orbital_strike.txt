@@ -1,0 +1,4 @@
+WeaponData
+{//多重炮火
+	"burst_fire_delay"								"15.5"
+}

@@ -4,7 +4,7 @@ WeaponData
 	{
 		accelerator
 		{
-			"vortex_drain"							"0.03"
+			"vortex_drain"							"0.02"
 			"damage_near_value_titanarmor"					"*1.2"
 			"damage_far_value_titanarmor" 					"*1.2"
 			"spread_stand_hip"						"*0.2"
@@ -21,6 +21,8 @@ WeaponData
 			"spread_max_kick_crouch_ads"  					"*0.2"
 			"spread_max_kick_air_hip" 					"*0.2"
 			"spread_max_kick_air_ads" 					"*0.2"
+
+			"fire_rate_max_time_speedup"			"2"
 		}
 		electric_rounds
 		{
