@@ -16,8 +16,30 @@ WeaponData
 		}
 		mortar_shots
 		{
-			"explosion_inner_radius"  						"300"
-			"explosionradius" 							"500"
+			"explosion_inner_radius"  						"400"
+			"explosionradius" 							"600"
+		}
+		burn_mod_titan_40mm
+		{
+		}
+		sur_level_0
+		{
+		}
+		sur_level_1
+		{
+		}
+		sur_level_2
+		{
+		}
+		sur_level_3
+		{
+		}
+		pas_tone_weapon
+		{
+		}
+		pas_tone_burst
+		{
+			"burst_fire_delay"								"0.6"
 		}
 	}
 }

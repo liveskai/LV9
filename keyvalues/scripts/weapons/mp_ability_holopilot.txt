@@ -8,8 +8,7 @@ WeaponData
 
 		dev_mod_low_recharge
 		{
-			"regen_ammo_refill_rate"   									"0.2"
+			"burst_fire_delay"				"5"
 		}
-
 	}
 }
