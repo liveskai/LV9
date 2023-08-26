@@ -373,7 +373,6 @@ void function OnTitanfall( entity titan )
 		soul.s.TitanHasBeenChange <- true
 		SendHudMessage(player, "切换为野牛，取消至尊泰坦以使用原版烈焰",  -1, 0.3, 200, 200, 225, 0, 0.15, 5, 1);
 		soul.s.titanTitle <- "野牛"
-		soul.soul.titanLoadout.titanExecution = "execution_scorch_prime"
 
 		titan.TakeWeaponNow( weapon.GetWeaponClassName() )
         titan.TakeOffhandWeapon( OFFHAND_ORDNANCE )
