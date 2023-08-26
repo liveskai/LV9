@@ -39,7 +39,7 @@ WeaponData
 		}
 		pas_tone_burst
 		{
-			"burst_fire_delay"								"0.6"
+			"burst_fire_delay"								"0.55"
 		}
 	}
 }
