@@ -168,7 +168,7 @@ void function OnTitanfall( entity titan )
         titan.TakeOffhandWeapon( OFFHAND_SPECIAL )
 		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
 		
-		titan.GiveWeapon( "mp_titanweapon_arc_cannon",["overcharge","splitter"] )
+		titan.GiveWeapon( "mp_titanweapon_arc_cannon",["splitter"] )
 		titan.GiveWeapon( "mp_titanweapon_arc_cannon",["capacitor","burn_mod_titan_arc_cannon"] )
 		titan.GiveOffhandWeapon( "mp_titanweapon_vortex_shield", OFFHAND_SPECIAL)
 		titan.GiveOffhandWeapon( "mp_ability_shifter", OFFHAND_TITAN_CENTER,["long_last_shifter","pas_power_cell","all_phase"])
