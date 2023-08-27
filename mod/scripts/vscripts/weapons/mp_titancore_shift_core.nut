@@ -211,7 +211,9 @@ var function OnAbilityStart_Shift_Core( entity weapon, WeaponPrimaryAttackParams
 	if ( weapon.HasMod( "tcp_arc_wave" ) )
 	{
 		weapon.AddMod( "triple_wave" )
+		GivePassive( owner, ePassives.PAS_SHIFT_CORE )
 		OnWeaponPrimaryAttack_titanweapon_arc_wave( weapon, attackParams )
+		TakePassive( owner, ePassives.PAS_SHIFT_CORE )
 		weapon.RemoveMod( "triple_wave" )
 	}
 	float delay = weapon.GetWeaponSettingFloat( eWeaponVar.charge_cooldown_delay )
@@ -241,7 +243,6 @@ void function Dash_Core_End( entity weapon, entity player, float delay )
 		player.EndSignal( "OnDeath" )
 		player.EndSignal( "TitanEjectionStarted" )
 		player.EndSignal( "DisembarkingTitan" )
-		player.EndSignal( "OnSyncedMelee" )
 	}
 	else if ( player.IsNPC() )
 	{
