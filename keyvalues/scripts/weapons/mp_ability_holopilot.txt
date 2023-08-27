@@ -8,7 +8,7 @@ WeaponData
 
 		dev_mod_low_recharge
 		{
-			"burst_fire_delay"				"5"
+			"fire_rate"	"0.2"
 		}
 	}
 }
