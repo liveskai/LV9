@@ -6,7 +6,9 @@ WeaponData
 		"damage_far_value"								"200"
 		"damage_near_value_titanarmor"					"400"
 		"damage_far_value_titanarmor" 					"400"
-		"explosionradius" 								"300"
+		"explosionradius" 								"375"
+		"explosion_inner_radius"						"225"
+		"deploy_time" 									"0.1"
 	}
 	Mods
 	{
