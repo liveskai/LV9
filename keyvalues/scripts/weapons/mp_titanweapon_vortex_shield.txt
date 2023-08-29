@@ -41,13 +41,5 @@ WeaponData
 		{
 			"shared_energy_charge_cost"				"1"
 		}
-		sp_wider_return_spread
-		{
-		}
-		normal
-		{	
-			"shared_energy_charge_cost"				"3"
-		}
 	}
-
 }
