@@ -414,7 +414,7 @@ void function OnTitanfall( entity titan )
 		
 		titan.GiveOffhandWeapon( "mp_ability_swordblock", OFFHAND_SPECIAL,["pm0"] )
 		titan.GiveOffhandWeapon( "mp_titanability_smoke", OFFHAND_TITAN_CENTER)
-		titan.GiveOffhandWeapon( "mp_titanweapon_arc_wave", OFFHAND_ORDNANCE )
+		titan.GiveOffhandWeapon( "mp_titanweapon_arc_wave", OFFHAND_ORDNANCE,["dev_mod_low_recharge"] )
 		titan.GiveOffhandWeapon( "mp_titancore_shift_core", OFFHAND_EQUIPMENT, ["tcp_arc_wave"] )
 		thread EMPThink_Thread( titan )
 		array<int> passives = [ ePassives.PAS_RONIN_WEAPON,
