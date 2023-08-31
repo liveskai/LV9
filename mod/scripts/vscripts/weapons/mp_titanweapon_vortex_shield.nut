@@ -238,7 +238,8 @@ bool function OnWeaponVortexHitBullet_titanweapon_vortex_shield( entity weapon, 
 			return true
 		string attackerWeaponName	= attackerWeapon.GetWeaponClassName()
 		int damageType				= DamageInfo_GetCustomDamageType( damageInfo )
-
+		if( attackerWeapon.HasMod( "burn_mod_titan_vortex_shield" ) )
+			return true
 		return TryVortexAbsorb( vortexSphere, attacker, origin, damageSourceID, attackerWeapon, attackerWeaponName, "hitscan", null, damageType, weapon.HasMod( "burn_mod_titan_vortex_shield" ) )
 	#endif
 }
