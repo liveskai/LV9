@@ -5,10 +5,10 @@ WeaponData
 		pas_power_cell
 		{
 		}
-
 		dev_mod_low_recharge
 		{
-			"fire_rate"	"0.2"
+			"burst_fire_count"								"1"
+			"burst_fire_delay"								"5"
 		}
 	}
 }
