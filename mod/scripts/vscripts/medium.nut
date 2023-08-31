@@ -404,14 +404,13 @@ void function OnTitanfall( entity titan )
 		SendHudMessage(player, "已切换为电弧，取消当前皮肤以使用原版浪人",  -1, 0.3, 200, 200, 225, 0, 0.15, 5, 1);
 		soul.s.titanTitle <- "電弧"
 
-		 titan.TakeWeaponNow( weapon.GetWeaponClassName() )
-		titan.GiveWeapon( "mp_titanweapon_leadwall",["sur_level_0"] )
-		
+		titan.TakeWeaponNow( weapon.GetWeaponClassName() )
 		titan.TakeOffhandWeapon( OFFHAND_ORDNANCE )
 		titan.TakeOffhandWeapon( OFFHAND_TITAN_CENTER )
         titan.TakeOffhandWeapon( OFFHAND_SPECIAL )
 		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
 		
+		titan.GiveWeapon( "mp_titanweapon_leadwall",["instaload"] )
 		titan.GiveOffhandWeapon( "mp_ability_swordblock", OFFHAND_SPECIAL,["pm0"] )
 		titan.GiveOffhandWeapon( "mp_titanability_smoke", OFFHAND_TITAN_CENTER)
 		titan.GiveOffhandWeapon( "mp_titanweapon_arc_wave", OFFHAND_ORDNANCE,["dev_mod_low_recharge"] )
