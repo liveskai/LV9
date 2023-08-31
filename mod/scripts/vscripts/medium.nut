@@ -444,7 +444,7 @@ void function OnTitanfall( entity titan )
 		titan.GiveOffhandWeapon( "mp_titanability_phase_dash", OFFHAND_TITAN_CENTER)
 		titan.GiveOffhandWeapon( "mp_titanweapon_arc_wave", OFFHAND_ORDNANCE,["dev_mod_low_recharge"] )
 		titan.GiveOffhandWeapon( "mp_titancore_shift_core", OFFHAND_EQUIPMENT)
-		titan.GiveOffhandWeapon( "melee_titan_sword", OFFHAND_MELEE )
+		titan.GiveOffhandWeapon( "melee_titan_sword", OFFHAND_MELEE,["fd_sword_upgrade"] )
 
 		array<int> passives = [ ePassives.PAS_VANGUARD_COREMETER,
 								ePassives.PAS_VANGUARD_SHIELD,
