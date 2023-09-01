@@ -86,7 +86,7 @@ void function OnTitanfall( entity titan )
 		
 		titan.GiveWeapon( "mp_titanweapon_xo16_shorty",["fast_reload"] )
 		titan.GiveOffhandWeapon( "mp_titanweapon_vortex_shield", OFFHAND_SPECIAL,["slow_recovery_vortex"] )
-		titan.GiveOffhandWeapon( "mp_titanability_smoke", OFFHAND_TITAN_CENTER,["burn_mod_titan_smoke"] )
+		titan.GiveOffhandWeapon( "mp_titanability_smoke", OFFHAND_TITAN_CENTER,["burn_mod_titan_smoke","maelstrom"] )
 		titan.GiveOffhandWeapon( "mp_titanweapon_shoulder_rockets", OFFHAND_ORDNANCE,["extended_smart_ammo_range"] )
 		titan.GiveOffhandWeapon( "mp_titancore_amp_core", OFFHAND_EQUIPMENT )
 
