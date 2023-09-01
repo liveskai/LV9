@@ -1,4 +1,7 @@
 WeaponData
 {//爆发核心
 	"damage_near_value_titanarmor"					"180"
+	"critical_hit_damage_scale"						"1.5"
+	"explosionradius" 							"100"
+	"explosion_inner_radius"						"50"
 }
