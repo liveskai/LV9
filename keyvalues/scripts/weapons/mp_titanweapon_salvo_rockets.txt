@@ -10,6 +10,8 @@ WeaponData
 		}
 		burn_mod_titan_salvo_rockets
 		{
+			"ammo_per_shot"									"10"
+			"burst_fire_count"								"12"
 		}
 		multi_launch_system
 		{
