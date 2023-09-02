@@ -26,6 +26,7 @@ WeaponData
 		}
 		electric_rounds
 		{
+			"vortex_drain"							"0.03"
 		}
 		fast_reload
 		{
@@ -37,8 +38,8 @@ WeaponData
 		}
 		burst
 		{
-			"damage_near_value_titanarmor"					"*2"
-			"damage_far_value_titanarmor" 					"*2"
+			"damage_near_value_titanarmor"					"*1.5"
+			"damage_far_value_titanarmor" 					"*1.5"
 			"spread_stand_hip"						"*0.1"
 			"spread_stand_hip_run"                      			"*0.1"
 			"spread_crouch_hip"   						"*0.1"
