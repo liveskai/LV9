@@ -45,6 +45,14 @@ void function GamemodeAITdm_Init()
 	AddCallback_OnClientConnected( OnPlayerConnected )
 	
 	AddCallback_NPCLeeched( OnSpectreLeeched )
+	//添加得分事件
+	SetApplyBatteryCallback( OnPilotAddsBatteryToFriendlyTitan )// 给队友装电池
+	AddPostDamageCallback( "player", OnTitanTakeDamage )// 伤害计算得分
+	AddPostDamageCallback( "npc_titan", OnTitanTakeDamage )// 伤害计算得分
+	if ( !svGlobal.onPilotBecomesTitanCallbacks.contains( OnTitanEmbark ) )// Hack:Add Embark Callback High Priority
+		svGlobal.onPilotBecomesTitanCallbacks.insert( 0, OnTitanEmbark )
+	AddSpawnCallback( "player", OnTitanSpawn )// 护甲伤害计算得分
+	AddSpawnCallback( "npc_titan", OnTitanSpawn )// 护甲伤害计算得分
 	
 	if ( GetCurrentPlaylistVarInt( "aitdm_archer_grunts", 0 ) == 0 )
 	{
@@ -108,6 +116,10 @@ void function OnPlaying()
 // Sets up mode specific hud on client
 void function OnPlayerConnected( entity player )
 {
+	//增加伤害判定
+	player.s.totalTitanDamage <- 0
+	player.s.trackedTitanDamage <- 0
+	// 结束
 	Remote_CallFunction_NonReplay( player, "ServerCallback_AITDM_OnPlayerConnected" )
 }
 
@@ -172,10 +184,19 @@ void function HandleScoreEvent( entity victim, entity attacker, var damageInfo )
 	
 	teamScore = playerScore
 	
-	// Add score + update network int to trigger the "Score +n" popup
-	AddTeamScore( attacker.GetTeam(), teamScore )
+	// Check for game state
+	if ( GetGameState() == eGameState.Playing )//游戏结束后停止队伍计分
+	{
+		// Check score so we dont go over max
+		if ( GameRules_GetTeamScore(attacker.GetTeam()) + teamScore > GetScoreLimit_FromPlaylist() )
+			teamScore = GetScoreLimit_FromPlaylist() - GameRules_GetTeamScore(attacker.GetTeam())
+
+		// Add score + update network int to trigger the "Score +n" popup
+		AddTeamScore( attacker.GetTeam(), teamScore )
+	}
 	attacker.AddToPlayerGameStat( PGS_ASSAULT_SCORE, playerScore )
-	attacker.SetPlayerNetInt("AT_bonusPoints", attacker.GetPlayerGameStat( PGS_ASSAULT_SCORE ) )
+	// attacker.SetPlayerNetInt("AT_bonusPoints", attacker.GetPlayerGameStat( PGS_ASSAULT_SCORE ) )
+	AITdm_SetPlayerBonusPoints( attacker, attacker.GetPlayerGameStat( PGS_ASSAULT_SCORE ) )//个人分数可以超过1023上限
 }
 
 // When attrition starts both teams spawn ai on preset nodes, after that
@@ -490,7 +511,8 @@ void function OnSpectreLeeched( entity spectre, entity player )
 	// Add score + update network int to trigger the "Score +n" popup
 	AddTeamScore( player.GetTeam(), 1 )
 	player.AddToPlayerGameStat( PGS_ASSAULT_SCORE, 1 )
-	player.SetPlayerNetInt("AT_bonusPoints", player.GetPlayerGameStat( PGS_ASSAULT_SCORE ) )
+	// player.SetPlayerNetInt("AT_bonusPoints", player.GetPlayerGameStat( PGS_ASSAULT_SCORE ) )
+	AITdm_SetPlayerBonusPoints( player, player.GetPlayerGameStat( PGS_ASSAULT_SCORE ) )//消耗战个人分数限制1023	
 }
 
 // Same as SquadHandler, just for reapers
@@ -583,4 +605,93 @@ void function AITdm_CleanupBoredNPCThread( entity guy )
 	
 	print( "cleaning up bored npc: " + guy + " from team " + guy.GetTeam() )
 	guy.Destroy()
+}
+//添加
+void function OnPilotAddsBatteryToFriendlyTitan( entity rider, entity titan, entity battery )
+{
+	AITdm_AddPlayerScore( rider, 3 )
+	entity friend = titan
+	if ( IsValid( titan ) && IsAlive( titan ) && !titan.IsPlayer() )
+		friend = titan.GetBossPlayer()
+	if ( friend != null && IsValid( friend ) && friend.IsPlayer() )
+		AITdm_AddPlayerScore( friend, 1 )
+}
+
+void function OnTitanTakeDamage( entity victim, var damageInfo )
+{
+	if ( !victim.IsTitan()  )
+		return
+
+	entity attacker = DamageInfo_GetAttacker( damageInfo )
+	float amount = DamageInfo_GetDamage( damageInfo )
+
+	if ( attacker.IsPlayer() && attacker != victim )
+	{
+		attacker.s.totalTitanDamage += amount
+		CalcTitanDamage( attacker )
+	}
+}
+
+// Copy from _gamemode_at
+void function AITdm_SetPlayerBonusPoints( entity player, int amount )
+{
+	// split into stacks of 256 where necessary
+	int stacks = amount / 256 // automatically rounds down because int division
+
+	player.SetPlayerNetInt( "AT_bonusPoints256", stacks )
+	player.SetPlayerNetInt( "AT_bonusPoints", amount - stacks * 256 )
+}
+
+void function OnTitanEmbark( entity player, entity titan )
+{
+	if ( !PlayerHasBattery( player ) )
+		return
+
+	int playerScore = GetPlayerBatteryCount( player )
+	AITdm_AddPlayerScore( player, playerScore )
+}
+
+void function OnTitanSpawn( entity titan )
+{
+	AddEntityCallback_OnPostShieldDamage( titan, OnPostShieldDamage )
+}
+
+void function OnPostShieldDamage( entity ent, var damageInfo, float actualShieldDamage )
+{
+    entity victim
+	if ( ent.IsTitan() )
+		victim = ent.GetTitanSoul()
+	else
+		victim = ent
+
+    entity attacker = DamageInfo_GetAttacker( damageInfo )
+    if ( IsValid( attacker ) && attacker.IsPlayer()  && DamageInfo_GetDamage( damageInfo ) != actualShieldDamage ) // Shield empty
+    {
+		attacker.s.totalTitanDamage += actualShieldDamage
+		CalcTitanDamage( attacker )
+	}
+}
+
+void function CalcTitanDamage( entity player )
+{
+	int score = int( floor( player.s.totalTitanDamage / 1000 )  - player.s.trackedTitanDamage)
+	AITdm_AddPlayerScore( player, score )
+	player.s.trackedTitanDamage += score
+}
+
+void function AITdm_AddPlayerScore( entity player, int score )
+{
+	int playerScore = score
+	int teamScore = score
+	// Check for game state
+	if ( GetGameState() == eGameState.Playing )
+	{
+		// Check score so we dont go over max
+		if ( GameRules_GetTeamScore(player.GetTeam()) + teamScore > GetScoreLimit_FromPlaylist() )
+			teamScore = GetScoreLimit_FromPlaylist() - GameRules_GetTeamScore(player.GetTeam())
+
+		// Add score + update network int to trigger the "Score +n" popup
+		AddTeamScore( player.GetTeam(), teamScore )
+	}
+	player.AddToPlayerGameStat( PGS_ASSAULT_SCORE, playerScore )
 }
