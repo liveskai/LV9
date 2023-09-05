@@ -186,8 +186,8 @@ var function OnWeaponPrimaryAttack_UpgradeCore( entity weapon, WeaponPrimaryAtta
 			else
 				mods = [ "upgradeCore_Vanguard" ]
 
-			if ( ordnance.HasMod( "fd_balance" ) )
-				mods.append( "fd_balance" )
+			// if ( ordnance.HasMod( "fd_balance" ) )伤害不再降低
+			// 	mods.append( "fd_balance" )
 
 			float ammoFrac = float( ordnance.GetWeaponPrimaryClipCount() ) / float( ordnance.GetWeaponPrimaryClipCountMax() )
 			owner.TakeWeaponNow( ordnance.GetWeaponClassName() )
