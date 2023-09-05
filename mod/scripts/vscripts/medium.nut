@@ -115,7 +115,7 @@ void function OnTitanfall( entity titan )
 		soul.s.titanTitle <- "至尊軍團"
 
         titan.TakeWeaponNow( weapon.GetWeaponClassName() )
-		titan.GiveWeapon( "mp_titanweapon_xo16_shorty", [ "accelerator" ] )
+		titan.GiveWeapon( "mp_titanweapon_xo16_shorty", [ "accelerator","spread"] )
 		
 		titan.TakeOffhandWeapon( OFFHAND_ORDNANCE )
 		titan.TakeOffhandWeapon( OFFHAND_TITAN_CENTER )
@@ -342,7 +342,7 @@ void function OnTitanfall( entity titan )
         titan.TakeOffhandWeapon( OFFHAND_SPECIAL )
 		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
 		
-		titan.GiveWeapon( "mp_titanweapon_xo16_shorty",["burst"] )
+		titan.GiveWeapon( "mp_titanweapon_xo16_shorty",["burst","spread"] )
 		titan.GiveWeapon( "mp_titanweapon_sniper",["fd_upgrade_charge","power_shot","burn_mod_titan_sniper"] )
 		titan.GiveOffhandWeapon( "mp_titanability_tether_trap", OFFHAND_SPECIAL,["fd_trap_charges"] )
 		titan.GiveOffhandWeapon( "mp_titanability_hover", OFFHAND_TITAN_CENTER)
