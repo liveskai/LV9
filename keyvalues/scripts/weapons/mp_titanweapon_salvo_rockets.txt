@@ -13,24 +13,5 @@ WeaponData
 			"ammo_per_shot"									"10"
 			"burst_fire_count"								"12"
 		}
-		multi_launch_system
-		{
-		}
-		scripted_no_damage
-		{
-		}
-		northstar_prime_execution
-		{
-		}
-		missile_racks
-		{
-		}
-		fd_balance
-		{
-			"explosion_damage"						"*1"
-			"explosion_damage_heavy_armor"					"*1"
-			"damage_near_value"   						"*1"
-			"damage_far_value"							"*1"
-		}
 	}
 }
