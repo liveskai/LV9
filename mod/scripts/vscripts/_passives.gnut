@@ -261,17 +261,17 @@ void function ApplyVanguardFDUpgrades( array<string> upgradeRefs, entity titan, 
 	entity soul = titan.GetTitanSoul()
 	if ( !IsValid( soul ) ) //Ejecting
 		return
-
+/*
 	entity primaryWeapon = titan.GetMainWeapons()[0]
 	array<string> primaryMods = primaryWeapon.GetMods()
 	primaryMods.append( "fd_balance" )
 	primaryWeapon.SetMods( primaryMods )
-
+	帝王取消神盾伤害削弱
 	entity ordanance = titan.GetOffhandWeapon( OFFHAND_RIGHT )
 	array<string> ordananceMods = ordanance.GetMods()
 	ordananceMods.append( "fd_balance" )
 	ordanance.SetMods( ordananceMods )
-
+*/
 	foreach ( upgrade in upgradeRefs )
 	{
 		switch ( upgrade )
