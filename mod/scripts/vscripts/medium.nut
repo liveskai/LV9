@@ -122,7 +122,7 @@ void function OnTitanfall( entity titan )
         titan.TakeOffhandWeapon( OFFHAND_SPECIAL )
 		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
 		
-		titan.GiveOffhandWeapon( "mp_weapon_frag_drone", OFFHAND_TITAN_CENTER,["pas_ordnance_pack","all_ticks"])
+		titan.GiveOffhandWeapon( "mp_titanability_smoke", OFFHAND_TITAN_CENTER)
 		titan.GiveOffhandWeapon( "mp_titanability_particle_wall", OFFHAND_SPECIAL)
 		titan.GiveOffhandWeapon( "mp_titanweapon_orbital_strike", OFFHAND_ORDNANCE,["burn_mod_titan_salvo_rockets"] )
 		titan.GiveOffhandWeapon( "mp_titancore_flame_wave", OFFHAND_EQUIPMENT )
