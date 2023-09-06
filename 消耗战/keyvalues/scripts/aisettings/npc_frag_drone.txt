@@ -1,0 +1,21 @@
+npc_frag_drone
+{//炸蛛
+	//极快的速度
+	minSpeedScale					1.5
+	maxSpeedScale					3.4
+	//视力增加10倍
+	LookDistDefault_Idle			20000
+	LookDistDefault_Alert			20000
+	LookDistDefault_Combat			20000
+
+	//360全方位索敌
+	faceEnemyToleranceAngle		360
+	faceEnemyStrictToleranceAngle	360
+	//视角转动速度
+	moveYawSpeed			90
+
+
+	MinStartMoveDist				10
+	MaxArrivalDist				15
+	moveDeflectionLookAheadTime		0.1//移动延迟
+}
