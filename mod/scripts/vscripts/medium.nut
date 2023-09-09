@@ -170,7 +170,7 @@ void function OnTitanfall( entity titan )
 		
 		titan.GiveWeapon( "mp_titanweapon_arc_cannon",["capacitor","burn_mod_titan_arc_cannon"] )
 		titan.GiveOffhandWeapon( "mp_titanweapon_vortex_shield", OFFHAND_SPECIAL,["burn_mod_titan_vortex_shield"])
-		titan.GiveOffhandWeapon( "mp_ability_shifter", OFFHAND_TITAN_CENTER,["long_last_shifter","pas_power_cell","all_phase"])
+		titan.GiveOffhandWeapon( "mp_ability_shifter", OFFHAND_TITAN_CENTER,["long_last_shifter","pas_power_cell"])
 		titan.GiveOffhandWeapon( "mp_titanweapon_stun_laser", OFFHAND_ORDNANCE)
 		titan.GiveOffhandWeapon( "mp_titancore_shift_core", OFFHAND_EQUIPMENT,["dash_core"])
 
@@ -197,9 +197,9 @@ void function OnTitanfall( entity titan )
 		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
 		
 		titan.GiveWeapon( "mp_titanweapon_xo16_vanguard",["battle_rifle","battle_rifle_icon"] )
-		titan.GiveOffhandWeapon( "mp_titanweapon_vortex_shield", OFFHAND_SPECIAL,["vortex_extended_effect_and_no_use_penalty"] )
+		titan.GiveOffhandWeapon( "mp_titanweapon_vortex_shield", OFFHAND_SPECIAL,["vortex_extended_effect_and_no_use_penalty","pas_defensive_core"] )
 		titan.GiveOffhandWeapon( "mp_titanability_phase_dash", OFFHAND_TITAN_CENTER,["pas_defensive_core"])
-		titan.GiveOffhandWeapon( "mp_titanweapon_salvo_rockets", OFFHAND_ORDNANCE,["burn_mod_titan_salvo_rockets","dev_mod_low_recharge"] )
+		titan.GiveOffhandWeapon( "mp_titanweapon_salvo_rockets", OFFHAND_ORDNANCE,["burn_mod_titan_salvo_rockets"] )
 		titan.GiveOffhandWeapon( "mp_titancore_shift_core", OFFHAND_EQUIPMENT,["dash_core"])
 		array<int> passives = [ ePassives.PAS_VANGUARD_COREMETER,
 								ePassives.PAS_VANGUARD_SHIELD,
