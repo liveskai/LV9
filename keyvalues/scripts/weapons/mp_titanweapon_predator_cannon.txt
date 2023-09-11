@@ -5,8 +5,7 @@ WeaponData
 	{
 		LongRangeAmmo
 		{
-			"damage_near_value_titanarmor"					"*1.2"
-			"damage_far_value_titanarmor" 					"*1.2"
+			"damage_far_value_titanarmor" 					"100"
 		}
 		Smart_Core
 		{
