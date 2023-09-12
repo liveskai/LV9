@@ -1,0 +1,11 @@
+WeaponData
+{//磁能榴弹炮
+	Mods
+	{
+		extended_ammo
+		{
+			"burst_fire_count"		"8"
+		}
+	}
+
+}

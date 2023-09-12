@@ -1,0 +1,57 @@
+WeaponData
+{//双重狙
+	Mods
+	{
+		iron_sights
+		{
+		}
+		scope_4x
+		{
+		}
+		threat_scope
+		{
+		}
+		pro_screen
+		{
+		}
+		tactical_cdr_on_kill
+		{
+		}
+		extended_ammo
+		{
+		}
+		stabilizer
+		{
+		}
+		ricochet
+		{
+		}
+        slammer
+        {
+        }
+		pas_fast_reload
+		{
+		}
+		pas_fast_ads
+		{
+		}
+		pas_fast_swap
+		{
+		}
+		burn_mod_doubletake
+		{
+		}
+		pas_run_and_gun
+		{
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
