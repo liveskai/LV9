@@ -54,6 +54,14 @@ void function OnPlayerRespawned( entity player )
 		mods.append( "fast_lock" )
 		weapon.SetMods( mods )
 	}
+	
+	if (player.GetMainWeapons()[0].GetWeaponClassName()== "mp_weapon_sniper" ||player.GetMainWeapons()[0].GetWeaponClassName()=="mp_weapon_wingman_n"||player.GetMainWeapons()[0].GetWeaponClassName()=="mp_weapon_wingman_n")
+	{
+		entity weapon = player.GetMainWeapons()[0]
+		array<string> mods = weapon.GetMods()
+		mods.append( "ricochet" )
+		weapon.SetMods( mods )
+	}	
 }
 
 
@@ -106,4 +114,12 @@ void function OnPlayerChangeLoadout( entity player , PilotLoadoutDef p)
 		mods.append( "fast_lock" )
 		weapon.SetMods( mods )
 	}
+	
+	if (player.GetMainWeapons()[0].GetWeaponClassName()== "mp_weapon_sniper" ||player.GetMainWeapons()[0].GetWeaponClassName()=="mp_weapon_wingman_n"||player.GetMainWeapons()[0].GetWeaponClassName()=="mp_weapon_wingman_n")
+	{
+		entity weapon = player.GetMainWeapons()[0]
+		array<string> mods = weapon.GetMods()
+		mods.append( "ricochet" )
+		weapon.SetMods( mods )
+	}	
 }
