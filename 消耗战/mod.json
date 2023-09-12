@@ -1,0 +1,29 @@
+{
+    "Name": "LV9TTDM",
+    "Description": "超好玩",
+    "LoadPriority": 101,
+    "RequiredOnClient": false,
+    "Scripts": [
+        {
+            "Path": "medium.nut",
+            "RunOn": "SERVER && MP",
+            "ServerCallback": {
+                "After": "medium_Init"
+            }
+        },
+        {
+            "Path": "weapons/mp_titanweapon_punch_fighter.nut",
+            "RunOn":"SERVER && MP",
+            "ServerCallback":{
+                "After": "MpTitanWeaponPunch_Fighter_Init"
+            }
+        },
+		{
+		    "Path": "player.nut",
+		    "RunOn":"SERVER && MP",
+		    "ServerCallback":{
+		        "After": "player_Init"
+		    }
+		}
+    ]
+}
