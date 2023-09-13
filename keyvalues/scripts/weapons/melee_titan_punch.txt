@@ -6,9 +6,7 @@ WeaponData
 		{
 			"melee_range"						"320"
 			"melee_damage_heavyarmor"					"2750"
-		}
-		allow_as_primary
-		{
+			"fire_rate"							"0.7"
 			"attack_button_presses_melee"				"1"
 		}
 	}
