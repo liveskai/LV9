@@ -4,8 +4,10 @@ WeaponData
 	{
 		pas_defensive_core
 		{
-			"ammo_min_to_fire"						"70"
-			"ammo_per_shot"							"70"
+			"ammo_clip_size"   								"280"
+			"ammo_default_total"							"280"
+			"ammo_stockpile_max"							"280"
+			"regen_ammo_refill_rate"							"*2"
 		}
 	}
 }
