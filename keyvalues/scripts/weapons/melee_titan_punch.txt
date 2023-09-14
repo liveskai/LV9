@@ -8,6 +8,7 @@ WeaponData
 			"melee_damage_heavyarmor"					"2750"
 			"fire_rate"							"0.7"
 			"attack_button_presses_melee"				"1"
+			"melee_lunge_target_angle"					"45"
 		}
 	}
 }
