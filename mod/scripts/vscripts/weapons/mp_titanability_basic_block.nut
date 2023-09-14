@@ -333,8 +333,8 @@ void function BasicBlock_OnDamage( entity blockingEnt, var damageInfo )
 	float dot = DotProduct( vec1, fwd )
 	float angleRange = GetAngleForBlock( blockingEnt )
 	float minDot = AngleToDot( angleRange )
-	if ( dot < minDot )
-		return
+	// if ( dot < minDot )
+	// 	return	移除剑锋弱点保护全身
 
 	IncrementChargeBlockAnim( blockingEnt, damageInfo )
 	EmitSoundOnEntity( blockingEnt, "ronin_sword_bullet_impacts" )
