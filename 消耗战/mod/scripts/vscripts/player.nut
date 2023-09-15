@@ -39,10 +39,27 @@ void function OnPlayerRespawned( entity player )
 	mods.append( "pas_ordnance_pack" )
 	weapon.SetMods( mods )
 	
+	if (player.GetMainWeapons()[2].GetWeaponClassName()=="mp_weapon_arc_launcher")
+	{
+		entity weapon = player.GetMainWeapons()[2]
+		array<string> mods = weapon.GetMods()
+		mods.append( "at_unlimited_ammo" )
+		weapon.SetMods( mods )
+	}	
+		
+	if (player.GetMainWeapons()[2].GetWeaponClassName()=="mp_weapon_defender")
+	{
+		entity weapon = player.GetMainWeapons()[2]
+		array<string> mods = weapon.GetMods()
+		mods.append( "at_unlimited_ammo" )
+		weapon.SetMods( mods )
+	}	
+	
 	if (player.GetMainWeapons()[2].GetWeaponClassName()=="mp_weapon_mgl")
 	{
 		entity weapon = player.GetMainWeapons()[2]
 		array<string> mods = weapon.GetMods()
+		mods.append( "at_unlimited_ammo" )
 		mods.append( "ar_trajectory" )
 		weapon.SetMods( mods )
 	}	
@@ -51,6 +68,7 @@ void function OnPlayerRespawned( entity player )
 	{
 		entity weapon = player.GetMainWeapons()[2]
 		array<string> mods = weapon.GetMods()
+		mods.append( "at_unlimited_ammo" )
 		mods.append( "fast_lock" )
 		weapon.SetMods( mods )
 	}
@@ -99,10 +117,27 @@ void function OnPlayerChangeLoadout( entity player , PilotLoadoutDef p)
 	mods.append( "pas_ordnance_pack" )
 	weapon.SetMods( mods )
 	
+	if (player.GetMainWeapons()[2].GetWeaponClassName()=="mp_weapon_arc_launcher")
+	{
+		entity weapon = player.GetMainWeapons()[2]
+		array<string> mods = weapon.GetMods()
+		mods.append( "at_unlimited_ammo" )
+		weapon.SetMods( mods )
+	}	
+		
+	if (player.GetMainWeapons()[2].GetWeaponClassName()=="mp_weapon_defender")
+	{
+		entity weapon = player.GetMainWeapons()[2]
+		array<string> mods = weapon.GetMods()
+		mods.append( "at_unlimited_ammo" )
+		weapon.SetMods( mods )
+	}	
+	
 	if (player.GetMainWeapons()[2].GetWeaponClassName()=="mp_weapon_mgl")
 	{
 		entity weapon = player.GetMainWeapons()[2]
 		array<string> mods = weapon.GetMods()
+		mods.append( "at_unlimited_ammo" )
 		mods.append( "ar_trajectory" )
 		weapon.SetMods( mods )
 	}	
@@ -111,6 +146,7 @@ void function OnPlayerChangeLoadout( entity player , PilotLoadoutDef p)
 	{
 		entity weapon = player.GetMainWeapons()[2]
 		array<string> mods = weapon.GetMods()
+		mods.append( "at_unlimited_ammo" )
 		mods.append( "fast_lock" )
 		weapon.SetMods( mods )
 	}
