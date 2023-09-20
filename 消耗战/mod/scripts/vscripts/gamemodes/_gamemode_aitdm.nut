@@ -58,7 +58,7 @@ void function GamemodeAITdm_Init()
 	{
 		AiGameModes_SetNPCWeapons( "npc_soldier", [ "mp_weapon_rspn101", "mp_weapon_dmr", "mp_weapon_r97", "mp_weapon_lmg"] )
 		AiGameModes_SetNPCWeapons( "npc_spectre", [ "mp_weapon_hemlok_smg", "mp_weapon_doubletake", "mp_weapon_mastiff","mp_weapon_dmr"] )
-		AiGameModes_SetNPCWeapons( "npc_stalker", [ "mp_weapon_hemlok","mp_weapon_g2","mp_weapon_lstar","mp_weapon_shotgun","mp_weapon_shotgun_pistol"] )
+		AiGameModes_SetNPCWeapons( "npc_stalker", [ "mp_weapon_epg"] )
 	}
 	else
 	{
@@ -149,8 +149,10 @@ void function HandleScoreEvent( entity victim, entity attacker, var damageInfo )
 		{
 			case "npc_soldier":
 			case "npc_spectre":
-			case "npc_stalker":
 				playerScore = 1
+				break			
+			case "npc_stalker":
+				playerScore = 2
 				break
 			case "npc_super_spectre"://死神
 				playerScore = 6
