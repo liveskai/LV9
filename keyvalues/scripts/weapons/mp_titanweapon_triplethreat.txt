@@ -1,0 +1,29 @@
+WeaponData
+{//三连发榴弹枪
+	Mods
+	{
+		mine_field
+		{
+		}
+		spread_decrease_ttt
+		{
+		}
+		spread_increase_ttt
+		{
+		}
+		hydraulic_launcher
+		{
+		}
+		impact_fuse
+		{
+		}
+        		rolling_rounds
+		{
+		}
+		burn_mod_titan_triple_threat
+		{
+			"explosion_damage_heavy_armor"					"*1.2"
+			"explosion_damages_owner"						"0"
+		}
+	}
+}

@@ -27,7 +27,7 @@ WeaponData
 		}
 		tcp_arc_wave
 		{
-			"charge_time" 						"0.5"
+			"charge_time" 						"0.75"
 			"core_duration"						"3"
 			"charge_cooldown_delay"   					"3"
 			"damage_near_value"					"75"

@@ -4,7 +4,16 @@ WeaponData
 	{
 		instaload
 		{
-			"regen_ammo_refill_start_delay"					"0"
+		}
+		burn_mod_titan_leadwall
+		{
+		}
+		sur_level_0
+		{
+			"reload_time"								"*0.6"
+			"reload_time_late1"							"*0.6"
+			"reloadempty_time"							"*0.6"
+			"reloadempty_time_late1"					"*0.6"
 		}
 	}
 }
