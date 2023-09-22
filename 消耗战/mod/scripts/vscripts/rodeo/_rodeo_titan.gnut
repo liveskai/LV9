@@ -27,6 +27,8 @@ global function Rodeo_PilotPicksUpBattery_Silent
 
 global function AddOnRodeoStartedCallback
 global function AddOnRodeoEndedCallback
+// northstarFD new adding callbacks
+global function AddBatteryHealCallback
 
 global function PilotBattery_SetMaxCount
 global function ThrowRiderOff
@@ -92,6 +94,8 @@ struct
 {
 	array<void functionref(entity,entity)> onRodeoEndedCallbacks
 	array<void functionref(entity,entity)> onRodeoStartedCallbacks
+	// northstarFD new adding callbacks
+	array<void functionref(entity,entity,int,int)> batteryHealCallbacks
 
 	table<entity, AntiRodeoPlayerData> antiRodeoPlayerData
 
@@ -535,6 +539,14 @@ void function AddOnRodeoEndedCallback( void functionref(entity,entity) callbackF
 	file.onRodeoEndedCallbacks.append( callbackFunc )
 }
 
+// northstarFD new adding callbacks
+void function AddBatteryHealCallback( void functionref(entity,entity,int,int) callbackFunc )
+{
+	Assert (!( file.batteryHealCallbacks.contains( callbackFunc ) ))
+	file.batteryHealCallbacks.append( callbackFunc )
+}
+//
+
 function PlayerBeginsTitanRodeo( entity player, RodeoPackageStruct rodeoPackage, entity rodeoTitan )
 {
 	entity soul = rodeoTitan.GetTitanSoul()
@@ -611,13 +623,32 @@ function PlayerBeginsTitanRodeo( entity player, RodeoPackageStruct rodeoPackage,
 
 				if ( IsAlive( player ) )
 				{
+					// don't know why newRodeoTitan becomes Invalid, maybe they disconnected due to "CONNECTION_LOST"?
+					/* // sometimes soul transfering will cause titanSoul become Invalid, and if at this point the titan been destroyed, this newRodeoTitan will be Invalid
 					int attachIndex = newRodeoTitan.LookupAttachment( rodeoPackage.attachPoint )
-					vector startPos = newRodeoTitan.GetAttachmentOrigin( attachIndex )
-
+					vector startPos = newRodeoTitan.GetAttachmentOrigin( attachIndex )\
+					
 					if ( !PlayerCanTeleportHere( player, startPos, newRodeoTitan ) )
 					{
 						startPos = newRodeoTitan.GetOrigin()
 						if ( !PlayerCanTeleportHere( player, startPos, newRodeoTitan ) )
+							startPos = player.GetOrigin()
+					}
+					*/
+
+					vector startPos = player.GetOrigin()
+					entity entToTeleport = player
+					if ( IsValid( newRodeoTitan ) )
+					{
+						entToTeleport = newRodeoTitan
+						int attachIndex = newRodeoTitan.LookupAttachment( rodeoPackage.attachPoint )
+						startPos = newRodeoTitan.GetAttachmentOrigin( attachIndex )
+					}
+
+					if ( !PlayerCanTeleportHere( player, startPos, entToTeleport ) )
+					{
+						startPos = entToTeleport.GetOrigin()
+						if ( !PlayerCanTeleportHere( player, startPos, entToTeleport ) )
 							startPos = player.GetOrigin()
 					}
 
@@ -835,6 +866,8 @@ void function TryBatteryStyleRodeo( entity rodeoPilot, entity rodeoTitan, entity
 	}
 	#endif
 
+	// debug
+	//print( "RUNNING Vanilla rodeo offensive sequence" )
 	if ( ShouldThrowGrenadeInHatch( rodeoPilot ) )
 	{
 		waitthread PlayerThrowsGrenadeInHatch( rodeoPilot, rodeoTitan, titanSoul, rodeoPackage ) //This ends rodeo at the end of the sequence
@@ -1548,6 +1581,12 @@ void function Rodeo_PilotPicksUpBattery( entity pilot, entity battery )
 
 entity function Rodeo_TakeBatteryAwayFromPilot( entity pilot )
 {
+	#if MP // nessie modify
+		// nessie defensive fix
+		if( GetPlayerBatteryCount( pilot ) == 0 ) // respawn didn't left this check, hah
+			return
+	#endif
+
 	//RemovePlayerHeldButtonEventCallback( player, IN_USE, Rodeo_PilotThrowsBattery, RODEO_THROW_BATTERY_BUTTON_HOLD_TIME )
 	SetPlayerBatteryCount( pilot, GetPlayerBatteryCount( pilot ) - 1 )
 
@@ -1657,17 +1696,17 @@ void function Rodeo_DropAllBatteries( entity player )
 	if ( !PlayerHasBattery( player ) )
 		return
 
-	while ( GetPlayerBatteryCount( player ) > 1 )
+	float batteryCount = float( GetPlayerBatteryCount( player ) - 1 ) // Floats instead of ints since we need decimal values for the math
+	for ( float i = 1.0; GetPlayerBatteryCount( player ) > 1; i += 1.0 )
 	{
 		entity newBattery = Rodeo_CreateBatteryPack()
 		newBattery.s.touchEnabledTime = Time() + 0.3
-		//look into using the players bounds for placement, instead of hardcoded numbers
-		array<vector> offsets = [<0,0,0>, <30,0,0>, <0,30,0>, <0,-30,0> ]
-		newBattery.SetOrigin( player.GetWorldSpaceCenter() + offsets[ GetPlayerBatteryCount( player ) ] ) //Temp fix, should change the origin
+		vector direction = AnglesToForward( <0, i/batteryCount * 360.0, 0> )
+		newBattery.SetOrigin( player.GetWorldSpaceCenter() + direction * 30 )
 		newBattery.SetAngles( <0, 0, 0 > )
 		vector baseVelocity = player.GetVelocity()
 		baseVelocity.z = 0
-		newBattery.SetVelocity( baseVelocity + AnglesToForward( <0, RandomInt( 360.0 ), 0 > ) * 100 + <0,0,1> )
+		newBattery.SetVelocity( baseVelocity + direction * 100 + <0, 0, 1> )
 		Rodeo_TakeBatteryAwayFromPilot( player )
 	}
 
@@ -1753,8 +1792,8 @@ void function Rodeo_ApplyBatteryToTitan( entity battery, entity titan )
 		}
 		float coreFrac = GetCurrentPlaylistVarFloat( "battery_core_frac", 0.2 )
 		float shieldFrac = GetCurrentPlaylistVarFloat( "battery_shield_frac", 1.0 )
-		float ampedHealthSegmentFrac = GetCurrentPlaylistVarFloat( "amped_battery_health_frac", 2 )//黄电池加血
-		float healthSegmentFrac = GetCurrentPlaylistVarFloat( "battery_health_frac", 1 )//绿电池加血
+		float ampedHealthSegmentFrac = GetCurrentPlaylistVarFloat( "amped_battery_health_frac", 2.0 )
+		float healthSegmentFrac = GetCurrentPlaylistVarFloat( "battery_health_frac", 1 )
 
 		AddCreditToTitanCoreBuilder( titan, coreFrac ) //Always give core
 
@@ -1766,7 +1805,10 @@ void function Rodeo_ApplyBatteryToTitan( entity battery, entity titan )
 		bool batteryIsAmped = IsAmpedBattery( battery )
 		float frac = batteryIsAmped ? ampedHealthSegmentFrac : healthSegmentFrac
 
+		// calculate health given
 		int addHealth = int( healingAmount * frac )
+		if( titan.GetHealth() + addHealth > titan.GetMaxHealth() )
+			addHealth = titan.GetMaxHealth() - titan.GetHealth()
 
 		int totalHealth = minint( titan.GetMaxHealth(), titan.GetHealth() + addHealth )
 		if ( soul.IsDoomed() && batteryIsAmped )
@@ -1778,6 +1820,13 @@ void function Rodeo_ApplyBatteryToTitan( entity battery, entity titan )
 		{
 			titan.SetHealth( totalHealth )
 			soul.SetShieldHealth( soul.GetShieldHealthMax() )
+		}
+	
+		// northstarFD new adding callbacks
+		// Added via AddBatteryHealCallbacks()
+		foreach ( callbackFunc in file.batteryHealCallbacks )
+		{
+			callbackFunc( battery, titan, shieldDifference, addHealth )
 		}
 	}
 
@@ -2254,7 +2303,7 @@ void function PostRodeoAirControl( entity player )
 	{
 		float elapsedTime = Time() - startTime
 		player.kv.airSpeed = player.GetPlayerSettingsField( "airSpeed" ) * POST_RODEO_AIR_CONTROL_SCALE * (1 - (elapsedTime / POST_RODEO_AIR_CONTROL_DURATION))
-		player.kv.airAcceleration = player.GetPlayerSettingsField( "airAcceleration" ) * POST_RODEO_AIR_CONTROL_SCALE * (1 - (elapsedTime / POST_RODEO_AIR_CONTROL_DURATION))
+		player.kv.airAcceleration = GetCurrentPlaylistVarInt( "custom_air_accel_pilot", int( player.GetPlayerSettingsField( "airAcceleration" ) ) ) * POST_RODEO_AIR_CONTROL_SCALE * (1 - (elapsedTime / POST_RODEO_AIR_CONTROL_DURATION))
 		//printt( "scale", POST_RODEO_AIR_CONTROL_SCALE * (1 - (elapsedTime / POST_RODEO_AIR_CONTROL_DURATION)) )
 
 		WaitFrame()
@@ -2311,7 +2360,7 @@ void function RestorePlayerAirControl( entity player ) //This function should re
 {
 	Assert( player.IsPlayer() )
 	player.kv.airSpeed = player.GetPlayerSettingsField( "airSpeed" )
-	player.kv.airAcceleration = player.GetPlayerSettingsField( "airAcceleration" )
+	player.kv.airAcceleration = GetCurrentPlaylistVarInt( "custom_air_accel_pilot", int( player.GetPlayerSettingsField( "airAcceleration" ) ) )
 }
 
 bool function ShouldThrowGrenadeInHatch( entity rodeoPilot )
