@@ -19,8 +19,8 @@ const string FLAME_WAVE_RIGHT_SFX = "flamewave_blast_right"
 
 const int TITAN_GROUND_SLAM_DAMAGE = 500
 const int TITAN_GROUND_SLAM_DAMAGE_HEAVYARMOR = 4500
-const float TITAN_GROUND_SLAM_INNER_RADIUS = 450
-const float TITAN_GROUND_SLAM_RADIUS = 525
+const float TITAN_GROUND_SLAM_INNER_RADIUS = 500
+const float TITAN_GROUND_SLAM_RADIUS = 600
 
 void function MpTitanWeaponFlameWave_Init()
 {
