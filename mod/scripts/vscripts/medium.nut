@@ -1,7 +1,7 @@
 untyped //entity.s need this
 global function medium_Init
 
-const DAMAGE_AGAINST_TITANS 			= 40
+const DAMAGE_AGAINST_TITANS 			= 45
 const DAMAGE_AGAINST_PILOTS 			= 12
 
 const EMP_DAMAGE_TICK_RATE = 0.1
@@ -409,7 +409,7 @@ void function OnTitanfall( entity titan )
         titan.TakeOffhandWeapon( OFFHAND_SPECIAL )
 		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
 		
-		titan.GiveWeapon( "mp_titanweapon_leadwall",["instaload"] )
+		titan.GiveWeapon( "mp_titanweapon_leadwall",["sur_level_0"] )
 		titan.GiveOffhandWeapon( "mp_ability_swordblock", OFFHAND_SPECIAL,["pm0"] )
 		titan.GiveOffhandWeapon( "mp_titanability_smoke", OFFHAND_TITAN_CENTER)
 		titan.GiveOffhandWeapon( "mp_titanweapon_arc_wave", OFFHAND_ORDNANCE,["dev_mod_low_recharge"] )
