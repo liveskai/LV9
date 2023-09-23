@@ -8,6 +8,8 @@ global function ScoreEvent_TitanDoomed
 global function ScoreEvent_TitanKilled
 global function ScoreEvent_NPCKilled
 global function ScoreEvent_MatchComplete
+// vanilla behavior
+global function ScoreEvent_VictoryKill
 
 global function ScoreEvent_SetEarnMeterValues
 global function ScoreEvent_SetupEarnMeterValuesForMixedModes
@@ -16,6 +18,7 @@ global function ScoreEvent_SetupEarnMeterValuesForTitanModes
 // nessie fix
 global function ScoreEvent_GetPlayerMVP
 global function ScoreEvent_SetMVPCompareFunc
+global function ScoreEvent_PlayerAssist
 global function AddTitanKilledDialogueEvent
 
 struct 
@@ -181,12 +184,6 @@ void function ScoreEvent_PlayerKilled( entity victim, entity attacker, var damag
 		return
 
 	// pilot kill
-	if( IsPilotEliminationBased() || IsTitanEliminationBased() )
-	{
-		if( GetPlayerArrayOfEnemies_Alive( attacker.GetTeam() ).len() == 0 ) // no enemy player left
-			AddPlayerScore( attacker, "VictoryKill", attacker ) // show a callsign event
-	}
-	
 	string pilotKillEvent = "KillPilot"
 	if( IsPilotEliminationBased() )
 		pilotKillEvent = "EliminatePilot" // elimination gamemodes have a special medal
@@ -269,21 +266,8 @@ void function ScoreEvent_PlayerKilled( entity victim, entity attacker, var damag
 	// assist. was previously be in _base_gametype_mp.gnut, which is bad. vanilla won't add assist on npc killing a player
 	if ( !victim.IsTitan() ) // titan assist handled by ScoreEvent_TitanKilled()
 	{
-		table<int, bool> alreadyAssisted
-		foreach( DamageHistoryStruct attackerInfo in victim.e.recentDamageHistory )
-		{
-			if ( !IsValid( attackerInfo.attacker ) || !attackerInfo.attacker.IsPlayer() || attackerInfo.attacker == victim )
-				continue
-
-			bool exists = attackerInfo.attacker.GetEncodedEHandle() in alreadyAssisted ? true : false
-			if( attackerInfo.attacker != attacker && !exists )
-			{
-				alreadyAssisted[attackerInfo.attacker.GetEncodedEHandle()] <- true
-				Remote_CallFunction_NonReplay( attackerInfo.attacker, "ServerCallback_SetAssistInformation", attackerInfo.damageSourceId, attacker.GetEncodedEHandle(), victim.GetEncodedEHandle(), attackerInfo.time ) 
-				AddPlayerScore( attackerInfo.attacker, "PilotAssist", victim )
-				attackerInfo.attacker.AddToPlayerGameStat( PGS_ASSISTS, 1 )
-			}
-		}
+		// wrap into this function
+		ScoreEvent_PlayerAssist( victim, attacker, "PilotAssist" )
 	}
 }
 
@@ -341,23 +325,10 @@ void function ScoreEvent_TitanKilled( entity victim, entity attacker, var damage
 	entity damageHistorySaver = killedByTermination ? victim : victim.GetTitanSoul()
 	if ( IsValid( damageHistorySaver ) )
 	{
+		// debug
 		//print( "damageHistorySaver valid! " + string( damageHistorySaver ) )
-		table<int, bool> alreadyAssisted
-		foreach( DamageHistoryStruct attackerInfo in damageHistorySaver.e.recentDamageHistory )
-		{
-			//print( "attackerInfo.attacker: " + string( attackerInfo.attacker ) )
-			if ( !IsValid( attackerInfo.attacker ) || !attackerInfo.attacker.IsPlayer() || attackerInfo.attacker == victim )
-				continue
-				
-			bool exists = attackerInfo.attacker.GetEncodedEHandle() in alreadyAssisted ? true : false
-			if( attackerInfo.attacker != attacker && !exists )
-			{
-				alreadyAssisted[attackerInfo.attacker.GetEncodedEHandle()] <- true
-				Remote_CallFunction_NonReplay( attackerInfo.attacker, "ServerCallback_SetAssistInformation", attackerInfo.damageSourceId, attacker.GetEncodedEHandle(), victim.GetEncodedEHandle(), attackerInfo.time )
-				AddPlayerScore( attackerInfo.attacker, "TitanAssist", victim )
-				attackerInfo.attacker.AddToPlayerGameStat( PGS_ASSISTS, 1 )
-			}
-		}
+		// wrap into this function
+		ScoreEvent_PlayerAssist( damageHistorySaver, attacker, "TitanAssist" )
 	}
 }
 
@@ -474,6 +445,12 @@ void function DelayedAddMatchCompleteScore( string winningScoreEvent, string mat
 		AddPlayerScore( winningPlayer, winningScoreEvent )
 }
 
+// vanilla behavior, northstar missing
+void function ScoreEvent_VictoryKill( entity attacker )
+{
+	AddPlayerScore( attacker, "VictoryKill", attacker ) // show a callsign event
+}
+
 void function ScoreEvent_SetEarnMeterValues( string eventName, float earned, float owned, float coreScale = 1.0 )
 {
 	ScoreEvent event = GetScoreEvent( eventName )
@@ -493,14 +470,13 @@ void function ScoreEvent_SetupEarnMeterValuesForMixedModes() // mixed modes in t
 	ScoreEvent_SetEarnMeterValues( "PilotAssist", 0.15, 0.05, 0.0 )
 	// titan kill
 	ScoreEvent_SetEarnMeterValues( "DoomTitan", 0.0, 0.0 )
-	// don't know why titan kills appear to be no value in vanilla
-	// was set to 0.10, 0.15
-	// in vanilla all values seems to be pilot kill only
-	ScoreEvent_SetEarnMeterValues( "KillTitan", 0.1, 0.1 )
+	// don't know why auto titan kills appear to be no value in vanilla
+	// even when the titan have an owner player
+	ScoreEvent_SetEarnMeterValues( "KillTitan", 0.1, 0.1)
 	ScoreEvent_SetEarnMeterValues( "KillAutoTitan", 0.1, 0.1 )
-	ScoreEvent_SetEarnMeterValues( "EliminateTitan", 0.1, 0.1 )
+	ScoreEvent_SetEarnMeterValues( "EliminateTitan",0.1, 0.1 )
 	ScoreEvent_SetEarnMeterValues( "EliminateAutoTitan", 0.1, 0.1 )
-	ScoreEvent_SetEarnMeterValues( "TitanKillTitan", 0.1, 0.1 )
+	ScoreEvent_SetEarnMeterValues( "TitanKillTitan", 0.1, 0.1)
 	// but titan assist do have earn values...
 	ScoreEvent_SetEarnMeterValues( "TitanAssist", 0.10, 0.10 )
 	// rodeo
@@ -508,7 +484,7 @@ void function ScoreEvent_SetupEarnMeterValuesForMixedModes() // mixed modes in t
 	ScoreEvent_SetEarnMeterValues( "PilotBatteryApplied", 0.0, 0.35, 0.0 )
 	// special method of killing
 	ScoreEvent_SetEarnMeterValues( "Headshot", 0.0, 0.02, 0.0 )
-	ScoreEvent_SetEarnMeterValues( "FirstStrike", 0.04, 0.01, 0.0 )
+	ScoreEvent_SetEarnMeterValues( "FirstStrike", 0.04, 0.01, 0.0 ) // this displays as "4%" when earning with KillPilot, pretty weird
 	
 	// ai
 	ScoreEvent_SetEarnMeterValues( "KillGrunt", 0.03, 0.01 )
@@ -564,6 +540,49 @@ entity function ScoreEvent_GetPlayerMVP( int team = 0 )
 void function ScoreEvent_SetMVPCompareFunc( IntFromEntityCompare func )
 {
 	file.mvpCompareFunc = func
+}
+
+// wrap assist checks into this function
+void function ScoreEvent_PlayerAssist( entity victim, entity attacker, string eventName )
+{
+	table<int, bool> alreadyAssisted
+	foreach( DamageHistoryStruct attackerInfo in victim.e.recentDamageHistory )
+	{
+		// Give all assisted player an extra score event
+		// Not for attack themselves only
+
+		// debug
+		//print( "attackerInfo.attacker: " + string( attackerInfo.attacker ) )
+
+		// generic check
+		if ( !IsValid( attackerInfo.attacker ) || !attackerInfo.attacker.IsPlayer() )
+			continue
+		// checks for self damage
+		if ( attackerInfo.attacker == victim )
+			return
+		// checks for player owned entities( such as titan, spectre or soul )
+		if ( attackerInfo.attacker == victim.GetOwner() || attackerInfo.attacker == victim.GetBossPlayer() )
+			continue
+		// if we're getting damage history from soul, should ignore their titan's self damage and owner's damage
+		if ( IsSoul( victim ) )
+		{
+			if ( attackerInfo.attacker == victim.GetTitan() )
+			{
+				// debug
+				//print( "victim is soul but attacker is it's titan! skipping Assist score" )
+				continue
+			}
+		}
+		
+		bool exists = attackerInfo.attacker.GetEncodedEHandle() in alreadyAssisted ? true : false
+		if( attackerInfo.attacker != attacker && !exists )
+		{
+			alreadyAssisted[attackerInfo.attacker.GetEncodedEHandle()] <- true
+			Remote_CallFunction_NonReplay( attackerInfo.attacker, "ServerCallback_SetAssistInformation", attackerInfo.damageSourceId, attacker.GetEncodedEHandle(), victim.GetEncodedEHandle(), attackerInfo.time )
+			AddPlayerScore( attackerInfo.attacker, eventName, victim )
+			attackerInfo.attacker.AddToPlayerGameStat( PGS_ASSISTS, 1 )
+		}
+	}
 }
 
 void function AddTitanKilledDialogueEvent( string titanName, string dialogueName )

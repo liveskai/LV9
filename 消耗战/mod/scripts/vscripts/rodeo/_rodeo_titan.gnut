@@ -106,7 +106,7 @@ struct
 
 	void functionref(entity,entity,entity) applyBatteryCallback
 } file
-
+array<entity> batteries;//限制电池数量
 //-----------------------------------------------------------------------------
 //  _rodeo_titan.nut
 //
@@ -1840,7 +1840,7 @@ void function Rodeo_ApplyBatteryToTitan( entity battery, entity titan )
 bool function Rodeo_OnTouchBatteryPack( entity player, entity batteryPack )
 {
 	Rodeo_OnTouchBatteryPack_Internal( player, batteryPack )
-
+	batteries.fastremovebyvalue(batteryPack)//限制电池数量
 	//Basically always return false since we don't want the battery pack to go away when being touched. ApplyBatteryToTitan() etc will deal with lifetime of battery
 	return false
 }
@@ -2514,7 +2514,11 @@ void function ClassicRodeo_DropAllStoredBatteries( entity ent, var damageInfo )
 	entity titanSoul = ent.GetTitanSoul()
 	if( !IsValid( titanSoul ) )
 		return
-
+	if(batteries.len()>=30)
+	{
+		batteries[0].Destroy()
+		batteries.remove(0)
+	}
 
 	entity newBattery = Rodeo_CreateBatteryPack()
 	newBattery.s.touchEnabledTime = Time() + 0.3
@@ -2530,4 +2534,5 @@ void function ClassicRodeo_DropAllStoredBatteries( entity ent, var damageInfo )
 		newBattery.SetSkin( 2 )
 		Battery_StartFX( newBattery )
 	}
+	batteries.append(newBattery)	//限制电池数量	
 }
