@@ -25,10 +25,13 @@ WeaponData
 			"spread_max_kick_air_hip" 						"*0.1"
 			"spread_max_kick_air_ads" 						"*0.1"
 
-			"reload_time"								"*0.6"
+			"reload_time" 							"*0.6"
 			"reload_time_late1"							"*0.6"
+			"reload_time_late2"							"*0.6"
+			"reload_time_late3"							"*0.6"
 			"reloadempty_time"							"*0.6"
-			"reloadempty_time_late1"					"*0.6"
+			"reloadempty_time_late1"						"*0.6"
+			"reloadempty_time_late2"						"*0.6"
 		}
 	}
 }
