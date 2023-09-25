@@ -2514,7 +2514,7 @@ void function ClassicRodeo_DropAllStoredBatteries( entity ent, var damageInfo )
 	entity titanSoul = ent.GetTitanSoul()
 	if( !IsValid( titanSoul ) )
 		return
-	if(batteries.len()>=30)
+	if(batteries.len()>=20)
 	{
 		batteries[0].Destroy()
 		batteries.remove(0)

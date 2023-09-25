@@ -42,10 +42,12 @@ void function GamemodeAITdm_Init()
 
 	AddCallback_OnNPCKilled( HandleScoreEvent )
 	AddCallback_OnPlayerKilled( HandleScoreEvent )
-
-	AddCallback_OnClientConnected( OnPlayerConnected )
+	AddCallback_OnPlayerKilled( AddPilotAssistOnPlayerTitanKilled )//击杀铁驭+泰坦也显示铁驭助攻
 	
+	AddCallback_OnClientConnected( OnPlayerConnected )
+
 	AddCallback_NPCLeeched( OnSpectreLeeched )
+	
 	//添加得分事件
 	SetApplyBatteryCallback( OnPilotAddsBatteryToFriendlyTitan )// 给队友装电池
 	AddPostDamageCallback( "player", OnTitanTakeDamage )// 伤害计算得分
@@ -133,7 +135,11 @@ void function OnPlayerConnected( entity player )
 // Used to handle both player and ai events
 void function HandleScoreEvent( entity victim, entity attacker, var damageInfo )
 {
-	if ( !AttackerIsValidForAiTDMScore( victim, attacker, damageInfo ) )
+	// if victim is a non-titan npc that owned by players, don't add score
+	if ( !VictimIsValidForAITdmScore( victim ) )
+		return
+	
+	if ( !AttackerIsValidForAITdmScore( victim, attacker, damageInfo ) )
 		return
 
 	int playerScore
@@ -180,17 +186,19 @@ void function HandleScoreEvent( entity victim, entity attacker, var damageInfo )
 	if ( victim.IsTitan() && victim.GetBossPlayer() != attacker )
 		playerScore += 10
 
-	AddAiTDMPlayerTeamScore( attacker, playerScore )
+	AddAITdmPlayerTeamScore( attacker, playerScore )
 }
 
-bool function AttackerIsValidForAiTDMScore( entity victim, entity attacker, var damageInfo )
+bool function AttackerIsValidForAITdmScore( entity victim, entity attacker, var damageInfo )
 {
 	// Basic checks
-	if ( victim == attacker || !( attacker.IsPlayer() || attacker.IsTitan() ) )
+	if ( !IsValid( attacker ) )
+		return false
+	if ( victim == attacker || !( attacker.IsPlayer() || attacker.IsTitan() ))
 		return false
 	
 	// Hacked spectre and pet titan filter
-	if ( victim.GetOwner() == attacker )
+	if ( victim.GetOwner() == attacker || victim.GetBossPlayer() == attacker )
 		return false
 	
 	// NPC titans without an owner player will not count towards any team's score
@@ -201,7 +209,30 @@ bool function AttackerIsValidForAiTDMScore( entity victim, entity attacker, var 
 	return true
 }
 
-void function AddAiTDMPlayerTeamScore( entity player, int score )
+bool function VictimIsValidForAITdmScore( entity victim )
+{
+	// if victim is a non-titan npc that owned by players, don't add score
+	if ( victim.IsNPC() && !victim.IsTitan() )
+	{
+		entity bossPlayer = victim.GetBossPlayer()
+		entity owner = victim.GetOwner()
+		if ( IsValid( bossPlayer ) )
+		{
+			if ( bossPlayer.IsPlayer() )
+				return false
+		}
+		if ( IsValid( owner ) )
+		{
+			if ( owner.IsPlayer() )
+				return false
+		}
+	}
+
+	// all checks passed
+	return true
+}
+
+void function AddAITdmPlayerTeamScore( entity player, int score )
 {
 	// Add score + update network int to trigger the "Score +n" popup
 	AddTeamScore( player.GetTeam(), score )
@@ -331,7 +362,8 @@ void function Spawner_Threaded( int team )
 	// handle prematch spawns
 	while( GetGameState() == eGameState.Prematch || GetGameState() == eGameState.Playing )
 	{
-		WaitFrame()
+		WaitFrame() // wait a frame each loop
+
 		Escalate( team )
 		
 		// TODO: this should possibly not count scripted npc spawns, probably only the ones spawned by this script
@@ -633,10 +665,7 @@ void function OnSpectreLeeched( entity spectre, entity player )
 	// Set Owner so we can filter in HandleScore
 	spectre.SetOwner( player )
 	// Add score + update network int to trigger the "Score +n" popup
-	AddTeamScore( player.GetTeam(), 1 )
-	player.AddToPlayerGameStat( PGS_ASSAULT_SCORE, 1 )
-	// player.SetPlayerNetInt("AT_bonusPoints", player.GetPlayerGameStat( PGS_ASSAULT_SCORE ) )
-	AITdm_SetPlayerBonusPoints( player, player.GetPlayerGameStat( PGS_ASSAULT_SCORE ) )//消耗战个人分数限制1023		
+	AddAITdmPlayerTeamScore( player, 1 )
 }
 
 // Same as SquadHandler, just for reapers
@@ -671,14 +700,34 @@ void function ReaperHandler( entity reaper )
 		pointsToSearch.extend( GetNPCArrayOfEnemies( team ) )
 		// try to find from alive player targets
 		pointsToSearch.extend( GetPlayerArrayOfEnemies_Alive( team ) )
-		// start searching
+
+		// we mostly search for heavy armor targets
+		bool foundHeavyArmorTarget = false
+		// first searching: heavy armor target
 		foreach ( entity ent in pointsToSearch )
 		{
 			// general check
 			if ( !IsValidNPCAssaultTarget( ent ) )
 				continue
 
-			points.append( ent )
+			if ( ent.GetArmorType() == ARMOR_TYPE_HEAVY )
+			{
+				points.append( ent )
+				foundHeavyArmorTarget = true
+			}
+		}
+		// failsafe: can't find any heavyarmor target!
+		if ( !foundHeavyArmorTarget )
+		{
+			// use all targets instead
+			foreach ( entity ent in pointsToSearch )
+			{
+				// general check
+				if ( !IsValidNPCAssaultTarget( ent ) )
+					continue
+
+				points.append( ent )
+			}
 		}
 
 		ArrayRemoveDead( points ) // remove dead targets
@@ -765,6 +814,12 @@ void function AITdm_CleanupBoredNPCThread( entity guy )
 	
 	print( "cleaning up bored npc: " + guy + " from team " + guy.GetTeam() )
 	guy.Destroy()
+}
+
+void function AddPilotAssistOnPlayerTitanKilled( entity victim, entity attacker, var damageInfo )
+{
+	if ( victim.IsTitan() )
+		ScoreEvent_PlayerAssist( victim.GetTitanSoul(), attacker, "PilotAssist", eEventDisplayType.MEDAL | eEventDisplayType.CENTER )
 }
 //添加
 void function OnPilotAddsBatteryToFriendlyTitan( entity rider, entity titan, entity battery )
@@ -855,4 +910,7 @@ void function AITdm_AddPlayerScore( entity player, int score )
 	}
 	player.AddToPlayerGameStat( PGS_ASSAULT_SCORE, playerScore )
 }
+
+
+
 
