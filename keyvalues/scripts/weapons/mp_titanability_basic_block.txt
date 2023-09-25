@@ -4,4 +4,6 @@ WeaponData
 	"deploy_time" 									"0.01"
 	"lower_time"  									"0.01"
 	"raise_time"  									"0.01"
+
+	"instant_swap_to"								"1"
 }
