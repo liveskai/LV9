@@ -106,7 +106,9 @@ struct
 
 	void functionref(entity,entity,entity) applyBatteryCallback
 } file
-array<entity> batteries;//限制电池数量
+
+array<entity> batteries//电池数量
+
 //-----------------------------------------------------------------------------
 //  _rodeo_titan.nut
 //
@@ -139,7 +141,7 @@ void function RodeoTitan_Init()
 	AddCallback_OnTouchHealthKit( "item_titan_battery", Rodeo_OnTouchBatteryPack )
 	AddCallback_OnPilotBecomesTitan( Rodeo_ApplyAllBatteriesOnEmbark )
 	AddDeathCallback( "player", ClassicRodeo_DropAllStoredBatteries )//添加电池掉落
-	AddDeathCallback( "npc_titan", ClassicRodeo_DropAllStoredBatteries )//添加电池掉落
+	AddDeathCallback( "npc_titan", ClassicRodeo_DropAllStoredBatteries )
 
 	if ( IsMultiplayer() )
 	{
@@ -1437,6 +1439,13 @@ void function Burnmeter_EmergencyBattery( entity player )
 
 entity function Rodeo_CreateBatteryPack( entity titanStolenFrom = null )
 {
+	if ( batteries.len() >= 30 )//限制电池数量
+	{
+		if ( IsValid( batteries[0] ) )
+			batteries[0].Destroy()
+		batteries.remove(0)
+	}
+
 	entity batteryPack = CreateEntity( "item_titan_battery" )
 	batteryPack.SetValueForModelKey( RODEO_BATTERY_MODEL )
 	batteryPack.kv.fadedist = 10000
@@ -1476,6 +1485,8 @@ entity function Rodeo_CreateBatteryPack( entity titanStolenFrom = null )
 	{
 		thread AttachTriggerToBattery( batteryPack )
 	}
+
+	batteries.append( batteryPack )//添加到电池列表
 
 	//thread MonitorBatteryVelocity( batteryPack )
 	return batteryPack
@@ -1722,6 +1733,7 @@ void function Rodeo_RemoveBatteryOffPlayer( entity player ) //Meant to be used i
 	entity battery = Rodeo_TakeBatteryAwayFromPilot( player )
 	if ( IsValid( battery ) )
 	{
+		batteries.fastremovebyvalue( battery )//移除电池
 		battery.Destroy()
 	}
 }
@@ -1793,7 +1805,7 @@ void function Rodeo_ApplyBatteryToTitan( entity battery, entity titan )
 		float coreFrac = GetCurrentPlaylistVarFloat( "battery_core_frac", 0.2 )
 		float shieldFrac = GetCurrentPlaylistVarFloat( "battery_shield_frac", 1.0 )
 		float ampedHealthSegmentFrac = GetCurrentPlaylistVarFloat( "amped_battery_health_frac", 2.0 )
-		float healthSegmentFrac = GetCurrentPlaylistVarFloat( "battery_health_frac", 1 )
+		float healthSegmentFrac = GetCurrentPlaylistVarFloat( "battery_health_frac", 0.5 )
 
 		AddCreditToTitanCoreBuilder( titan, coreFrac ) //Always give core
 
@@ -1833,6 +1845,7 @@ void function Rodeo_ApplyBatteryToTitan( entity battery, entity titan )
 	if ( battery != null )
 	{
 		Assert( battery.GetParent() == null )
+		batteries.fastremovebyvalue( battery )//移除电池
 		battery.Destroy()
 	}
 }
@@ -1840,7 +1853,7 @@ void function Rodeo_ApplyBatteryToTitan( entity battery, entity titan )
 bool function Rodeo_OnTouchBatteryPack( entity player, entity batteryPack )
 {
 	Rodeo_OnTouchBatteryPack_Internal( player, batteryPack )
-	batteries.fastremovebyvalue(batteryPack)//限制电池数量
+
 	//Basically always return false since we don't want the battery pack to go away when being touched. ApplyBatteryToTitan() etc will deal with lifetime of battery
 	return false
 }
@@ -2514,11 +2527,6 @@ void function ClassicRodeo_DropAllStoredBatteries( entity ent, var damageInfo )
 	entity titanSoul = ent.GetTitanSoul()
 	if( !IsValid( titanSoul ) )
 		return
-	if(batteries.len()>=20)
-	{
-		batteries[0].Destroy()
-		batteries.remove(0)
-	}
 
 	entity newBattery = Rodeo_CreateBatteryPack()
 	newBattery.s.touchEnabledTime = Time() + 0.3
@@ -2529,10 +2537,9 @@ void function ClassicRodeo_DropAllStoredBatteries( entity ent, var damageInfo )
 	baseVelocity.z = 0
 	newBattery.SetVelocity( baseVelocity + direction * 100 + <0, 0, 1> )
 	int random = RandomInt( 10 )
-	if( random <= 1 )	//0,1,2,3,4,5,6,7,8 -> 80%绿 20%黄
+	if( random <= 1 )	//0,1,2,3,4,5,6,7,8 -> 90%绿 10%黄
 	{
 		newBattery.SetSkin( 2 )
 		Battery_StartFX( newBattery )
 	}
-	batteries.append(newBattery)	//限制电池数量	
 }
