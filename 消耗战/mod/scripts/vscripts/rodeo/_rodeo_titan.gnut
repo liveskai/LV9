@@ -107,8 +107,6 @@ struct
 	void functionref(entity,entity,entity) applyBatteryCallback
 } file
 
-array<entity> batteries//电池数量
-
 //-----------------------------------------------------------------------------
 //  _rodeo_titan.nut
 //
@@ -1439,13 +1437,6 @@ void function Burnmeter_EmergencyBattery( entity player )
 
 entity function Rodeo_CreateBatteryPack( entity titanStolenFrom = null )
 {
-	if ( batteries.len() >= 30 )//限制电池数量
-	{
-		if ( IsValid( batteries[0] ) )
-			batteries[0].Destroy()
-		batteries.remove(0)
-	}
-
 	entity batteryPack = CreateEntity( "item_titan_battery" )
 	batteryPack.SetValueForModelKey( RODEO_BATTERY_MODEL )
 	batteryPack.kv.fadedist = 10000
@@ -1462,6 +1453,19 @@ entity function Rodeo_CreateBatteryPack( entity titanStolenFrom = null )
 
 	Battery_StartFX( batteryPack )
 
+	array<entity> batteryArray = GetEntArrayByClass_Expensive( "item_titan_battery" )
+	// 限制电池数量
+	if( batteryArray.len() > 30 )
+	{
+		for( int i = batteryArray.len() - 1; i > 0; i-- )
+		{
+			if( batteryArray[i].GetParent() ) // assuming this is a battery carried by players
+				continue
+			batteryArray[i].Destroy()
+			break
+		}
+	}
+	
 	if ( HAS_BATTERY_THIEF_ICON && titanStolenFrom != null )
 	{
 		Assert( titanStolenFrom.IsTitan() )
@@ -1485,8 +1489,6 @@ entity function Rodeo_CreateBatteryPack( entity titanStolenFrom = null )
 	{
 		thread AttachTriggerToBattery( batteryPack )
 	}
-
-	batteries.append( batteryPack )//添加到电池列表
 
 	//thread MonitorBatteryVelocity( batteryPack )
 	return batteryPack
@@ -1733,7 +1735,6 @@ void function Rodeo_RemoveBatteryOffPlayer( entity player ) //Meant to be used i
 	entity battery = Rodeo_TakeBatteryAwayFromPilot( player )
 	if ( IsValid( battery ) )
 	{
-		batteries.fastremovebyvalue( battery )//移除电池
 		battery.Destroy()
 	}
 }
@@ -1845,7 +1846,6 @@ void function Rodeo_ApplyBatteryToTitan( entity battery, entity titan )
 	if ( battery != null )
 	{
 		Assert( battery.GetParent() == null )
-		batteries.fastremovebyvalue( battery )//移除电池
 		battery.Destroy()
 	}
 }
