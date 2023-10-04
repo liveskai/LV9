@@ -69,7 +69,6 @@ void function OnPlayerRespawned( entity player )
 		entity weapon = player.GetMainWeapons()[2]
 		array<string> mods = weapon.GetMods()
 		mods.append( "at_unlimited_ammo" )
-		mods.append( "fast_lock" )
 		weapon.SetMods( mods )
 	}
 	
