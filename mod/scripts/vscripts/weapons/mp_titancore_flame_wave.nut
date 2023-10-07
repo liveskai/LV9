@@ -114,6 +114,7 @@ var function OnWeaponPrimaryAttack_titancore_flame_wave( entity weapon, WeaponPr
 			return
 
 		vector right = CrossProduct( attackParams.dir, <0,0,1> )
+		right = Normalize( right )//核心宽度不受视角影响
 		vector offset = offsets[count] * right * PROJECTILE_SEPARATION
 
 		const float FUSE_TIME = 99.0
