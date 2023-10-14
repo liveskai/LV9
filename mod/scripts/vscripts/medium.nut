@@ -12,6 +12,7 @@ void function medium_Init()
 {
 	AddSpawnCallback( "npc_titan", OnTitanfall )
 	AddCallback_OnPilotBecomesTitan( SetPlayerTitanTitle )
+	AddCallback_OnTitanBecomesPilot( OnTitanBecomesPilot )
 }
 
 void function SetPlayerTitanTitle( entity player, entity titan )
@@ -505,7 +506,6 @@ void function EMPThink_Thread( entity titan )
 	titan.EndSignal( "OnDestroy" )
 	titan.EndSignal( "Doomed" )
 	titan.EndSignal( "StopEMPField" )
-	DisableTitanRodeo( titan )
 	WaitTillHotDropComplete( titan )
 	if ( HasSoul( titan ) )
 	{
@@ -563,7 +563,6 @@ void function EMPThink_Thread( entity titan )
 			if ( IsValid( titan ) )
 			{
 				StopSoundOnEntity( titan, "EMP_Titan_Electrical_Field" )
-				EnableTitanRodeo( titan ) //Make the arc titan rodeoable now that it is no longer electrified.
 			}
 
 			foreach ( particleSystem in particles )
@@ -600,4 +599,13 @@ void function EMPThink_Thread( entity titan )
 
 		wait EMP_DAMAGE_TICK_RATE
 	}
+}
+void function OnTitanBecomesPilot( entity player, entity titan )	//重新给予泰坦电弧场
+{
+	entity soul = titan.GetTitanSoul()
+	if( !IsValid( soul ) )		//如果因为不可抗力因素导致玩家的泰坦获取不到有效的soul
+		return					//直接结束，不做任何操作
+	
+	if( titan.GetModelName() == $"models/titans/light/titan_light_locust.mdl"&& titan.GetCamo()== 1)	//检查
+		thread DelayEMPThread( soul )																	//如果是，那么重新给他emp
 }
