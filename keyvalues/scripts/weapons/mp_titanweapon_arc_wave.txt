@@ -1,5 +1,6 @@
 WeaponData
-{
+{//电弧波
+	"instant_swap_to"								"1"
 	"holster_time"									"0.01"
 	"deploy_time" 									"0.01"
 	"lower_time"  									"0.01"
