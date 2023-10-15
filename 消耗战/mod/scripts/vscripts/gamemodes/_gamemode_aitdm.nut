@@ -824,7 +824,7 @@ void function AddPilotAssistOnPlayerTitanKilled( entity victim, entity attacker,
 //添加
 void function OnPilotAddsBatteryToFriendlyTitan( entity rider, entity titan, entity battery )
 {
-	AITdm_AddPlayerScore( rider, 3 )
+	AITdm_AddPlayerScore( rider, 4 )
 	entity friend = titan
 	if ( IsValid( titan ) && IsAlive( titan ) && !titan.IsPlayer() )
 		friend = titan.GetBossPlayer()
