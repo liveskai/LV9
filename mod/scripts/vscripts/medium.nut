@@ -382,7 +382,7 @@ void function OnTitanfall( entity titan )
 		titan.TakeOffhandWeapon( OFFHAND_MELEE )
 		
 		titan.GiveOffhandWeapon( "mp_ability_cloak", OFFHAND_SPECIAL,["pas_power_cell"])
-		titan.GiveOffhandWeapon( "mp_ability_heal", OFFHAND_TITAN_CENTER,["bc_super_stim","bc_long_stim1","bc_long_stim2","amped_tacticals","pas_power_cell"])
+		titan.GiveOffhandWeapon( "mp_ability_heal", OFFHAND_TITAN_CENTER,["bc_super_stim","bc_long_stim1","bc_long_stim2","pas_power_cell","amped_tacticals"])
 		titan.GiveOffhandWeapon( "mp_ability_holopilot_nova", OFFHAND_ORDNANCE,["dev_mod_low_recharge"])
 		titan.GiveOffhandWeapon( "mp_titancore_flame_wave", OFFHAND_EQUIPMENT,["ground_slam"] )
 		titan.GiveOffhandWeapon( "melee_titan_punch_fighter", OFFHAND_MELEE, ["berserker", "allow_as_primary"] )
