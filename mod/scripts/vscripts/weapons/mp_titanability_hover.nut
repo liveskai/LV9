@@ -66,7 +66,7 @@ void function FlyerHovers( entity player, HoverSounds soundInfo, float flightTim
 	player.EndSignal( "VTOLHoverBegin" )
 	thread AirborneThink( player, soundInfo )
 
-	const float DEFAULT_HORIZ_SPEED = 250 // 水平速度限制，毒蛇推进器速度+40%
+	const float DEFAULT_HORIZ_SPEED = 250 // 水平速度限制
 	const float DEFAULT_HORIZ_ACCEL = 540 //水平加速度
 	
 	const float DEFAULT_VERTI_SPEED = 300 //垂直速度限制
@@ -86,7 +86,7 @@ void function FlyerHovers( entity player, HoverSounds soundInfo, float flightTim
 	float horizontalVelocity
 	if ( IsValid( pog ) && SoulHasPassive( pog, ePassives.PAS_NORTHSTAR_FLIGHTCORE ) )
 	{
-		hor *= 1.4
+		hor *= 2//毒蛇推进器,增加水平速度限制
 	}
 	
 	float additionalVerticalVel = 0 //added for the sake of vertical movement
