@@ -86,7 +86,7 @@ void function FlyerHovers( entity player, HoverSounds soundInfo, float flightTim
 	float horizontalVelocity
 	if ( IsValid( pog ) && SoulHasPassive( pog, ePassives.PAS_NORTHSTAR_FLIGHTCORE ) )
 	{
-		hor *= 2//毒蛇推进器,增加水平速度限制
+		hor += 150//毒蛇推进器,增加水平速度限制
 	}
 	
 	float additionalVerticalVel = 0 //added for the sake of vertical movement
