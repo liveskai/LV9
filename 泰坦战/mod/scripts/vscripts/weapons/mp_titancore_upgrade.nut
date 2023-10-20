@@ -41,41 +41,7 @@ var function OnWeaponPrimaryAttack_UpgradeCore( entity weapon, WeaponPrimaryAtta
 		int currentUpgradeCount = soul.GetTitanSoulNetInt( "upgradeCount" )
 		if ( currentUpgradeCount == 0 )
 		{
-			//Energy Transfer
-			entity offhandWeapon = owner.GetOffhandWeapon( OFFHAND_LEFT )
-			if ( IsValid( offhandWeapon ) )
-			{
-				array<string> mods = offhandWeapon.GetMods()
-				mods.append( "energy_transfer" )
-				offhandWeapon.SetMods( mods )
-			}
-			if ( owner.IsPlayer() )
-			{
-				int conversationID = GetConversationIndex( "upgradeTo1" )
-				Remote_CallFunction_Replay( owner, "ServerCallback_PlayTitanConversation", conversationID )
-				Remote_CallFunction_NonReplay( owner, "ServerCallback_VanguardUpgradeMessage", 3 )
-			}
-		}
-		else if ( currentUpgradeCount == 1 )
-		{
-			//Missile Racks
-			entity offhandWeapon = owner.GetOffhandWeapon( OFFHAND_RIGHT )
-			if ( IsValid( offhandWeapon ) )
-			{
-				array<string> mods = offhandWeapon.GetMods()
-				mods.append( "missile_racks" )
-				offhandWeapon.SetMods( mods )
-			}
-			if ( owner.IsPlayer() )
-			{
-				int conversationID = GetConversationIndex( "upgradeTo1" )
-				Remote_CallFunction_Replay( owner, "ServerCallback_PlayTitanConversation", conversationID )
-				Remote_CallFunction_NonReplay( owner, "ServerCallback_VanguardUpgradeMessage", 2 )
-			}
-		}
-		else if ( currentUpgradeCount == 2 )
-		{
-			// Arc Rounds
+			// Arc Rounds电弧弹药
 			array<entity> weapons = GetPrimaryWeapons( owner )
 			if ( weapons.len() > 0 )
 			{
@@ -95,37 +61,43 @@ var function OnWeaponPrimaryAttack_UpgradeCore( entity weapon, WeaponPrimaryAtta
 				Remote_CallFunction_NonReplay( owner, "ServerCallback_VanguardUpgradeMessage", 1 )
 			}
 		}
-		else if ( currentUpgradeCount == 3 )
+		if ( currentUpgradeCount == 1 )
 		{
-			//Energy Field
+			//Missile Racks双重火箭弹
+			entity offhandWeapon = owner.GetOffhandWeapon( OFFHAND_RIGHT )
+			if ( IsValid( offhandWeapon ) )
+			{
+				array<string> mods = offhandWeapon.GetMods()
+				mods.append( "missile_racks" )
+				offhandWeapon.SetMods( mods )
+			}
+			if ( owner.IsPlayer() )
+			{
+				int conversationID = GetConversationIndex( "upgradeTo1" )
+				Remote_CallFunction_Replay( owner, "ServerCallback_PlayTitanConversation", conversationID )
+				Remote_CallFunction_NonReplay( owner, "ServerCallback_VanguardUpgradeMessage", 2 )
+			}
+		}
+		if ( currentUpgradeCount == 2 )
+		{
+			//Energy Transfer能量转换
 			entity offhandWeapon = owner.GetOffhandWeapon( OFFHAND_LEFT )
 			if ( IsValid( offhandWeapon ) )
 			{
 				array<string> mods = offhandWeapon.GetMods()
-				if ( mods.contains( "energy_transfer" ) )
-				{
-					array<string> mods = offhandWeapon.GetMods()
-					mods.fastremovebyvalue( "energy_transfer" )
-					mods.append( "energy_field_energy_transfer" )
-					offhandWeapon.SetMods( mods )
-				}
-				else
-				{
-					array<string> mods = offhandWeapon.GetMods()
-					mods.append( "energy_field" )
-					offhandWeapon.SetMods( mods )
-				}
+				mods.append( "energy_transfer" )
+				offhandWeapon.SetMods( mods )
 			}
 			if ( owner.IsPlayer() )
 			{
-				int conversationID = GetConversationIndex( "upgradeTo2" )
+				int conversationID = GetConversationIndex( "upgradeTo1" )
 				Remote_CallFunction_Replay( owner, "ServerCallback_PlayTitanConversation", conversationID )
-				Remote_CallFunction_NonReplay( owner, "ServerCallback_VanguardUpgradeMessage", 6 )
+				Remote_CallFunction_NonReplay( owner, "ServerCallback_VanguardUpgradeMessage", 3 )
 			}
 		}
-		else if ( currentUpgradeCount == 4 )
+		if ( currentUpgradeCount == 3 )
 		{
-			// Rapid Rearm
+			// Rapid Rearm快速换弹
 			entity offhandWeapon = owner.GetOffhandWeapon( OFFHAND_ANTIRODEO )
 			if ( IsValid( offhandWeapon ) )
 			{
@@ -151,90 +123,37 @@ var function OnWeaponPrimaryAttack_UpgradeCore( entity weapon, WeaponPrimaryAtta
 				Remote_CallFunction_NonReplay( owner, "ServerCallback_VanguardUpgradeMessage", 4 )
 			}
 		}
-		else if ( currentUpgradeCount == 5 )
+		if ( currentUpgradeCount == 4 )
 		{
-			//Maelstrom
-			entity offhandWeapon = owner.GetOffhandWeapon( OFFHAND_INVENTORY )
+			//Energy Field能量场
+			entity offhandWeapon = owner.GetOffhandWeapon( OFFHAND_LEFT )
 			if ( IsValid( offhandWeapon ) )
 			{
 				array<string> mods = offhandWeapon.GetMods()
-				mods.append( "maelstrom" )
-				offhandWeapon.SetMods( mods )
+				if ( mods.contains( "energy_transfer" ) )
+				{
+					array<string> mods = offhandWeapon.GetMods()
+					mods.fastremovebyvalue( "energy_transfer" )
+					mods.append( "energy_field_energy_transfer" )
+					offhandWeapon.SetMods( mods )
+				}
+				else
+				{
+					array<string> mods = offhandWeapon.GetMods()
+					mods.append( "energy_field" )
+					offhandWeapon.SetMods( mods )
+				}
 			}
 			if ( owner.IsPlayer() )
 			{
 				int conversationID = GetConversationIndex( "upgradeTo2" )
 				Remote_CallFunction_Replay( owner, "ServerCallback_PlayTitanConversation", conversationID )
-				Remote_CallFunction_NonReplay( owner, "ServerCallback_VanguardUpgradeMessage", 5 )
+				Remote_CallFunction_NonReplay( owner, "ServerCallback_VanguardUpgradeMessage", 6 )
 			}
 		}
-		else if ( currentUpgradeCount == 6 )
+		if ( currentUpgradeCount == 5 )
 		{
-			// Multi-Target Missiles
-			if ( owner.IsPlayer() )
-			{
-				array<string> conversations = [ "upgradeTo3", "upgradeToFin" ]
-				int conversationID = GetConversationIndex( conversations.getrandom() )
-				Remote_CallFunction_Replay( owner, "ServerCallback_PlayTitanConversation", conversationID )
-				Remote_CallFunction_NonReplay( owner, "ServerCallback_VanguardUpgradeMessage", 7 )
-			}
-
-			entity ordnance = owner.GetOffhandWeapon( OFFHAND_RIGHT )
-			array<string> mods
-			if ( ordnance.HasMod( "missile_racks") )
-				mods = [ "upgradeCore_MissileRack_Vanguard" ]
-			else
-				mods = [ "upgradeCore_Vanguard" ]
-
-			// if ( ordnance.HasMod( "fd_balance" ) )伤害不再降低
-			// 	mods.append( "fd_balance" )
-
-			float ammoFrac = float( ordnance.GetWeaponPrimaryClipCount() ) / float( ordnance.GetWeaponPrimaryClipCountMax() )
-			owner.TakeWeaponNow( ordnance.GetWeaponClassName() )
-			owner.GiveOffhandWeapon( "mp_titanweapon_shoulder_rockets", OFFHAND_RIGHT, mods )
-			ordnance = owner.GetOffhandWeapon( OFFHAND_RIGHT )
-			ordnance.SetWeaponChargeFractionForced( 1 - ammoFrac )
-		}
-		else if ( currentUpgradeCount == 7 )
-		{
-			//Superior Chassis
-			if ( owner.IsPlayer() )
-			{
-				array<string> conversations = [ "upgradeTo3", "upgradeToFin" ]
-				int conversationID = GetConversationIndex( conversations.getrandom() )
-				Remote_CallFunction_Replay( owner, "ServerCallback_PlayTitanConversation", conversationID )
-				Remote_CallFunction_NonReplay( owner, "ServerCallback_VanguardUpgradeMessage", 8 )
-
-				if ( !GetDoomedState( owner ) )
-				{
-					int missingHealth = owner.GetMaxHealth() - owner.GetHealth()
-					array<string> settingMods = owner.GetPlayerSettingsMods()
-					settingMods.append( "core_health_upgrade" )
-					owner.SetPlayerSettingsWithMods( owner.GetPlayerSettings(), settingMods )
-					owner.SetHealth( max( owner.GetMaxHealth() - missingHealth, VANGUARD_CORE8_HEALTH_AMOUNT ) )
-
-					//Hacky Hack - Append core_health_upgrade to setFileMods so that we have a way to check that this upgrade is active.
-					soul.soul.titanLoadout.setFileMods.append( "core_health_upgrade" )
-				}
-				else
-				{
-					owner.SetHealth( owner.GetMaxHealth() )
-				}
-			}
-			else
-			{
-				if ( !GetDoomedState( owner ) )
-		  		{
-					owner.SetMaxHealth( owner.GetMaxHealth() + VANGUARD_CORE8_HEALTH_AMOUNT )
-					owner.SetHealth( owner.GetHealth() + VANGUARD_CORE8_HEALTH_AMOUNT )
-				}
-			}
-			entity soul = owner.GetTitanSoul()
-			soul.SetPreventCrits( true )
-		}
-		else if ( currentUpgradeCount == 8 )
-		{
-			//XO-16 Battle Rifle
+			//XO-16 Battle Rifle加速器
 			array<entity> weapons = GetPrimaryWeapons( owner )
 			if ( weapons.len() > 0 )
 			{
@@ -257,7 +176,7 @@ var function OnWeaponPrimaryAttack_UpgradeCore( entity weapon, WeaponPrimaryAtta
 					}
 				}
 			}
-
+		
 			if ( owner.IsPlayer() )
 			{
 				array<string> conversations = [ "upgradeTo3", "upgradeToFin" ]
@@ -265,6 +184,87 @@ var function OnWeaponPrimaryAttack_UpgradeCore( entity weapon, WeaponPrimaryAtta
 				Remote_CallFunction_Replay( owner, "ServerCallback_PlayTitanConversation", conversationID )
 				Remote_CallFunction_NonReplay( owner, "ServerCallback_VanguardUpgradeMessage", 9 )
 			}
+		}
+		if ( currentUpgradeCount == 6 )
+		{
+			// Multi-Target Missiles追踪导弹
+			if ( owner.IsPlayer() )
+			{
+				array<string> conversations = [ "upgradeTo3", "upgradeToFin" ]
+				int conversationID = GetConversationIndex( conversations.getrandom() )
+				Remote_CallFunction_Replay( owner, "ServerCallback_PlayTitanConversation", conversationID )
+				Remote_CallFunction_NonReplay( owner, "ServerCallback_VanguardUpgradeMessage", 7 )
+			}
+		
+			entity ordnance = owner.GetOffhandWeapon( OFFHAND_RIGHT )
+			array<string> mods
+			if ( ordnance.HasMod( "missile_racks") )
+				mods = [ "extended_smart_ammo_range" ]
+			else
+				mods = [ "upgradeCore_Vanguard" ]
+		
+			if ( ordnance.HasMod( "fd_balance" ) )
+				mods.append( "fd_balance" )
+		
+			float ammoFrac = float( ordnance.GetWeaponPrimaryClipCount() ) / float( ordnance.GetWeaponPrimaryClipCountMax() )
+			owner.TakeWeaponNow( ordnance.GetWeaponClassName() )
+			owner.GiveOffhandWeapon( "mp_titanweapon_shoulder_rockets", OFFHAND_RIGHT, mods )
+			ordnance = owner.GetOffhandWeapon( OFFHAND_RIGHT )
+			ordnance.SetWeaponChargeFractionForced( 1 - ammoFrac )
+		}
+		if ( currentUpgradeCount == 7 )
+		{
+			//Maelstrom强化烟
+			entity offhandWeapon = owner.GetOffhandWeapon( OFFHAND_INVENTORY )
+			if ( IsValid( offhandWeapon ) )
+			{
+				array<string> mods = offhandWeapon.GetMods()
+				mods.append( "maelstrom" )
+				offhandWeapon.SetMods( mods )
+			}
+			if ( owner.IsPlayer() )
+			{
+				int conversationID = GetConversationIndex( "upgradeTo2" )
+				Remote_CallFunction_Replay( owner, "ServerCallback_PlayTitanConversation", conversationID )
+				Remote_CallFunction_NonReplay( owner, "ServerCallback_VanguardUpgradeMessage", 5 )
+			}
+		}
+		if ( currentUpgradeCount == 8 )
+		{
+			//Superior Chassis高级机种
+			if ( owner.IsPlayer() )
+			{
+				array<string> conversations = [ "upgradeTo3", "upgradeToFin" ]
+				int conversationID = GetConversationIndex( conversations.getrandom() )
+				Remote_CallFunction_Replay( owner, "ServerCallback_PlayTitanConversation", conversationID )
+				Remote_CallFunction_NonReplay( owner, "ServerCallback_VanguardUpgradeMessage", 8 )
+		
+				if ( !GetDoomedState( owner ) )
+				{
+					int missingHealth = owner.GetMaxHealth() - owner.GetHealth()
+					array<string> settingMods = owner.GetPlayerSettingsMods()
+					settingMods.append( "core_health_upgrade" )
+					owner.SetPlayerSettingsWithMods( owner.GetPlayerSettings(), settingMods )
+					owner.SetHealth( max( owner.GetMaxHealth() - missingHealth, VANGUARD_CORE8_HEALTH_AMOUNT ) )
+		
+					//Hacky Hack - Append core_health_upgrade to setFileMods so that we have a way to check that this upgrade is active.
+					soul.soul.titanLoadout.setFileMods.append( "core_health_upgrade" )
+				}
+				else
+				{
+					owner.SetHealth( owner.GetMaxHealth() )
+				}
+			}
+			else
+			{
+				if ( !GetDoomedState( owner ) )
+		  		{
+					owner.SetMaxHealth( owner.GetMaxHealth() + VANGUARD_CORE8_HEALTH_AMOUNT )
+					owner.SetHealth( owner.GetHealth() + VANGUARD_CORE8_HEALTH_AMOUNT )
+				}
+			}
+			entity soul = owner.GetTitanSoul()
+			soul.SetPreventCrits( true )
 		}
 		else
 		{
