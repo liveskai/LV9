@@ -153,38 +153,41 @@ var function OnWeaponPrimaryAttack_UpgradeCore( entity weapon, WeaponPrimaryAtta
 		}
 		if ( currentUpgradeCount == 5 )
 		{
-			//XO-16 Battle Rifle加速器
-			array<entity> weapons = GetPrimaryWeapons( owner )
-			if ( weapons.len() > 0 )
-			{
-				entity primaryWeapon = weapons[0]
-				if ( IsValid( primaryWeapon ) )
-				{
-					if ( primaryWeapon.HasMod( "arc_rounds" ) )
-					{
-						primaryWeapon.RemoveMod( "arc_rounds" )
-						array<string> mods = primaryWeapon.GetMods()
-						mods.append( "arc_rounds_with_battle_rifle" )
-						primaryWeapon.SetMods( mods )
-					}
-					else
-					{
-						array<string> mods = primaryWeapon.GetMods()
-						mods.append( "battle_rifle" )
-						mods.append( "battle_rifle_icon" )
-						primaryWeapon.SetMods( mods )
-					}
-				}
-			}
-
+			//Superior Chassis高级机种
 			if ( owner.IsPlayer() )
 			{
 				array<string> conversations = [ "upgradeTo3", "upgradeToFin" ]
 				int conversationID = GetConversationIndex( conversations.getrandom() )
 				Remote_CallFunction_Replay( owner, "ServerCallback_PlayTitanConversation", conversationID )
-				Remote_CallFunction_NonReplay( owner, "ServerCallback_VanguardUpgradeMessage", 9 )
+				Remote_CallFunction_NonReplay( owner, "ServerCallback_VanguardUpgradeMessage", 8 )
+
+				if ( !GetDoomedState( owner ) )
+				{
+					int missingHealth = owner.GetMaxHealth() - owner.GetHealth()
+					array<string> settingMods = owner.GetPlayerSettingsMods()
+					settingMods.append( "core_health_upgrade" )
+					owner.SetPlayerSettingsWithMods( owner.GetPlayerSettings(), settingMods )
+					owner.SetHealth( max( owner.GetMaxHealth() - missingHealth, VANGUARD_CORE8_HEALTH_AMOUNT ) )
+
+					//Hacky Hack - Append core_health_upgrade to setFileMods so that we have a way to check that this upgrade is active.
+					soul.soul.titanLoadout.setFileMods.append( "core_health_upgrade" )
+				}
+				else
+				{
+					owner.SetHealth( owner.GetMaxHealth() )
+				}
 			}
-		}
+			else
+			{
+				if ( !GetDoomedState( owner ) )
+		  		{
+					owner.SetMaxHealth( owner.GetMaxHealth() + VANGUARD_CORE8_HEALTH_AMOUNT )
+					owner.SetHealth( owner.GetHealth() + VANGUARD_CORE8_HEALTH_AMOUNT )
+				}
+			}
+			entity soul = owner.GetTitanSoul()
+			soul.SetPreventCrits( true )
+		}	
 		if ( currentUpgradeCount == 6 )
 		{
 			// Multi-Target Missiles追踪导弹
@@ -228,43 +231,40 @@ var function OnWeaponPrimaryAttack_UpgradeCore( entity weapon, WeaponPrimaryAtta
 				Remote_CallFunction_Replay( owner, "ServerCallback_PlayTitanConversation", conversationID )
 				Remote_CallFunction_NonReplay( owner, "ServerCallback_VanguardUpgradeMessage", 5 )
 			}
-		}
+		}	
 		if ( currentUpgradeCount == 8 )
 		{
-			//Superior Chassis高级机种
+			//XO-16 Battle Rifle加速器
+			array<entity> weapons = GetPrimaryWeapons( owner )
+			if ( weapons.len() > 0 )
+			{
+				entity primaryWeapon = weapons[0]
+				if ( IsValid( primaryWeapon ) )
+				{
+					if ( primaryWeapon.HasMod( "arc_rounds" ) )
+					{
+						primaryWeapon.RemoveMod( "arc_rounds" )
+						array<string> mods = primaryWeapon.GetMods()
+						mods.append( "arc_rounds_with_battle_rifle" )
+						primaryWeapon.SetMods( mods )
+					}
+					else
+					{
+						array<string> mods = primaryWeapon.GetMods()
+						mods.append( "battle_rifle" )
+						mods.append( "battle_rifle_icon" )
+						primaryWeapon.SetMods( mods )
+					}
+				}
+			}
+
 			if ( owner.IsPlayer() )
 			{
 				array<string> conversations = [ "upgradeTo3", "upgradeToFin" ]
 				int conversationID = GetConversationIndex( conversations.getrandom() )
 				Remote_CallFunction_Replay( owner, "ServerCallback_PlayTitanConversation", conversationID )
-				Remote_CallFunction_NonReplay( owner, "ServerCallback_VanguardUpgradeMessage", 8 )
-
-				if ( !GetDoomedState( owner ) )
-				{
-					int missingHealth = owner.GetMaxHealth() - owner.GetHealth()
-					array<string> settingMods = owner.GetPlayerSettingsMods()
-					settingMods.append( "core_health_upgrade" )
-					owner.SetPlayerSettingsWithMods( owner.GetPlayerSettings(), settingMods )
-					owner.SetHealth( max( owner.GetMaxHealth() - missingHealth, VANGUARD_CORE8_HEALTH_AMOUNT ) )
-
-					//Hacky Hack - Append core_health_upgrade to setFileMods so that we have a way to check that this upgrade is active.
-					soul.soul.titanLoadout.setFileMods.append( "core_health_upgrade" )
-				}
-				else
-				{
-					owner.SetHealth( owner.GetMaxHealth() )
-				}
+				Remote_CallFunction_NonReplay( owner, "ServerCallback_VanguardUpgradeMessage", 9 )
 			}
-			else
-			{
-				if ( !GetDoomedState( owner ) )
-		  		{
-					owner.SetMaxHealth( owner.GetMaxHealth() + VANGUARD_CORE8_HEALTH_AMOUNT )
-					owner.SetHealth( owner.GetHealth() + VANGUARD_CORE8_HEALTH_AMOUNT )
-				}
-			}
-			entity soul = owner.GetTitanSoul()
-			soul.SetPreventCrits( true )
 		}
 		else
 		{
