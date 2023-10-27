@@ -10,9 +10,8 @@ WeaponData
 		}
 		fd_balance
 		{
-			"damage_near_value_titanarmor"					"*1.6"
-			"damage_far_value_titanarmor" 					"*1.6"
-			"explosion_damage_heavy_armor"					"*1.6"
+			"damage_near_value_titanarmor"					"++175"
+			"damage_far_value_titanarmor" 					"++175"
 		}
 		super_laser_core
 		{
