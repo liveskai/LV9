@@ -1,4 +1,4 @@
 WeaponData
 {
-	"core_duration"									"7"
+	"sustained_discharge_duration"					"5" 
 }
