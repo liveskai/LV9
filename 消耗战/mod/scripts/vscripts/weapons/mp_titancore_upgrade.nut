@@ -205,9 +205,8 @@ var function OnWeaponPrimaryAttack_UpgradeCore( entity weapon, WeaponPrimaryAtta
 				mods = [ "extended_smart_ammo_range" ]
 			else
 				mods = [ "upgradeCore_Vanguard" ]
-
-			if ( ordnance.HasMod( "fd_balance" ) )
-				mods.append( "fd_balance" )
+				
+			mods.append( "fd_balance" )
 
 			float ammoFrac = float( ordnance.GetWeaponPrimaryClipCount() ) / float( ordnance.GetWeaponPrimaryClipCountMax() )
 			owner.TakeWeaponNow( ordnance.GetWeaponClassName() )
