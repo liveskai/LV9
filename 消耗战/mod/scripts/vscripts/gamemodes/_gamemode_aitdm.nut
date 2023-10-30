@@ -42,7 +42,6 @@ void function GamemodeAITdm_Init()
 
 	AddCallback_OnNPCKilled( HandleScoreEvent )
 	AddCallback_OnPlayerKilled( HandleScoreEvent )
-	AddCallback_OnPlayerKilled( AddPilotAssistOnPlayerTitanKilled )//击杀铁驭+泰坦也显示铁驭助攻
 	
 	AddCallback_OnClientConnected( OnPlayerConnected )
 
@@ -814,11 +813,6 @@ void function AITdm_CleanupBoredNPCThread( entity guy )
 	guy.Destroy()
 }
 
-void function AddPilotAssistOnPlayerTitanKilled( entity victim, entity attacker, var damageInfo )
-{
-	if ( victim.IsTitan() )
-		ScoreEvent_PlayerAssist( victim.GetTitanSoul(), attacker, "PilotAssist", eEventDisplayType.MEDAL | eEventDisplayType.CENTER )
-}
 //添加
 void function OnPilotAddsBatteryToFriendlyTitan( entity rider, entity titan, entity battery )
 {
