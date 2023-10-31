@@ -6,8 +6,8 @@ void function GamemodeTTDM_Init()
 {
 	Riff_ForceSetSpawnAsTitan( eSpawnAsTitan.Always )
 	Riff_ForceTitanExitEnabled( eTitanExitEnabled.Never )
-	TrackTitanShieldDamageInPlayerGameStat( PGS_ASSAULT_SCORE )
 	TrackTitanDamageInPlayerGameStat( PGS_ASSAULT_SCORE )
+	TrackTitanShieldDamageInPlayerGameStat( PGS_ASSAULT_SCORE )//护甲计算伤害
 	ScoreEvent_SetupEarnMeterValuesForMixedModes()
 	SetLoadoutGracePeriodEnabled( false )
 
@@ -18,13 +18,35 @@ void function GamemodeTTDM_Init()
 	AddCallback_OnPlayerKilled( AddTeamScoreForPlayerKilled ) // dont have to track autotitan kills since you cant leave your titan in this mode
 
 	// probably needs scoreevent earnmeter values
+	SetUpTTDMScoreEvents() // northstar missing
+	SetKillcamsEnabled( false ) //关闭击杀回放
+	// tempfix specifics
+	SetShouldPlayDefaultMusic( true ) // play music when score or time reaches some point
+}
+
+// northstar missing
+void function SetUpTTDMScoreEvents()
+{
+	// pilot kill: 15% for titans
+	// titan kill: 0%
+	// titan assist: 0%
+	// execution: 0%
+	ScoreEvent_SetEarnMeterValues( "KillPilot", 0.0, 0.15, 1.0 )
+	ScoreEvent_SetEarnMeterValues( "KillTitan", 0.0, 0.0 )
+	ScoreEvent_SetEarnMeterValues( "KillAutoTitan", 0.0, 0.0 )
+	ScoreEvent_SetEarnMeterValues( "TitanKillTitan", 0.0, 0.0 )
+	ScoreEvent_SetEarnMeterValues( "TitanAssist", 0.0, 0.0 )
+	ScoreEvent_SetEarnMeterValues( "Execution", 0.0, 0.0 )
 }
 
 void function TTDMIntroSetup()
 {
 	// this should show intermission cam for 15 sec in prematch, before spawning players as titans
 	AddCallback_GameStateEnter( eGameState.Prematch, TTDMIntroStart )
-	AddCallback_OnClientConnected( TTDMIntroShowIntermissionCam )
+	//AddCallback_OnClientConnected( TTDMIntroShowIntermissionCam )
+	// vanilla behavior...
+	AddCallback_GameStateEnter( eGameState.Playing, TTDMGameStart )
+	AddCallback_OnClientConnected( TTDMIntroConntectedPlayer )
 }
 
 void function TTDMIntroStart()
@@ -51,10 +73,40 @@ void function TTDMIntroStartThreaded()
 
 void function TTDMIntroShowIntermissionCam( entity player )
 {
+	// vanilla behavior
+	//if ( GetGameState() != eGameState.Prematch )
+	//	return
+	
+	thread PlayerWatchesTTDMIntroIntermissionCam( player )
+}
+
+// vanilla behavior
+void function TTDMGameStart()
+{
+	foreach ( entity player in GetPlayerArray_Alive() )
+	{
+		TryGameModeAnnouncement( player ) // announce players whose already alive
+		player.UnfreezeControlsOnServer() // if a player is alive they must be freezed, unfreeze them
+	}
+}
+
+void function TTDMIntroConntectedPlayer( entity player )
+{
 	if ( GetGameState() != eGameState.Prematch )
 		return
+		
+	thread TTDMIntroConntectedPlayer_Threaded( player )
+}
 
-	thread PlayerWatchesTTDMIntroIntermissionCam( player )
+void function TTDMIntroConntectedPlayer_Threaded( entity player )
+{
+	player.EndSignal( "OnDestroy" )
+
+	RespawnAsTitan( player, false )
+	if ( GetGameState() == eGameState.Prematch ) // still in intro
+		player.FreezeControlsOnServer() // freeze
+	else if ( GetGameState() == eGameState.Playing ) // they may connect near the end of intro
+		TryGameModeAnnouncement( player )
 }
 
 void function PlayerWatchesTTDMIntroIntermissionCam( entity player )
