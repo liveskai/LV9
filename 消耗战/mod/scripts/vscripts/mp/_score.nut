@@ -297,11 +297,11 @@ void function ScoreEvent_PlayerKilled( entity victim, entity attacker, var damag
 	attacker.s.lastKillTime = Time()
 
 	// assist. was previously be in _base_gametype_mp.gnut, which is bad. vanilla won't add assist on npc killing a player
-	if ( !victim.IsTitan() ) // titan assist handled by ScoreEvent_TitanKilled()
+	/*if ( !victim.IsTitan() ) // titan assist handled by ScoreEvent_TitanKilled()
 	{
 		// wrap into this function
-		ScoreEvent_PlayerAssist( victim, attacker, "PilotAssist" )
-	}
+		ScoreEvent_PlayerAssist( victim, attacker, "PilotAssist" )删除助攻，不显示助攻了
+	}*/
 }
 
 // this only gets called when titan's owner is player
@@ -325,8 +325,13 @@ void function ScoreEvent_TitanKilled( entity victim, entity attacker, var damage
 	// modified for npc pilot embarked titan
 #if NPC_TITAN_PILOT_PROTOTYPE
 	entity owner = victim.GetOwner()
-	bool hasNPCPilot = ( IsAlive( owner ) && IsPilotElite( owner ) ) || TitanHasNpcPilot( victim )
-	bool isNPCPilotPet = TitanIsNpcPilotPetTitan( victim )
+	bool hasNPCPilot = TitanHasNpcPilot( victim )
+	bool isEjecting = true // npc pilot ejecting meaning their titan already died. default to be true
+	if ( IsValid( victim.GetTitanSoul() ) )
+		isEjecting = victim.GetTitanSoul().IsEjecting()
+	// debug
+	//print( "hasNPCPilot: " + string( hasNPCPilot ) )
+	//print( "isEjecting: " + string( isEjecting ) )
 #endif
 
 	string scoreEvent = "KillTitan"
@@ -337,7 +342,7 @@ void function ScoreEvent_TitanKilled( entity victim, entity attacker, var damage
 		scoreEvent = "KillAutoTitan"
 		// modified for npc pilot embarked titan
 #if NPC_TITAN_PILOT_PROTOTYPE
-		if ( hasNPCPilot )
+		if ( hasNPCPilot && !isEjecting )
 		{
 			scoreEvent = "KillTitan"
 			if ( attacker.IsTitan() )
@@ -345,6 +350,8 @@ void function ScoreEvent_TitanKilled( entity victim, entity attacker, var damage
 		}
 #endif
 	}
+	// debug
+	//print( "scoreEvent: " + scoreEvent )
 
 	if( IsTitanEliminationBased() )
 	{
@@ -369,6 +376,7 @@ void function ScoreEvent_TitanKilled( entity victim, entity attacker, var damage
 	bool playTitanKilledDiag = isPlayerTitan
 	// modified for npc pilot embarked titan
 #if NPC_TITAN_PILOT_PROTOTYPE
+	bool isNPCPilotPet = TitanIsNpcPilotPetTitan( victim )
 	playTitanKilledDiag = isPlayerTitan || hasNPCPilot || isNPCPilotPet
 #endif
 
@@ -378,13 +386,13 @@ void function ScoreEvent_TitanKilled( entity victim, entity attacker, var damage
 	// titan damage history stores in titanSoul, but if they killed by termination it's gonna transfer to victim themselves
 	bool killedByTermination = DamageInfo_GetDamageSourceIdentifier( damageInfo ) == eDamageSourceId.titan_execution
 	entity damageHistorySaver = killedByTermination ? victim : victim.GetTitanSoul()
-	if ( IsValid( damageHistorySaver ) )
+	/*if ( IsValid( damageHistorySaver ) )
 	{
 		// debug
 		//print( "damageHistorySaver valid! " + string( damageHistorySaver ) )
 		// wrap into this function
-		ScoreEvent_PlayerAssist( damageHistorySaver, attacker, "TitanAssist" )
-	}
+		ScoreEvent_PlayerAssist( damageHistorySaver, attacker, "TitanAssist" )删除助攻，不显示助攻了
+	}*/
 }
 
 // this can also handle npc killing another npc condition
@@ -520,35 +528,38 @@ void function ScoreEvent_SetupEarnMeterValuesForMixedModes() // mixed modes in t
 		return
 
 	// pilot kill
-	ScoreEvent_SetEarnMeterValues( "KillPilot", 0.15, 0.05 )
-	ScoreEvent_SetEarnMeterValues( "EliminatePilot", 0.15, 0.05 )
-	ScoreEvent_SetEarnMeterValues( "PilotAssist", 0.15, 0.05 ) // if set to "0.03, 0.02", will display as "4%"
+	ScoreEvent_SetEarnMeterValues( "KillPilot", 0.10, 0.05 )
+	ScoreEvent_SetEarnMeterValues( "EliminatePilot", 0.10, 0.05 )
+	ScoreEvent_SetEarnMeterValues( "PilotAssist", 0.03, 0.020001, 0.0 ) // if set to "0.03, 0.02", will display as "4%"
 	// titan kill
 	ScoreEvent_SetEarnMeterValues( "DoomTitan", 0.0, 0.0 )
 	// don't know why auto titan kills appear to be no value in vanilla
 	// even when the titan have an owner player
-	ScoreEvent_SetEarnMeterValues( "KillTitan", 0.20, 0.10 )
+	ScoreEvent_SetEarnMeterValues( "KillTitan", 0.1, 0.1 )
 	ScoreEvent_SetEarnMeterValues( "KillAutoTitan", 0.1, 0.1 )
 	ScoreEvent_SetEarnMeterValues( "EliminateTitan", 0.1, 0.1 )
-	ScoreEvent_SetEarnMeterValues( "EliminateAutoTitan", 0.1, 0.1 )
+	ScoreEvent_SetEarnMeterValues( "EliminateAutoTitan",0.1, 0.1 )
 	ScoreEvent_SetEarnMeterValues( "TitanKillTitan", 0.1, 0.1 )
 	// but titan assist do have earn values...
-	ScoreEvent_SetEarnMeterValues( "TitanAssist", 0.10, 0.10 )
+	ScoreEvent_SetEarnMeterValues( "TitanAssist", 0.0, 0.0 )
 	// rodeo
 	ScoreEvent_SetEarnMeterValues( "PilotBatteryStolen", 0.0, 0.35, 0.0 )
 	ScoreEvent_SetEarnMeterValues( "PilotBatteryApplied", 0.0, 0.35, 0.0 )
 	// special method of killing
 	ScoreEvent_SetEarnMeterValues( "Headshot", 0.0, 0.02, 0.0 )
-	ScoreEvent_SetEarnMeterValues( "FirstStrike", 0.031, 0.02, 0.0 ) // if set to "0.03, 0.02", will display as "4%"
+	ScoreEvent_SetEarnMeterValues( "FirstStrike", 0.03, 0.020001, 0.0 ) // if set to "0.03, 0.02", will display as "4%"
 	
 	// ai
-	ScoreEvent_SetEarnMeterValues( "KillGrunt", 0.03, 0.01 )
-	ScoreEvent_SetEarnMeterValues( "KillSpectre", 0.03, 0.01 )
-	ScoreEvent_SetEarnMeterValues( "LeechSpectre", 0.03, 0.01 )
-	ScoreEvent_SetEarnMeterValues( "KillHackedSpectre", 0.03, 0.01 )
-	ScoreEvent_SetEarnMeterValues( "KillStalker", 0.03, 0.01 )
-	ScoreEvent_SetEarnMeterValues( "KillSuperSpectre", 0.1, 0.1 )
-	ScoreEvent_SetEarnMeterValues( "KillLightTurret", 0.05, 0.05 )
+	// so here's a funny twist, respawn don't know "0.03, 0.02" will display as 4%
+	// which means actual vanilla infantry value is 5% but it displays as 4%
+	// (if you set earnmeter multiplier to 5.0 it displays as 24%, proving my thought)
+	ScoreEvent_SetEarnMeterValues( "KillGrunt", 0.03, 0.020001, 0.5 )
+	ScoreEvent_SetEarnMeterValues( "KillSpectre", 0.03, 0.020001, 0.5 )
+	ScoreEvent_SetEarnMeterValues( "LeechSpectre", 0.03, 0.020001, 0.5 )
+	ScoreEvent_SetEarnMeterValues( "KillHackedSpectre", 0.03, 0.020001, 0.5 )
+	ScoreEvent_SetEarnMeterValues( "KillStalker", 0.03, 0.020001, 0.5 )
+	ScoreEvent_SetEarnMeterValues( "KillSuperSpectre", 0.10, 0.10)
+	ScoreEvent_SetEarnMeterValues( "KillLightTurret", 0.0, 0.1 )
 }
 
 void function ScoreEvent_SetupEarnMeterValuesForTitanModes()
