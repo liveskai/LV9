@@ -151,10 +151,8 @@ void function HandleScoreEvent( entity victim, entity attacker, var damageInfo )
 		{
 			case "npc_soldier":
 			case "npc_spectre":
-				playerScore = 1
-				break			
 			case "npc_stalker":
-				playerScore = 2
+				playerScore = 1
 				break
 			case "npc_super_spectre"://死神
 				playerScore = 6
