@@ -13,7 +13,6 @@ WeaponData
 		}
 		super_laser_core
 		{
-			"charge_time" 			"0.01" 
 		}
 	}
 }
