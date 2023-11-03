@@ -89,7 +89,7 @@ void function OnTitanfall( entity titan )
 			TakePassive( soul, passive )
 		}
 	}
-	if( titan.GetModelName() == $"models/titans/medium/titan_medium_vanguard.mdl" && titan.GetCamo() == -1 && titan.GetSkin() == 3 )
+	else if( titan.GetModelName() == $"models/titans/medium/titan_medium_vanguard.mdl" && titan.GetCamo() == -1 && titan.GetSkin() == 3 )
 	{
 		soul.s.TitanHasBeenChange <- true
 		SendHudMessage(player, "已切换为远征，取消\"边境帝王\"皮肤以使用原版帝王",  -1, 0.3, 200, 200, 225, 0, 0.15, 12, 1);
@@ -125,7 +125,7 @@ void function OnTitanfall( entity titan )
 			TakePassive( soul, passive )
 		}
 	}
-	if( titan.GetModelName() == $"models/titans/heavy/titan_heavy_legion_prime.mdl" )
+	else if( titan.GetModelName() == $"models/titans/heavy/titan_heavy_legion_prime.mdl" )
 	{
 		soul.s.TitanHasBeenChange <- true
 		SendHudMessage(player, "取消至尊泰坦以使用原版军团",  -1, 0.3, 200, 200, 225, 0, 0.15, 5, 1);
@@ -144,7 +144,7 @@ void function OnTitanfall( entity titan )
 		titan.GiveOffhandWeapon( "mp_titanweapon_orbital_strike", OFFHAND_ORDNANCE,["burn_mod_titan_salvo_rockets"] )
 		titan.GiveOffhandWeapon( "mp_titancore_flame_wave", OFFHAND_EQUIPMENT )
 	}
-	if( titan.GetModelName() == $"models/titans/medium/titan_medium_tone_prime.mdl" )
+	else if( titan.GetModelName() == $"models/titans/medium/titan_medium_tone_prime.mdl" )
 	{
 		soul.s.TitanHasBeenChange <- true
 		SendHudMessage(player, "取消至尊泰坦以使用原版强力",  -1, 0.3, 200, 200, 225, 0, 0.15, 5, 1);
@@ -173,7 +173,7 @@ void function OnTitanfall( entity titan )
 			TakePassive( soul, passive )
 		}
 	}
-	if( titan.GetModelName() == $"models/titans/medium/titan_medium_ion_prime.mdl" )
+	else if( titan.GetModelName() == $"models/titans/medium/titan_medium_ion_prime.mdl" )
 	{
 		soul.s.TitanHasBeenChange <- true
 		SendHudMessage(player, "取消至尊泰坦以使用原版离子",  -1, 0.3, 200, 200, 225, 0, 0.15, 5, 1);
@@ -201,7 +201,7 @@ void function OnTitanfall( entity titan )
 			TakePassive( soul, passive )
 		}
 	}
-	if( titan.GetModelName() == $"models/titans/medium/titan_medium_vanguard.mdl"  && titan.GetCamo() == 1 )
+	else if( titan.GetModelName() == $"models/titans/medium/titan_medium_vanguard.mdl"  && titan.GetCamo() == 1 )
 	{
 		soul.s.TitanHasBeenChange <- true
 		SendHudMessage(player, "切换为疾风，取消当前皮肤以使用原版帝王",  -1, 0.3, 200, 200, 225, 0, 0.15, 12, 1);
@@ -236,7 +236,7 @@ void function OnTitanfall( entity titan )
 			TakePassive( soul, passive )
 		}
 	}
-	if( titan.GetModelName() == $"models/titans/medium/titan_medium_vanguard.mdl" && titan.GetCamo() ==  2 )
+	else if( titan.GetModelName() == $"models/titans/medium/titan_medium_vanguard.mdl" && titan.GetCamo() ==  2 )
 	{//离子装备
 		soul.s.TitanHasBeenChange <- true
 		SendHudMessage(player, "使用离子装备，取消当前皮肤以使用原版帝王",  -1, 0.3, 200, 200, 225, 0, 0.15, 12, 1);
@@ -273,7 +273,7 @@ void function OnTitanfall( entity titan )
 			TakePassive( soul, passive )
 		}
 	}
-	if( titan.GetModelName() == $"models/titans/medium/titan_medium_vanguard.mdl" && titan.GetCamo() == 3 )
+	else if( titan.GetModelName() == $"models/titans/medium/titan_medium_vanguard.mdl" && titan.GetCamo() == 3 )
 	{//强力装备
 		soul.s.TitanHasBeenChange <- true
 		SendHudMessage(player, "使用强力装备，取消当前皮肤以使用原版帝王",  -1, 0.3, 200, 200, 225, 0, 0.15, 12, 1);
@@ -310,7 +310,7 @@ void function OnTitanfall( entity titan )
 			TakePassive( soul, passive )
 		}
 	}
-	if( titan.GetModelName() == $"models/titans/medium/titan_medium_vanguard.mdl" && titan.GetCamo() ==  30 )
+	else if( titan.GetModelName() == $"models/titans/medium/titan_medium_vanguard.mdl" && titan.GetCamo() ==  30 )
 	{//烈焰装备
 		soul.s.TitanHasBeenChange <- true
 		SendHudMessage(player, "使用烈焰装备，取消当前皮肤以使用原版帝王",  -1, 0.3, 200, 200, 225, 0, 0.15, 12, 1);
@@ -347,7 +347,7 @@ void function OnTitanfall( entity titan )
 			TakePassive( soul, passive )
 		}
 	}
-	if( titan.GetModelName() == $"models/titans/medium/titan_medium_vanguard.mdl" && titan.GetCamo()== 18 )
+	else if( titan.GetModelName() == $"models/titans/medium/titan_medium_vanguard.mdl" && titan.GetCamo()== 18 )
 	{//北极星装备
 		soul.s.TitanHasBeenChange <- true
 		SendHudMessage(player, "使用北极星装备，取消当前皮肤以使用原版帝王",  -1, 0.3, 200, 200, 225, 0, 0.15, 12, 1);
@@ -384,7 +384,7 @@ void function OnTitanfall( entity titan )
 			TakePassive( soul, passive )
 		}
 	}
-	if( titan.GetModelName() == $"models/titans/heavy/titan_heavy_scorch_prime.mdl" )
+	else if( titan.GetModelName() == $"models/titans/heavy/titan_heavy_scorch_prime.mdl" )
 	{
 		soul.s.TitanHasBeenChange <- true
 		SendHudMessage(player, "切换为野牛，取消至尊泰坦以使用原版烈焰",  -1, 0.3, 200, 200, 225, 0, 0.15, 5, 1);
@@ -414,7 +414,7 @@ void function OnTitanfall( entity titan )
 			TakePassive( soul, passive )
 		}
 	}
-	if( titan.GetModelName() == $"models/titans/light/titan_light_locust.mdl"&& titan.GetCamo()== 1)
+	else if( titan.GetModelName() == $"models/titans/light/titan_light_locust.mdl"&& titan.GetCamo()== 1)
 	{
 		soul.s.TitanHasBeenChange <- true
 		SendHudMessage(player, "已切换为电弧，取消当前皮肤以使用原版浪人",  -1, 0.3, 200, 200, 225, 0, 0.15, 5, 1);
@@ -442,7 +442,7 @@ void function OnTitanfall( entity titan )
 			TakePassive( soul, passive )
 		}
 	}
-	if( titan.GetModelName() == $"models/titans/medium/titan_medium_vanguard.mdl"  && titan.GetCamo()== 97 )
+	else if( titan.GetModelName() == $"models/titans/medium/titan_medium_vanguard.mdl"  && titan.GetCamo()== 97 )
 	{
 		soul.s.TitanHasBeenChange <- true
 		SendHudMessage(player, "使用浪人装备，取消当前皮肤以使用原版帝王",  -1, 0.3, 200, 200, 225, 0, 0.15, 12, 1);
@@ -480,7 +480,7 @@ void function OnTitanfall( entity titan )
 			TakePassive( soul, passive )
 		}
 	}
-	if( titan.GetModelName() == $"models/titans/light/titan_light_locust.mdl"&& titan.GetCamo()== 3)
+	else if( titan.GetModelName() == $"models/titans/light/titan_light_locust.mdl"&& titan.GetCamo()== 3)
 	{
 		soul.s.TitanHasBeenChange <- true
 		SendHudMessage(player, "已切换为影杀，取消当前皮肤以使用原版浪人",  -1, 0.3, 200, 200, 225, 0, 0.15, 5, 1);
