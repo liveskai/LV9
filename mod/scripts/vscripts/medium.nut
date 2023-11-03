@@ -37,6 +37,7 @@ void function TitanEnhance( entity titan, TitanLoadoutDef loadout )
     {
 		loadout.setFileMods.fastremovebyvalue( "pas_mobility_dash_capacity" )
 		loadout.setFileMods.append( "sflag_bc_dash_capacity" )
+		loadout.setFileMods.append( "pas_dash_recharge" )
     }	
     if ( !SoulHasPassive( soul, ePassives.PAS_MOBILITY_DASH_CAPACITY  ) )
     {
