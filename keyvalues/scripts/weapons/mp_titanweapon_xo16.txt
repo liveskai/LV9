@@ -13,7 +13,7 @@ WeaponData
 		}
 		electric_rounds
 		{
-			"vortex_drain"							"0.03"
+			"vortex_drain"							"0.035"
 		}
 		fast_reload
 		{
