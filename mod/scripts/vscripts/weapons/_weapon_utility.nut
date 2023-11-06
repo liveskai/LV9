@@ -223,6 +223,7 @@ function WeaponUtility_Init()
 		if ( IsMultiplayer() )
 			AddCallback_OnPlayerRespawned( PROTO_TrackedProjectile_OnPlayerRespawned )
 		AddCallback_OnPlayerKilled( PAS_CooldownReduction_OnKill )
+		AddCallback_OnNPCKilled( PAS_CooldownReduction_OnKill )//击杀NPC也能恢复技能（战术击杀）
 		AddCallback_OnPlayerGetsNewPilotLoadout( OnPlayerGetsNewPilotLoadout )
 		AddCallback_OnPlayerKilled( OnPlayerKilled )
 
