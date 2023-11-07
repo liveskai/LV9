@@ -129,7 +129,7 @@ void function PlayerWatchesTTDMIntroIntermissionCam( entity player )
 
 void function AddTeamScoreForPlayerKilled( entity victim, entity attacker, var damageInfo )
 {
-	if ( victim == attacker || !victim.IsPlayer() || !attacker.IsPlayer() && GetGameState() == eGameState.Playing )
+	if ( victim == attacker || !victim.IsPlayer() || !attacker.IsPlayer() )
 		return
 
 	AddTeamScore( GetOtherTeam( victim.GetTeam() ), 1 )
