@@ -1,0 +1,13 @@
+WeaponData
+{//烈焰铝热剂
+	Mods
+	{
+		pas_scorch_weapon
+		{
+		}
+		fd_wpn_upgrade_1
+		{
+			"reload_alt_anim"			"1"
+		}
+	}
+}
