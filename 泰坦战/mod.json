@@ -2,7 +2,6 @@
     "Name": "LV9TTDM",
     "Description": "更多泰坦",
     "LoadPriority": 101,
-    "RequiredOnClient": false,
     "Scripts": [
 		{
 			"Path": "medium.nut",
