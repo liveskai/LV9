@@ -249,7 +249,7 @@ void function OnTitanfall( entity titan )
         titan.TakeOffhandWeapon( OFFHAND_SPECIAL )
 		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
 		
-		titan.GiveWeapon( "mp_titanweapon_xo16_shorty",["electric_rounds"] )
+		titan.GiveWeapon( "mp_titanweapon_xo16_shorty",["electric_rounds","spread"] )
 		titan.GiveWeapon( "mp_titanweapon_particle_accelerator",["burn_mod_titan_particle_accelerator"] )		
 		titan.GiveOffhandWeapon( "mp_titanweapon_vortex_shield", OFFHAND_SPECIAL,["slow_recovery_vortex","pas_defensive_core","sur_level_3"] )
 		titan.GiveOffhandWeapon( "mp_titanability_laser_trip", OFFHAND_TITAN_CENTER)
