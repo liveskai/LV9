@@ -2,7 +2,6 @@
     "Name": "LV9TTDM",
     "Description": "超好玩",
     "LoadPriority": 101,
-    "RequiredOnClient": false,
     "Scripts": [
         {
             "Path": "medium.nut",
