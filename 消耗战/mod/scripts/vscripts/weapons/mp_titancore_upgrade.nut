@@ -125,6 +125,23 @@ var function OnWeaponPrimaryAttack_UpgradeCore( entity weapon, WeaponPrimaryAtta
 		}
 		if ( currentUpgradeCount == 4 )
 		{
+			//Maelstrom强化烟
+			entity offhandWeapon = owner.GetOffhandWeapon( OFFHAND_INVENTORY )
+			if ( IsValid( offhandWeapon ) )
+			{
+				array<string> mods = offhandWeapon.GetMods()
+				mods.append( "maelstrom" )
+				offhandWeapon.SetMods( mods )
+			}
+			if ( owner.IsPlayer() )
+			{
+				int conversationID = GetConversationIndex( "upgradeTo2" )
+				Remote_CallFunction_Replay( owner, "ServerCallback_PlayTitanConversation", conversationID )
+				Remote_CallFunction_NonReplay( owner, "ServerCallback_VanguardUpgradeMessage", 5 )
+			}
+		}
+		if ( currentUpgradeCount == 5 )
+		{
 			//Energy Field能量场
 			entity offhandWeapon = owner.GetOffhandWeapon( OFFHAND_LEFT )
 			if ( IsValid( offhandWeapon ) )
@@ -151,7 +168,33 @@ var function OnWeaponPrimaryAttack_UpgradeCore( entity weapon, WeaponPrimaryAtta
 				Remote_CallFunction_NonReplay( owner, "ServerCallback_VanguardUpgradeMessage", 6 )
 			}
 		}
-		if ( currentUpgradeCount == 5 )
+		if ( currentUpgradeCount == 6 )
+		{
+			// Multi-Target Missiles追踪导弹
+			if ( owner.IsPlayer() )
+			{
+				array<string> conversations = [ "upgradeTo3", "upgradeToFin" ]
+				int conversationID = GetConversationIndex( conversations.getrandom() )
+				Remote_CallFunction_Replay( owner, "ServerCallback_PlayTitanConversation", conversationID )
+				Remote_CallFunction_NonReplay( owner, "ServerCallback_VanguardUpgradeMessage", 7 )
+			}
+
+			entity ordnance = owner.GetOffhandWeapon( OFFHAND_RIGHT )
+			array<string> mods
+			if ( ordnance.HasMod( "missile_racks") )
+				mods = [ "extended_smart_ammo_range" ]
+			else
+				mods = [ "upgradeCore_Vanguard" ]
+
+				mods.append( "fd_balance" )
+
+			float ammoFrac = float( ordnance.GetWeaponPrimaryClipCount() ) / float( ordnance.GetWeaponPrimaryClipCountMax() )
+			owner.TakeWeaponNow( ordnance.GetWeaponClassName() )
+			owner.GiveOffhandWeapon( "mp_titanweapon_shoulder_rockets", OFFHAND_RIGHT, mods )
+			ordnance = owner.GetOffhandWeapon( OFFHAND_RIGHT )
+			// ordnance.SetWeaponChargeFractionForced( 1 - ammoFrac )升级追踪导弹直接恢复
+		}
+		if ( currentUpgradeCount == 7 )
 		{
 			//Superior Chassis高级机种
 			if ( owner.IsPlayer() )
@@ -187,49 +230,6 @@ var function OnWeaponPrimaryAttack_UpgradeCore( entity weapon, WeaponPrimaryAtta
 			}
 			entity soul = owner.GetTitanSoul()
 			soul.SetPreventCrits( true )
-		}	
-		if ( currentUpgradeCount == 6 )
-		{
-			// Multi-Target Missiles追踪导弹
-			if ( owner.IsPlayer() )
-			{
-				array<string> conversations = [ "upgradeTo3", "upgradeToFin" ]
-				int conversationID = GetConversationIndex( conversations.getrandom() )
-				Remote_CallFunction_Replay( owner, "ServerCallback_PlayTitanConversation", conversationID )
-				Remote_CallFunction_NonReplay( owner, "ServerCallback_VanguardUpgradeMessage", 7 )
-			}
-
-			entity ordnance = owner.GetOffhandWeapon( OFFHAND_RIGHT )
-			array<string> mods
-			if ( ordnance.HasMod( "missile_racks") )
-				mods = [ "extended_smart_ammo_range" ]
-			else
-				mods = [ "upgradeCore_Vanguard" ]
-				
-			mods.append( "fd_balance" )
-
-			float ammoFrac = float( ordnance.GetWeaponPrimaryClipCount() ) / float( ordnance.GetWeaponPrimaryClipCountMax() )
-			owner.TakeWeaponNow( ordnance.GetWeaponClassName() )
-			owner.GiveOffhandWeapon( "mp_titanweapon_shoulder_rockets", OFFHAND_RIGHT, mods )
-			ordnance = owner.GetOffhandWeapon( OFFHAND_RIGHT )
-			ordnance.SetWeaponChargeFractionForced( 1 - ammoFrac )
-		}
-		if ( currentUpgradeCount == 7 )
-		{
-			//Maelstrom强化烟
-			entity offhandWeapon = owner.GetOffhandWeapon( OFFHAND_INVENTORY )
-			if ( IsValid( offhandWeapon ) )
-			{
-				array<string> mods = offhandWeapon.GetMods()
-				mods.append( "maelstrom" )
-				offhandWeapon.SetMods( mods )
-			}
-			if ( owner.IsPlayer() )
-			{
-				int conversationID = GetConversationIndex( "upgradeTo2" )
-				Remote_CallFunction_Replay( owner, "ServerCallback_PlayTitanConversation", conversationID )
-				Remote_CallFunction_NonReplay( owner, "ServerCallback_VanguardUpgradeMessage", 5 )
-			}
 		}	
 		if ( currentUpgradeCount == 8 )
 		{
