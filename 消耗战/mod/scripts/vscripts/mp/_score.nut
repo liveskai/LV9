@@ -528,8 +528,8 @@ void function ScoreEvent_SetupEarnMeterValuesForMixedModes() // mixed modes in t
 		return
 
 	// pilot kill
-	ScoreEvent_SetEarnMeterValues( "KillPilot", 0.10, 0.05 )
-	ScoreEvent_SetEarnMeterValues( "EliminatePilot", 0.10, 0.05 )
+	ScoreEvent_SetEarnMeterValues( "KillPilot", 0.2, 0.05 )
+	ScoreEvent_SetEarnMeterValues( "EliminatePilot", 0.2, 0.05 )
 	ScoreEvent_SetEarnMeterValues( "PilotAssist", 0.03, 0.020001, 0.0 ) // if set to "0.03, 0.02", will display as "4%"
 	// titan kill
 	ScoreEvent_SetEarnMeterValues( "DoomTitan", 0.0, 0.0 )
