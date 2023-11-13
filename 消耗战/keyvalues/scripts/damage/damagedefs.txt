@@ -38,5 +38,29 @@ DamageDefs
 		"damage" 			"50"
 		"damage_heavy_armor"		"0"
 	}
+	damagedef_trip_wire
+	{
+	}
 
+	damagedef_reaper_groundslam
+	{
+	}
+	damagedef_reaper_nuke
+	{
+	}
+
+	damagedef_frag_drone_explode
+	{
+	}
+
+	damagedef_frag_drone_explode_FD
+	{
+	}
+
+	damagedef_frag_drone_throwable_PLAYER
+	{
+		"damage" 					"300"	[$mp]
+		"damage_heavy_armor"		"1000"
+		"inner_radius"				"350"	[$mp]
+	}
 }
