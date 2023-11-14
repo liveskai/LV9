@@ -134,13 +134,12 @@ void function OnPlayerConnected( entity player )
 // Used to handle both player and ai events
 void function HandleScoreEvent( entity victim, entity attacker, var damageInfo )
 {
-	if ( victim == attacker || !( attacker.IsPlayer() || attacker.IsTitan() )  )
-		return	
-	if ( victim.GetOwner() == attacker )
+	if ( !VictimIsValidForAITdmScore( victim ) )
 		return
-	// NPC titans without an owner player will not count towards any team's score
-	if ( attacker.IsNPC() && attacker.IsTitan() && !IsValid( GetPetTitanOwner( attacker ) ) )
+	
+	if ( !AttackerIsValidForAITdmScore( victim, attacker, damageInfo ) )
 		return
+
 	int playerScore
 	string eventName
 	
@@ -206,6 +205,8 @@ bool function AttackerIsValidForAITdmScore( entity victim, entity attacker, var 
 
 bool function VictimIsValidForAITdmScore( entity victim )
 {
+	if( IsTurret (victim) )//使击杀炮塔得分
+		return true
 	// if victim is a non-titan npc that owned by players, don't add score
 	if ( victim.IsNPC() && !victim.IsTitan() )
 	{
@@ -214,11 +215,6 @@ bool function VictimIsValidForAITdmScore( entity victim )
 		if ( IsValid( bossPlayer ) )
 		{
 			if ( bossPlayer.IsPlayer() )
-				return false
-		}
-		if ( IsValid( owner ) )
-		{
-			if ( owner.IsPlayer() )
 				return false
 		}
 	}
