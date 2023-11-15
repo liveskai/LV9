@@ -108,7 +108,7 @@ global const PROJECTILE_NOT_LAG_COMPENSATED = false
 
 const float EMP_SEVERITY_SLOWTURN = 0.35
 const float EMP_SEVERITY_SLOWMOVE = 0.50
-const float LASER_STUN_SEVERITY_SLOWTURN = 0
+const float LASER_STUN_SEVERITY_SLOWTURN = 0.20
 const float LASER_STUN_SEVERITY_SLOWMOVE = 0.30
 
 const asset FX_EMP_BODY_HUMAN			= $"P_emp_body_human"
@@ -2775,6 +2775,8 @@ void function PAS_CooldownReduction_OnKill( entity victim, entity attacker, var 
 	if ( GetCurrentPlaylistVarInt( "featured_mode_tactikill", 0 ) > 0 )
 	{
 		entity weapon = attacker.GetOffhandWeapon( OFFHAND_LEFT )
+		if ( !IsValid(weapon) )
+			return
 
 		switch ( GetWeaponInfoFileKeyField_Global( weapon.GetWeaponClassName(), "cooldown_type" ) )
 		{
@@ -2808,6 +2810,8 @@ void function PAS_CooldownReduction_OnKill( entity victim, entity attacker, var 
 			return
 
 		entity weapon = attacker.GetOffhandWeapon( OFFHAND_LEFT )
+		if ( !IsValid(weapon) )
+			return
 
 		switch ( GetWeaponInfoFileKeyField_Global( weapon.GetWeaponClassName(), "cooldown_type" ) )
 		{
