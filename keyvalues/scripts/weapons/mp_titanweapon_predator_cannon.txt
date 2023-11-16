@@ -29,6 +29,8 @@ WeaponData
 		}
 		LongRangePowerShot
 		{
+			"explosion_inner_radius"						"300"
+			"explosionradius" 							"300"
 		}
 		pas_LongRangePowerShot
 		{
