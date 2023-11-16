@@ -1,5 +1,6 @@
 WeaponData
 {//烈焰铝热剂
+	"instant_swap_to"								"1"
 	Mods
 	{
 		pas_scorch_weapon

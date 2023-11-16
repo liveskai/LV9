@@ -1,5 +1,6 @@
 WeaponData
 {//40毫米炮
+	"instant_swap_to"								"1"
 	Mods
 	{
 		gunship_gunner

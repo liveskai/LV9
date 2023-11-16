@@ -1,5 +1,6 @@
 WeaponData
 {//分裂枪
+	"instant_swap_to"								"1"
 	Mods
 	{
 		proto_particle_accelerator

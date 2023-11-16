@@ -1,5 +1,6 @@
 WeaponData
 {
+	"instant_swap_to"								"1"
 	Mods
 	{
 		accelerator
