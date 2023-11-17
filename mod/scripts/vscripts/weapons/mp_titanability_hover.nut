@@ -66,7 +66,7 @@ void function FlyerHovers( entity player, HoverSounds soundInfo, float flightTim
 	player.EndSignal( "VTOLHoverBegin" )
 	thread AirborneThink( player, soundInfo )
 
-	const float DEFAULT_HORIZ_SPEED = 350 // 水平速度限制
+	const float DEFAULT_HORIZ_SPEED = 250 // 水平速度限制
 	const float DEFAULT_HORIZ_ACCEL = 540 //水平加速度
 	
 	const float DEFAULT_VERTI_SPEED = 300 //垂直速度限制
