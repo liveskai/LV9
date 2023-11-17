@@ -8,7 +8,7 @@ WeaponData
 		}
 		fd_wpn_upgrade_1
 		{
-			"reload_alt_anim"			"0"
+			"reload_is_segmented"			"0"
 			"fire_rate"			"2.4"
 		}
 	}
