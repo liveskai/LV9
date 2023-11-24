@@ -90,7 +90,7 @@ void function OnTitanfall( entity titan )
 			TakePassive( soul, passive )
 		}
 	}
-	else if( titan.GetModelName() == $"models/titans/medium/titan_medium_vanguard.mdl" && titan.GetCamo() == -1 && titan.GetSkin() == 3 )
+	else if( titan.GetModelName() == $"models/titans/medium/titan_medium_vanguard.mdl" && titan.GetCamo() == -1 )
 	{
 		soul.s.TitanHasBeenChange <- true
 		SendHudMessage(player, "已切换为远征，取消\"边境帝王\"皮肤以使用原版帝王",  -1, 0.3, 200, 200, 225, 0, 0.15, 12, 1);
@@ -500,6 +500,43 @@ void function OnTitanfall( entity titan )
 			TakePassive( soul, passive )
 		}
 	}	
+	else if( titan.GetModelName() == $"models/titans/medium/titan_medium_vanguard.mdl"  && titan.GetCamo()== 26 )
+	{
+		soul.s.TitanHasBeenChange <- true
+		SendHudMessage(player, "使用军团装备，取消当前皮肤以使用原版帝王",  -1, 0.3, 200, 200, 225, 0, 0.15, 12, 1);
+		soul.s.titanTitle <- "BT軍團"
+
+		titan.TakeWeaponNow( weapon.GetWeaponClassName() )
+		titan.TakeOffhandWeapon( OFFHAND_ORDNANCE )
+		titan.TakeOffhandWeapon( OFFHAND_TITAN_CENTER )
+        titan.TakeOffhandWeapon( OFFHAND_SPECIAL )
+		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
+		
+		titan.GiveWeapon( "mp_titanweapon_predator_cannon_siege" )
+		titan.GiveOffhandWeapon( "mp_titanweapon_vortex_shield", OFFHAND_SPECIAL,["shield_only"] )
+		titan.GiveOffhandWeapon( "mp_titanability_hover", OFFHAND_TITAN_CENTER)
+		titan.GiveOffhandWeapon( "mp_ability_holopilot_nova", OFFHAND_ORDNANCE,["dev_mod_low_recharge"])
+		titan.GiveOffhandWeapon( "mp_titancore_siege_mode", OFFHAND_EQUIPMENT)
+
+		array<int> passives = [ ePassives.PAS_VANGUARD_COREMETER,
+								ePassives.PAS_VANGUARD_SHIELD,
+								ePassives.PAS_VANGUARD_REARM,
+								ePassives.PAS_VANGUARD_DOOM,
+								ePassives.PAS_VANGUARD_CORE1,
+								ePassives.PAS_VANGUARD_CORE2,
+								ePassives.PAS_VANGUARD_CORE3,
+								ePassives.PAS_VANGUARD_CORE4,
+								ePassives.PAS_VANGUARD_CORE5,
+								ePassives.PAS_VANGUARD_CORE6,
+								ePassives.PAS_VANGUARD_CORE7,
+								ePassives.PAS_VANGUARD_CORE8,
+								ePassives.PAS_VANGUARD_CORE9 ]
+		foreach( passive in passives )
+		{
+			TakePassive( soul, passive )
+		}
+		GivePassive(soul,ePassives.PAS_NORTHSTAR_FLIGHTCORE)
+	}
 }
 
 void function DelayEMPThread( entity soul )
