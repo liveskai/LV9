@@ -1,31 +1,34 @@
 WeaponData
 {//加特林
-"ammo_no_remove_from_clip"						"1"
+	MP_BASE
+	{
+		"damage_near_value_titanarmor"					"120"
+		"damage_far_value_titanarmor" 					"100"
+	}
+	"ammo_no_remove_from_clip"						"1"
 	Mods
 	{
 		LongRangeAmmo
 		{
-			"damage_far_value_titanarmor" 					"100"
+			"damage_far_value_titanarmor" 					"120"
 			"damage_far_value"							"35"
 		}
 		Smart_Core
 		{
-			"damage_near_value_titanarmor"					"*1.2"
-			"damage_far_value_titanarmor" 					"*1.2"
 		}
 		CloseRangePowerShot
 		{
 		}
 		pas_CloseRangePowerShot
 		{
+			"damage_near_value_titanarmor"					"*1"
+			"damage_far_value_titanarmor"					"*1"
 		}
 		fd_closerange_helper
 		{
-
 		}
 		fd_CloseRangePowerShot
 		{
-			
 		}
 		LongRangePowerShot
 		{
@@ -37,6 +40,5 @@ WeaponData
 			"damage_near_value_titanarmor"					"*1"
 			"damage_far_value_titanarmor"					"*1"
 		}
-
 	}
 }
