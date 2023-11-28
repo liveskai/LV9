@@ -90,7 +90,7 @@ void function OnTitanfall( entity titan )
 			TakePassive( soul, passive )
 		}
 	}
-	else if( titan.GetModelName() == $"models/titans/medium/titan_medium_vanguard.mdl" && titan.GetCamo() == -1 )
+	else if( titan.GetModelName() == $"models/titans/medium/titan_medium_vanguard.mdl" && titan.GetCamo() == -1 && titan.GetSkin() == 3 )
 	{
 		soul.s.TitanHasBeenChange <- true
 		SendHudMessage(player, "已切换为远征，取消\"边境帝王\"皮肤以使用原版帝王",  -1, 0.3, 200, 200, 225, 0, 0.15, 12, 1);
