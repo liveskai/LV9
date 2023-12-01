@@ -1,5 +1,11 @@
-untyped //entity.s need this
+untyped
 global function medium_Init
+
+global function Replace_OFFHAND_RIGHT
+global function Replace_OFFHAND_ANTIRODEO
+global function Replace_OFFHAND_LEFT
+global function Replace_OFFHAND_EQUIPMENT
+global function TakeTitanPassives
 
 const DAMAGE_AGAINST_TITANS 			= 45
 const DAMAGE_AGAINST_PILOTS 			= 12
@@ -16,6 +22,77 @@ void function medium_Init()
 	AddCallback_OnTitanGetsNewTitanLoadout( TitanEnhance )
 }
 
+void function Replace_OFFHAND_RIGHT( entity titan, string offhandName, array<string> mods = [] )
+{
+	titan.TakeOffhandWeapon( OFFHAND_RIGHT )
+	titan.GiveOffhandWeapon( offhandName, OFFHAND_RIGHT, mods )
+}
+void function Replace_OFFHAND_ANTIRODEO( entity titan, string offhandName, array<string> mods = [] )
+{
+	titan.TakeOffhandWeapon( OFFHAND_ANTIRODEO )
+	titan.GiveOffhandWeapon( offhandName, OFFHAND_ANTIRODEO, mods )
+}
+void function Replace_OFFHAND_LEFT( entity titan, string offhandName, array<string> mods = [] )
+{
+	titan.TakeOffhandWeapon( OFFHAND_LEFT )
+	titan.GiveOffhandWeapon( offhandName, OFFHAND_LEFT, mods )
+}
+void function Replace_OFFHAND_EQUIPMENT( entity titan, string offhandName, array<string> mods = [] )
+{
+	titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
+	titan.GiveOffhandWeapon( offhandName, OFFHAND_EQUIPMENT, mods )
+}
+function TakeTitanPassives( entity titan )
+{
+	entity soul = titan.GetTitanSoul()
+	array<int> passives = [ ePassives.PAS_RONIN_WEAPON,
+								ePassives.PAS_NORTHSTAR_WEAPON,
+								ePassives.PAS_ION_WEAPON,
+								ePassives.PAS_TONE_WEAPON,
+								ePassives.PAS_SCORCH_WEAPON,
+								ePassives.PAS_LEGION_WEAPON,
+								ePassives.PAS_ION_TRIPWIRE,
+								ePassives.PAS_ION_VORTEX,
+								ePassives.PAS_ION_LASERCANNON,
+								ePassives.PAS_TONE_ROCKETS,
+								ePassives.PAS_TONE_SONAR,
+								ePassives.PAS_TONE_WALL,
+								ePassives.PAS_RONIN_ARCWAVE,
+								ePassives.PAS_RONIN_PHASE,
+								ePassives.PAS_RONIN_SWORDCORE,
+								ePassives.PAS_NORTHSTAR_CLUSTER,
+								ePassives.PAS_NORTHSTAR_TRAP,
+								ePassives.PAS_NORTHSTAR_FLIGHTCORE,
+								ePassives.PAS_SCORCH_FIREWALL,
+								ePassives.PAS_SCORCH_SHIELD,
+								ePassives.PAS_SCORCH_SELFDMG,
+								ePassives.PAS_LEGION_SPINUP,
+								ePassives.PAS_LEGION_GUNSHIELD,
+								ePassives.PAS_LEGION_SMARTCORE,
+								ePassives.PAS_ION_WEAPON_ADS,
+								ePassives.PAS_TONE_BURST,
+								ePassives.PAS_LEGION_CHARGESHOT,
+								ePassives.PAS_RONIN_AUTOSHIFT,
+								ePassives.PAS_NORTHSTAR_OPTICS,
+								ePassives.PAS_SCORCH_FLAMECORE,
+								ePassives.PAS_VANGUARD_COREMETER,
+								ePassives.PAS_VANGUARD_SHIELD,
+								ePassives.PAS_VANGUARD_REARM,
+								ePassives.PAS_VANGUARD_DOOM,
+								ePassives.PAS_VANGUARD_CORE1,
+								ePassives.PAS_VANGUARD_CORE2,
+								ePassives.PAS_VANGUARD_CORE3,
+								ePassives.PAS_VANGUARD_CORE4,
+								ePassives.PAS_VANGUARD_CORE5,
+								ePassives.PAS_VANGUARD_CORE6,
+								ePassives.PAS_VANGUARD_CORE7,
+								ePassives.PAS_VANGUARD_CORE8,
+								ePassives.PAS_VANGUARD_CORE9]
+	foreach( passive in passives )
+	{
+		TakePassive( soul, passive )
+	}
+}
 void function SetPlayerTitanTitle( entity player, entity titan )
 {
 	entity soul = player.GetTitanSoul()
@@ -61,34 +138,19 @@ void function OnTitanfall( entity titan )
 	if( !IsValid( soul ) )	//如果soul == null，我们应该直接return，防止执行后面的soul.s.TitanHasBeenChange <- true时报错
 		return
 	foreach ( entity weapon in titan.GetMainWeapons() )
-	if( titan.GetModelName() == $"models/titans/light/titan_light_northstar_prime.mdl" )	//检查玩家的模型
+	if( titan.GetModelName() == $"models/titans/light/titan_light_northstar_prime.mdl" )	//检查泰坦的模型
 	{
 		soul.s.TitanHasBeenChange <- true
 		SendHudMessage(player, "已切换为野兽，取消至尊泰坦以使用原版北极星",  -1, 0.3, 200, 200, 225, 0, 0.15, 5, 1);
 		soul.s.titanTitle <- "野獸"	//众所周知，当玩家上泰坦时不会按照我们的意愿设置标题的，所以这边整个变量让玩家上泰坦时读取这个然后写上
 		soul.soul.titanLoadout.titanExecution = "execution_northstar_prime"
-
-        titan.TakeWeaponNow( weapon.GetWeaponClassName() )
-        titan.TakeOffhandWeapon( OFFHAND_ORDNANCE )
-		titan.TakeOffhandWeapon( OFFHAND_TITAN_CENTER )
-        titan.TakeOffhandWeapon( OFFHAND_SPECIAL )
-		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
 		
+		TakeTitanPassives(titan)
+        titan.TakeWeaponNow( weapon.GetWeaponClassName() )
         titan.GiveWeapon( "mp_titanweapon_rocketeer_rocketstream",["sp_s2s_settings"] )
-		titan.GiveOffhandWeapon( "mp_titanweapon_vortex_shield", OFFHAND_SPECIAL,["slow_recovery_vortex"] )
-		titan.GiveOffhandWeapon( "mp_titanability_hover", OFFHAND_TITAN_CENTER )
-      	titan.GiveOffhandWeapon( "mp_titanweapon_shoulder_rockets", OFFHAND_ORDNANCE,["extended_smart_ammo_range"] )
-		titan.GiveOffhandWeapon( "mp_titancore_flight_core", OFFHAND_EQUIPMENT )
-
-		array<int> passives = [ ePassives.PAS_NORTHSTAR_WEAPON,
-								ePassives.PAS_NORTHSTAR_CLUSTER,
-								ePassives.PAS_NORTHSTAR_TRAP,
-								ePassives.PAS_NORTHSTAR_FLIGHTCORE,
-								ePassives.PAS_NORTHSTAR_OPTICS ]
-		foreach( passive in passives )
-		{
-			TakePassive( soul, passive )
-		}
+		
+		Replace_OFFHAND_RIGHT( titan, "mp_titanweapon_shoulder_rockets",["extended_smart_ammo_range"] )
+		Replace_OFFHAND_LEFT( titan, "mp_titanweapon_vortex_shield",["slow_recovery_vortex"] )
 	}
 	else if( titan.GetModelName() == $"models/titans/medium/titan_medium_vanguard.mdl" && titan.GetCamo() == -1 && titan.GetSkin() == 3 )
 	{
@@ -96,146 +158,74 @@ void function OnTitanfall( entity titan )
 		SendHudMessage(player, "已切换为远征，取消\"边境帝王\"皮肤以使用原版帝王",  -1, 0.3, 200, 200, 225, 0, 0.15, 12, 1);
 		soul.s.titanTitle <- "遠征"
 		
+		TakeTitanPassives(titan)//移除所有被动
         titan.TakeWeaponNow( weapon.GetWeaponClassName() )
-        titan.TakeOffhandWeapon( OFFHAND_ORDNANCE )
-		titan.TakeOffhandWeapon( OFFHAND_TITAN_CENTER )
-        titan.TakeOffhandWeapon( OFFHAND_SPECIAL )
-		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
-		
 		titan.GiveWeapon( "mp_titanweapon_xo16_shorty",["fast_reload"] )
-		titan.GiveOffhandWeapon( "mp_titanweapon_vortex_shield", OFFHAND_SPECIAL,["slow_recovery_vortex"] )
-		titan.GiveOffhandWeapon( "mp_titanability_smoke", OFFHAND_TITAN_CENTER,["burn_mod_titan_smoke","maelstrom"] )
-		titan.GiveOffhandWeapon( "mp_titanweapon_shoulder_rockets", OFFHAND_ORDNANCE,["extended_smart_ammo_range"] )
-		titan.GiveOffhandWeapon( "mp_titancore_amp_core", OFFHAND_EQUIPMENT )
-
-		array<int> passives = [ ePassives.PAS_VANGUARD_COREMETER,
-								ePassives.PAS_VANGUARD_SHIELD,
-								ePassives.PAS_VANGUARD_REARM,
-								ePassives.PAS_VANGUARD_DOOM,
-								ePassives.PAS_VANGUARD_CORE1,
-								ePassives.PAS_VANGUARD_CORE2,
-								ePassives.PAS_VANGUARD_CORE3,
-								ePassives.PAS_VANGUARD_CORE4,
-								ePassives.PAS_VANGUARD_CORE5,
-								ePassives.PAS_VANGUARD_CORE6,
-								ePassives.PAS_VANGUARD_CORE7,
-								ePassives.PAS_VANGUARD_CORE8,
-								ePassives.PAS_VANGUARD_CORE9 ]
-		foreach( passive in passives )
-		{
-			TakePassive( soul, passive )
-		}
+		
+		Replace_OFFHAND_RIGHT( titan, "mp_titanweapon_shoulder_rockets",["extended_smart_ammo_range"] )
+		Replace_OFFHAND_LEFT( titan, "mp_titanweapon_vortex_shield",["slow_recovery_vortex"] )
+		Replace_OFFHAND_ANTIRODEO( titan, "mp_titanability_smoke",["burn_mod_titan_smoke","maelstrom"] )
+		Replace_OFFHAND_EQUIPMENT( titan, "mp_titancore_amp_core" )		
 	}
 	else if( titan.GetModelName() == $"models/titans/heavy/titan_heavy_legion_prime.mdl" )
 	{
 		soul.s.TitanHasBeenChange <- true
 		SendHudMessage(player, "取消至尊泰坦以使用原版军团",  -1, 0.3, 200, 200, 225, 0, 0.15, 5, 1);
 		soul.s.titanTitle <- "至尊軍團"
-
+		
+		TakeTitanPassives(titan)
         titan.TakeWeaponNow( weapon.GetWeaponClassName() )
 		titan.GiveWeapon( "mp_titanweapon_xo16_shorty", [ "accelerator","spread"] )
 		
-		titan.TakeOffhandWeapon( OFFHAND_ORDNANCE )
-		titan.TakeOffhandWeapon( OFFHAND_TITAN_CENTER )
-        titan.TakeOffhandWeapon( OFFHAND_SPECIAL )
-		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
-		
-		titan.GiveOffhandWeapon( "mp_titanability_smoke", OFFHAND_TITAN_CENTER)
-		titan.GiveOffhandWeapon( "mp_titanability_particle_wall", OFFHAND_SPECIAL)
-		titan.GiveOffhandWeapon( "mp_titanweapon_orbital_strike", OFFHAND_ORDNANCE,["burn_mod_titan_salvo_rockets"] )
-		titan.GiveOffhandWeapon( "mp_titancore_flame_wave", OFFHAND_EQUIPMENT )
+		Replace_OFFHAND_LEFT( titan, "mp_titanability_particle_wall" )
+		Replace_OFFHAND_RIGHT( titan, "mp_titanweapon_orbital_strike",["burn_mod_titan_salvo_rockets"] )
+		Replace_OFFHAND_ANTIRODEO( titan, "mp_titanability_smoke" )
+		Replace_OFFHAND_EQUIPMENT( titan, "mp_titancore_flame_wave")		
 	}
 	else if( titan.GetModelName() == $"models/titans/medium/titan_medium_tone_prime.mdl" )
 	{
 		soul.s.TitanHasBeenChange <- true
 		SendHudMessage(player, "取消至尊泰坦以使用原版强力",  -1, 0.3, 200, 200, 225, 0, 0.15, 5, 1);
 		soul.s.titanTitle <- "至尊強力"
-
+		
+		TakeTitanPassives(titan)
         titan.TakeWeaponNow( weapon.GetWeaponClassName() )
 		titan.GiveWeapon( "mp_titanweapon_sticky_40mm", [ "splasher_rounds","extended_ammo","burn_mod_titan_40mm","fast_reload","sur_level_1"] )
 		
-		titan.TakeOffhandWeapon( OFFHAND_ORDNANCE )
-		titan.TakeOffhandWeapon( OFFHAND_TITAN_CENTER )
-        titan.TakeOffhandWeapon( OFFHAND_SPECIAL )
-		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
-		
-		titan.GiveOffhandWeapon( "mp_titanweapon_vortex_shield_ion", OFFHAND_SPECIAL)
-		titan.GiveOffhandWeapon( "mp_ability_holopilot_nova", OFFHAND_TITAN_CENTER,["dev_mod_low_recharge"])
-		titan.GiveOffhandWeapon( "mp_titanweapon_homing_rockets", OFFHAND_ORDNANCE,["burn_mod_titan_homing_rockets","mod_ordnance_core"] )
-		titan.GiveOffhandWeapon( "mp_titancore_salvo_core", OFFHAND_EQUIPMENT)
-
-		array<int> passives = [ ePassives.PAS_TONE_WEAPON,
-								ePassives.PAS_TONE_ROCKETS,
-								ePassives.PAS_TONE_SONAR,
-								ePassives.PAS_TONE_WALL,
-								ePassives.PAS_TONE_BURST ]
-		foreach( passive in passives )
-		{
-			TakePassive( soul, passive )
-		}
+		Replace_OFFHAND_LEFT( titan, "mp_titanweapon_vortex_shield_ion" )
+		Replace_OFFHAND_RIGHT( titan, "mp_titanweapon_homing_rockets",["burn_mod_titan_homing_rockets","mod_ordnance_core"] )
+		Replace_OFFHAND_ANTIRODEO( titan, "mp_ability_holopilot_nova",["dev_mod_low_recharge"] )
+		Replace_OFFHAND_EQUIPMENT( titan, "mp_titancore_salvo_core")
 	}
 	else if( titan.GetModelName() == $"models/titans/medium/titan_medium_ion_prime.mdl" )
 	{
 		soul.s.TitanHasBeenChange <- true
 		SendHudMessage(player, "取消至尊泰坦以使用原版离子",  -1, 0.3, 200, 200, 225, 0, 0.15, 5, 1);
 		soul.s.titanTitle <- "至尊離子"
-
-        titan.TakeWeaponNow( weapon.GetWeaponClassName() )
-		titan.TakeOffhandWeapon( OFFHAND_ORDNANCE )
-		titan.TakeOffhandWeapon( OFFHAND_TITAN_CENTER )
-        titan.TakeOffhandWeapon( OFFHAND_SPECIAL )
-		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
 		
+		TakeTitanPassives(titan)
+        titan.TakeWeaponNow( weapon.GetWeaponClassName() )
 		titan.GiveWeapon( "mp_titanweapon_arc_cannon",["capacitor"] )
-		titan.GiveOffhandWeapon( "mp_titanweapon_vortex_shield", OFFHAND_SPECIAL,["burn_mod_titan_vortex_shield"])
-		titan.GiveOffhandWeapon( "mp_ability_shifter", OFFHAND_TITAN_CENTER,["long_last_shifter","pas_power_cell"])
-		titan.GiveOffhandWeapon( "mp_titanweapon_stun_laser", OFFHAND_ORDNANCE)
-		titan.GiveOffhandWeapon( "mp_titancore_shift_core", OFFHAND_EQUIPMENT,["dash_core"])
-
-		array<int> passives = [ ePassives.PAS_ION_WEAPON,
-								ePassives.PAS_ION_TRIPWIRE,
-								ePassives.PAS_ION_VORTEX,
-								ePassives.PAS_ION_LASERCANNON,
-								ePassives.PAS_ION_WEAPON_ADS ]
-		foreach( passive in passives )
-		{
-			TakePassive( soul, passive )
-		}
+		
+		Replace_OFFHAND_LEFT( titan, "mp_titanweapon_vortex_shield",["burn_mod_titan_vortex_shield"] )
+		Replace_OFFHAND_RIGHT( titan, "mp_titanweapon_stun_laser" )
+		Replace_OFFHAND_ANTIRODEO( titan, "mp_ability_shifter",["long_last_shifter","pas_power_cell"] )
+		Replace_OFFHAND_EQUIPMENT( titan, "mp_titancore_shift_core",["dash_core"])				
 	}
 	else if( titan.GetModelName() == $"models/titans/medium/titan_medium_vanguard.mdl"  && titan.GetCamo() == 1 )
 	{
 		soul.s.TitanHasBeenChange <- true
 		SendHudMessage(player, "切换为疾风，取消当前皮肤以使用原版帝王",  -1, 0.3, 200, 200, 225, 0, 0.15, 12, 1);
 		soul.s.titanTitle <- "疾風"
-	
-		titan.TakeWeaponNow( weapon.GetWeaponClassName() )
-        titan.TakeOffhandWeapon( OFFHAND_ORDNANCE )
-		titan.TakeOffhandWeapon( OFFHAND_TITAN_CENTER )
-        titan.TakeOffhandWeapon( OFFHAND_SPECIAL )
-		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
 		
+		TakeTitanPassives(titan)
+		titan.TakeWeaponNow( weapon.GetWeaponClassName() )		
 		titan.GiveWeapon( "mp_titanweapon_xo16_vanguard",["battle_rifle","battle_rifle_icon"] )
-		titan.GiveOffhandWeapon( "mp_titanweapon_vortex_shield", OFFHAND_SPECIAL,["vortex_extended_effect_and_no_use_penalty"])
-		titan.GiveOffhandWeapon( "mp_titanability_phase_dash", OFFHAND_TITAN_CENTER)
-		titan.GiveOffhandWeapon( "mp_titanweapon_salvo_rockets", OFFHAND_ORDNANCE,["burn_mod_titan_salvo_rockets"] )
-		titan.GiveOffhandWeapon( "mp_titancore_shift_core", OFFHAND_EQUIPMENT,["dash_core"])
-		array<int> passives = [ ePassives.PAS_VANGUARD_COREMETER,
-								ePassives.PAS_VANGUARD_SHIELD,
-								ePassives.PAS_VANGUARD_REARM,
-								ePassives.PAS_VANGUARD_DOOM,
-								ePassives.PAS_VANGUARD_CORE1,
-								ePassives.PAS_VANGUARD_CORE2,
-								ePassives.PAS_VANGUARD_CORE3,
-								ePassives.PAS_VANGUARD_CORE4,
-								ePassives.PAS_VANGUARD_CORE5,
-								ePassives.PAS_VANGUARD_CORE6,
-								ePassives.PAS_VANGUARD_CORE7,
-								ePassives.PAS_VANGUARD_CORE8,
-								ePassives.PAS_VANGUARD_CORE9 ]
-		foreach( passive in passives )
-		{
-			TakePassive( soul, passive )
-		}
+		
+		Replace_OFFHAND_LEFT( titan, "mp_titanweapon_vortex_shield",["vortex_extended_effect_and_no_use_penalty"] )
+		Replace_OFFHAND_RIGHT( titan, "mp_titanweapon_salvo_rockets" ,["burn_mod_titan_salvo_rockets"])
+		Replace_OFFHAND_ANTIRODEO( titan, "mp_titanability_phase_dash")
+		Replace_OFFHAND_EQUIPMENT( titan, "mp_titancore_shift_core",["dash_core"])	
 	}
 	else if( titan.GetModelName() == $"models/titans/medium/titan_medium_vanguard.mdl" && titan.GetCamo() ==  2 )
 	{//离子装备
@@ -243,36 +233,16 @@ void function OnTitanfall( entity titan )
 		SendHudMessage(player, "使用离子装备，取消当前皮肤以使用原版帝王",  -1, 0.3, 200, 200, 225, 0, 0.15, 12, 1);
 		soul.s.titanTitle <- "BT離子"
 
-		titan.TakeWeaponNow( weapon.GetWeaponClassName() )
-        titan.TakeOffhandWeapon( OFFHAND_ORDNANCE )
-		titan.TakeOffhandWeapon( OFFHAND_TITAN_CENTER )
-        titan.TakeOffhandWeapon( OFFHAND_SPECIAL )
-		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
-		
+		TakeTitanPassives(titan)
+		titan.TakeWeaponNow( weapon.GetWeaponClassName() )	
 		titan.GiveWeapon( "mp_titanweapon_xo16_shorty",["electric_rounds","spread"] )
 		titan.GiveWeapon( "mp_titanweapon_particle_accelerator",["burn_mod_titan_particle_accelerator"] )		
-		titan.GiveOffhandWeapon( "mp_titanweapon_vortex_shield", OFFHAND_SPECIAL,["slow_recovery_vortex","pas_defensive_core","sur_level_3"] )
-		titan.GiveOffhandWeapon( "mp_titanability_laser_trip", OFFHAND_TITAN_CENTER)
-		titan.GiveOffhandWeapon( "mp_titanweapon_laser_lite", OFFHAND_ORDNANCE )
-		titan.GiveOffhandWeapon( "mp_titancore_laser_cannon", OFFHAND_EQUIPMENT,["super_laser_core"])
 		titan.SetActiveWeaponByName("mp_titanweapon_particle_accelerator")
-		array<int> passives = [ ePassives.PAS_VANGUARD_COREMETER,
-								ePassives.PAS_VANGUARD_SHIELD,
-								ePassives.PAS_VANGUARD_REARM,
-								ePassives.PAS_VANGUARD_DOOM,
-								ePassives.PAS_VANGUARD_CORE1,
-								ePassives.PAS_VANGUARD_CORE2,
-								ePassives.PAS_VANGUARD_CORE3,
-								ePassives.PAS_VANGUARD_CORE4,
-								ePassives.PAS_VANGUARD_CORE5,
-								ePassives.PAS_VANGUARD_CORE6,
-								ePassives.PAS_VANGUARD_CORE7,
-								ePassives.PAS_VANGUARD_CORE8,
-								ePassives.PAS_VANGUARD_CORE9 ]
-		foreach( passive in passives )
-		{
-			TakePassive( soul, passive )
-		}
+		
+		Replace_OFFHAND_LEFT( titan, "mp_titanweapon_vortex_shield",["slow_recovery_vortex","pas_defensive_core","sur_level_3"])
+		Replace_OFFHAND_RIGHT( titan, "mp_titanweapon_laser_lite")
+		Replace_OFFHAND_ANTIRODEO( titan, "mp_titanability_laser_trip")
+		Replace_OFFHAND_EQUIPMENT( titan, "mp_titancore_laser_cannon",["super_laser_core"])			
 	}
 	else if( titan.GetModelName() == $"models/titans/medium/titan_medium_vanguard.mdl" && titan.GetCamo() == 3 )
 	{//强力装备
@@ -280,36 +250,15 @@ void function OnTitanfall( entity titan )
 		SendHudMessage(player, "使用强力装备，取消当前皮肤以使用原版帝王",  -1, 0.3, 200, 200, 225, 0, 0.15, 12, 1);
 		soul.s.titanTitle <- "BT強力"
 
-         titan.TakeWeaponNow( weapon.GetWeaponClassName() )
-        titan.TakeOffhandWeapon( OFFHAND_ORDNANCE )
-		titan.TakeOffhandWeapon( OFFHAND_TITAN_CENTER )
-        titan.TakeOffhandWeapon( OFFHAND_SPECIAL )
-		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
-		
+		TakeTitanPassives(titan)
+        titan.TakeWeaponNow( weapon.GetWeaponClassName() )
 		titan.GiveWeapon( "mp_titanweapon_xo16_shorty",["extended_ammo"] )
 		titan.GiveWeapon( "mp_titanweapon_sticky_40mm",["mortar_shots","sur_level_3","fast_reload"] )
-		titan.GiveOffhandWeapon( "mp_titanability_particle_wall", OFFHAND_SPECIAL,["pas_defensive_core"] )
-		titan.GiveOffhandWeapon( "mp_titanability_sonar_pulse", OFFHAND_TITAN_CENTER)
-		titan.GiveOffhandWeapon( "mp_titanweapon_homing_rockets", OFFHAND_ORDNANCE,["burn_mod_titan_homing_rockets"] )
-		titan.GiveOffhandWeapon( "mp_titancore_salvo_core", OFFHAND_EQUIPMENT)
-
-		array<int> passives = [ ePassives.PAS_VANGUARD_COREMETER,
-								ePassives.PAS_VANGUARD_SHIELD,
-								ePassives.PAS_VANGUARD_REARM,
-								ePassives.PAS_VANGUARD_DOOM,
-								ePassives.PAS_VANGUARD_CORE1,
-								ePassives.PAS_VANGUARD_CORE2,
-								ePassives.PAS_VANGUARD_CORE3,
-								ePassives.PAS_VANGUARD_CORE4,
-								ePassives.PAS_VANGUARD_CORE5,
-								ePassives.PAS_VANGUARD_CORE6,
-								ePassives.PAS_VANGUARD_CORE7,
-								ePassives.PAS_VANGUARD_CORE8,
-								ePassives.PAS_VANGUARD_CORE9 ]
-		foreach( passive in passives )
-		{
-			TakePassive( soul, passive )
-		}
+		
+		Replace_OFFHAND_LEFT( titan, "mp_titanability_particle_wall",["pas_defensive_core"])
+		Replace_OFFHAND_RIGHT( titan, "mp_titanweapon_homing_rockets",["burn_mod_titan_homing_rockets"])
+		Replace_OFFHAND_ANTIRODEO( titan, "mp_titanability_sonar_pulse")
+		Replace_OFFHAND_EQUIPMENT( titan, "mp_titancore_salvo_core")					
 	}
 	else if( titan.GetModelName() == $"models/titans/medium/titan_medium_vanguard.mdl" && titan.GetCamo() ==  30 )
 	{//烈焰装备
@@ -317,37 +266,20 @@ void function OnTitanfall( entity titan )
 		SendHudMessage(player, "使用烈焰装备，取消当前皮肤以使用原版帝王",  -1, 0.3, 200, 200, 225, 0, 0.15, 12, 1);
 		soul.s.titanTitle <- "BT烈焰"
 
-		titan.TakeWeaponNow( weapon.GetWeaponClassName() )
-        titan.TakeOffhandWeapon( OFFHAND_ORDNANCE )
-		titan.TakeOffhandWeapon( OFFHAND_TITAN_CENTER )
-        titan.TakeOffhandWeapon( OFFHAND_SPECIAL )
-		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
-		
+		TakeTitanPassives(titan)
+		titan.TakeWeaponNow( weapon.GetWeaponClassName() )		
 		titan.GiveWeapon( "mp_titanweapon_xo16_shorty",["burn_mod_titan_xo16"] )
 		titan.GiveWeapon( "mp_titanweapon_meteor",["fd_wpn_upgrade_1"] )
+		
 		titan.GiveOffhandWeapon( "mp_titanweapon_heat_shield", OFFHAND_SPECIAL )
 		titan.GiveOffhandWeapon( "mp_titanability_slow_trap", OFFHAND_TITAN_CENTER)
 		titan.GiveOffhandWeapon( "mp_titanweapon_flame_wall", OFFHAND_ORDNANCE,["dev_mod_low_recharge"] )
 		titan.GiveOffhandWeapon( "mp_titancore_flame_wave", OFFHAND_EQUIPMENT)
-
-		array<int> passives = [ ePassives.PAS_VANGUARD_COREMETER,
-								ePassives.PAS_VANGUARD_SHIELD,
-								ePassives.PAS_VANGUARD_REARM,
-								ePassives.PAS_VANGUARD_DOOM,
-								ePassives.PAS_VANGUARD_CORE1,
-								ePassives.PAS_VANGUARD_CORE2,
-								ePassives.PAS_VANGUARD_CORE3,
-								ePassives.PAS_VANGUARD_CORE4,
-								ePassives.PAS_VANGUARD_CORE5,
-								ePassives.PAS_VANGUARD_CORE6,
-								ePassives.PAS_VANGUARD_CORE7,
-								ePassives.PAS_VANGUARD_CORE8,
-								ePassives.PAS_VANGUARD_CORE9 ]
-		foreach( passive in passives )
-		{
-			TakePassive( soul, passive )
-		}
-		GivePassive( soul, ePassives.PAS_SCORCH_SELFDMG )
+		
+		Replace_OFFHAND_LEFT( titan, "mp_titanweapon_heat_shield")
+		Replace_OFFHAND_RIGHT( titan, "mp_titanweapon_flame_wall",["dev_mod_low_recharge"])
+		Replace_OFFHAND_ANTIRODEO( titan, "mp_titanability_slow_trap")
+		Replace_OFFHAND_EQUIPMENT( titan, "mp_titancore_flame_wave")		
 	}
 	else if( titan.GetModelName() == $"models/titans/medium/titan_medium_vanguard.mdl" && titan.GetCamo()== 18 )
 	{//北极星装备
@@ -355,36 +287,15 @@ void function OnTitanfall( entity titan )
 		SendHudMessage(player, "使用北极星装备，取消当前皮肤以使用原版帝王",  -1, 0.3, 200, 200, 225, 0, 0.15, 12, 1);
 		soul.s.titanTitle <- "BT北極星"
 
+		TakeTitanPassives(titan)
 		titan.TakeWeaponNow( weapon.GetWeaponClassName() )
-        titan.TakeOffhandWeapon( OFFHAND_ORDNANCE )
-		titan.TakeOffhandWeapon( OFFHAND_TITAN_CENTER )
-        titan.TakeOffhandWeapon( OFFHAND_SPECIAL )
-		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
-		
 		titan.GiveWeapon( "mp_titanweapon_xo16_shorty",["burst","spread"] )
 		titan.GiveWeapon( "mp_titanweapon_sniper",["fd_upgrade_charge","power_shot","burn_mod_titan_sniper"] )
-		titan.GiveOffhandWeapon( "mp_titanability_tether_trap", OFFHAND_SPECIAL,["fd_trap_charges"] )
-		titan.GiveOffhandWeapon( "mp_titanability_hover", OFFHAND_TITAN_CENTER)
-		titan.GiveOffhandWeapon( "mp_titanweapon_dumbfire_rockets", OFFHAND_ORDNANCE,["burn_mod_titan_dumbfire_rockets"] )
-		titan.GiveOffhandWeapon( "mp_titancore_flight_core", OFFHAND_EQUIPMENT)
-
-		array<int> passives = [ ePassives.PAS_VANGUARD_COREMETER,
-								ePassives.PAS_VANGUARD_SHIELD,
-								ePassives.PAS_VANGUARD_REARM,
-								ePassives.PAS_VANGUARD_DOOM,
-								ePassives.PAS_VANGUARD_CORE1,
-								ePassives.PAS_VANGUARD_CORE2,
-								ePassives.PAS_VANGUARD_CORE3,
-								ePassives.PAS_VANGUARD_CORE4,
-								ePassives.PAS_VANGUARD_CORE5,
-								ePassives.PAS_VANGUARD_CORE6,
-								ePassives.PAS_VANGUARD_CORE7,
-								ePassives.PAS_VANGUARD_CORE8,
-								ePassives.PAS_VANGUARD_CORE9 ]
-		foreach( passive in passives )
-		{
-			TakePassive( soul, passive )
-		}
+		
+		Replace_OFFHAND_LEFT( titan, "mp_titanability_tether_trap",["fd_trap_charges"])
+		Replace_OFFHAND_RIGHT( titan, "mp_titanweapon_dumbfire_rockets",["burn_mod_titan_dumbfire_rockets"])
+		Replace_OFFHAND_ANTIRODEO( titan, "mp_titanability_hover")
+		Replace_OFFHAND_EQUIPMENT( titan, "mp_titancore_flight_core")
 	}
 	else if( titan.GetModelName() == $"models/titans/heavy/titan_heavy_scorch_prime.mdl" )
 	{
@@ -393,6 +304,7 @@ void function OnTitanfall( entity titan )
 		soul.s.titanTitle <- "野牛"
 
 		TakeAllWeapons( titan ) 
+		TakeTitanPassives(titan)
 		
 		titan.GiveOffhandWeapon( "mp_ability_cloak", OFFHAND_SPECIAL,["pas_power_cell","amped_tacticals"])
 		titan.GiveOffhandWeapon( "mp_ability_heal", OFFHAND_TITAN_CENTER,["bc_super_stim","bc_long_stim1","bc_long_stim2","pas_power_cell","amped_tacticals"])
@@ -400,44 +312,22 @@ void function OnTitanfall( entity titan )
 		titan.GiveOffhandWeapon( "mp_titancore_flame_wave", OFFHAND_EQUIPMENT,["ground_slam"] )
 		titan.GiveOffhandWeapon( "melee_titan_punch_fighter", OFFHAND_MELEE, ["berserker", "allow_as_primary"] )
 		titan.SetActiveWeaponByName( "melee_titan_punch_fighter" )
-
-		array<int> passives = [ ePassives.PAS_SCORCH_WEAPON,
-								ePassives.PAS_SCORCH_FIREWALL,
-								ePassives.PAS_SCORCH_SHIELD,
-								ePassives.PAS_SCORCH_SELFDMG,
-								ePassives.PAS_SCORCH_FLAMECORE ]
-		foreach( passive in passives )
-		{
-			TakePassive( soul, passive )
-		}
 	}
 	else if( titan.GetModelName() == $"models/titans/light/titan_light_locust.mdl"&& titan.GetCamo()== 1)
 	{
 		soul.s.TitanHasBeenChange <- true
 		SendHudMessage(player, "已切换为电弧，取消当前皮肤以使用原版浪人",  -1, 0.3, 200, 200, 225, 0, 0.15, 5, 1);
 		soul.s.titanTitle <- "電弧"
-
-		titan.TakeWeaponNow( weapon.GetWeaponClassName() )
-		titan.TakeOffhandWeapon( OFFHAND_ORDNANCE )
-		titan.TakeOffhandWeapon( OFFHAND_TITAN_CENTER )
-        titan.TakeOffhandWeapon( OFFHAND_SPECIAL )
-		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
 		
+		TakeTitanPassives(titan)
+		titan.TakeWeaponNow( weapon.GetWeaponClassName() )
 		titan.GiveWeapon( "mp_titanweapon_leadwall",["sur_level_0"] )
-		titan.GiveOffhandWeapon( "mp_ability_swordblock", OFFHAND_SPECIAL,["pm0"] )
-		titan.GiveOffhandWeapon( "mp_titanability_smoke", OFFHAND_TITAN_CENTER)
-		titan.GiveOffhandWeapon( "mp_titanweapon_arc_wave", OFFHAND_ORDNANCE,["dev_mod_low_recharge"] )
-		titan.GiveOffhandWeapon( "mp_titancore_shift_core", OFFHAND_EQUIPMENT, ["tcp_arc_wave"] )
+		
+		Replace_OFFHAND_LEFT( titan, "mp_ability_swordblock",["pm0"])
+		Replace_OFFHAND_RIGHT( titan, "mp_titanweapon_arc_wave",["dev_mod_low_recharge"])
+		Replace_OFFHAND_ANTIRODEO( titan, "mp_titanability_smoke")
+		Replace_OFFHAND_EQUIPMENT( titan, "mp_titancore_shift_core", ["tcp_arc_wave"])
 		thread EMPThink_Thread( titan )
-		array<int> passives = [ ePassives.PAS_RONIN_WEAPON,
-								ePassives.PAS_RONIN_ARCWAVE,
-								ePassives.PAS_RONIN_PHASE,
-								ePassives.PAS_RONIN_SWORDCORE,
-								ePassives.PAS_RONIN_AUTOSHIFT ]
-		foreach( passive in passives )
-		{
-			TakePassive( soul, passive )
-		}
 	}
 	else if( titan.GetModelName() == $"models/titans/medium/titan_medium_vanguard.mdl"  && titan.GetCamo()== 97 )
 	{
@@ -446,6 +336,7 @@ void function OnTitanfall( entity titan )
 		soul.s.titanTitle <- "BT浪人"
 
 		TakeAllWeapons( titan ) 
+		TakeTitanPassives(titan)
 		
 		titan.GiveWeapon( "mp_titanweapon_xo16_shorty",["electric_rounds","fast_reload"] )
 		titan.GiveOffhandWeapon( "mp_ability_swordblock", OFFHAND_SPECIAL )
@@ -453,24 +344,6 @@ void function OnTitanfall( entity titan )
 		titan.GiveOffhandWeapon( "mp_titanweapon_arc_wave", OFFHAND_ORDNANCE,["dev_mod_low_recharge"] )
 		titan.GiveOffhandWeapon( "mp_titancore_shift_core", OFFHAND_EQUIPMENT,["fd_duration"])
 		titan.GiveOffhandWeapon( "melee_titan_sword", OFFHAND_MELEE,["fd_sword_upgrade"] )
-
-		array<int> passives = [ ePassives.PAS_VANGUARD_COREMETER,
-								ePassives.PAS_VANGUARD_SHIELD,
-								ePassives.PAS_VANGUARD_REARM,
-								ePassives.PAS_VANGUARD_DOOM,
-								ePassives.PAS_VANGUARD_CORE1,
-								ePassives.PAS_VANGUARD_CORE2,
-								ePassives.PAS_VANGUARD_CORE3,
-								ePassives.PAS_VANGUARD_CORE4,
-								ePassives.PAS_VANGUARD_CORE5,
-								ePassives.PAS_VANGUARD_CORE6,
-								ePassives.PAS_VANGUARD_CORE7,
-								ePassives.PAS_VANGUARD_CORE8,
-								ePassives.PAS_VANGUARD_CORE9 ]
-		foreach( passive in passives )
-		{
-			TakePassive( soul, passive )
-		}
 	}
 	else if( titan.GetModelName() == $"models/titans/light/titan_light_locust.mdl"&& titan.GetCamo()== 3)
 	{
@@ -478,6 +351,7 @@ void function OnTitanfall( entity titan )
 		SendHudMessage(player, "已切换为影杀，取消当前皮肤以使用原版浪人",  -1, 0.3, 200, 200, 225, 0, 0.15, 5, 1);
 		soul.s.titanTitle <- "影殺"
 
+		TakeTitanPassives(titan)
 		titan.TakeWeaponNow( weapon.GetWeaponClassName() )
 		titan.GiveWeapon( "mp_titanweapon_triplethreat", [ "rolling_rounds","burn_mod_titan_triple_threat","impact_fuse"] )
 		
@@ -486,19 +360,10 @@ void function OnTitanfall( entity titan )
         titan.TakeOffhandWeapon( OFFHAND_SPECIAL )
 		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
 		
-		titan.GiveOffhandWeapon( "mp_ability_swordblock", OFFHAND_SPECIAL,["pm0"] )
-		titan.GiveOffhandWeapon( "mp_titanability_phase_dash", OFFHAND_TITAN_CENTER)
-		titan.GiveOffhandWeapon( "mp_titanweapon_arc_wave", OFFHAND_ORDNANCE )
-		titan.GiveOffhandWeapon( "mp_titancore_shift_core", OFFHAND_EQUIPMENT, ["dash_core"] )
-		array<int> passives = [ ePassives.PAS_RONIN_WEAPON,
-								ePassives.PAS_RONIN_ARCWAVE,
-								ePassives.PAS_RONIN_PHASE,
-								ePassives.PAS_RONIN_SWORDCORE,
-								ePassives.PAS_RONIN_AUTOSHIFT ]
-		foreach( passive in passives )
-		{
-			TakePassive( soul, passive )
-		}
+		Replace_OFFHAND_LEFT( titan, "mp_ability_swordblock",["pm0"])
+		Replace_OFFHAND_RIGHT( titan, "mp_titanweapon_arc_wave")
+		Replace_OFFHAND_ANTIRODEO( titan, "mp_titanability_phase_dash")
+		Replace_OFFHAND_EQUIPMENT( titan, "mp_titancore_shift_core", ["dash_core"])
 	}
 }
 
@@ -615,5 +480,5 @@ void function OnTitanBecomesPilot( entity player, entity titan )	//重新给予�
 		return					//直接结束，不做任何操作
 	
 	if( titan.GetModelName() == $"models/titans/light/titan_light_locust.mdl"&& titan.GetCamo()== 1)	//检查
-		thread DelayEMPThread( soul )																	//如果是，那么重新给他emp
+		thread DelayEMPThread( soul )																	//如果是，那么重新给他电弧场
 }
