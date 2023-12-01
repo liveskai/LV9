@@ -7,7 +7,10 @@ void function player_Init()
 
 void function OnPlayerChangeLoadout( entity player , PilotLoadoutDef p)
 {
-	player.TakeWeaponNow( player.GetMainWeapons()[1].GetWeaponClassName())
+	player.TakeWeaponNow("mp_weapon_semipistol")
+	player.TakeWeaponNow("mp_weapon_autopistol")
+	player.TakeWeaponNow("mp_weapon_wingman")
+	
 	player.GiveWeapon( "mp_weapon_shotgun_doublebarrel_tfo")
 	
 	foreach (entity weapon in player.GetMainWeapons())
