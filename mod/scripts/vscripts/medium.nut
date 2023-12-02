@@ -271,11 +271,6 @@ void function OnTitanfall( entity titan )
 		titan.GiveWeapon( "mp_titanweapon_xo16_shorty",["burn_mod_titan_xo16"] )
 		titan.GiveWeapon( "mp_titanweapon_meteor",["fd_wpn_upgrade_1"] )
 		
-		titan.GiveOffhandWeapon( "mp_titanweapon_heat_shield", OFFHAND_SPECIAL )
-		titan.GiveOffhandWeapon( "mp_titanability_slow_trap", OFFHAND_TITAN_CENTER)
-		titan.GiveOffhandWeapon( "mp_titanweapon_flame_wall", OFFHAND_ORDNANCE,["dev_mod_low_recharge"] )
-		titan.GiveOffhandWeapon( "mp_titancore_flame_wave", OFFHAND_EQUIPMENT)
-		
 		Replace_OFFHAND_LEFT( titan, "mp_titanweapon_heat_shield")
 		Replace_OFFHAND_RIGHT( titan, "mp_titanweapon_flame_wall",["dev_mod_low_recharge"])
 		Replace_OFFHAND_ANTIRODEO( titan, "mp_titanability_slow_trap")
@@ -354,11 +349,6 @@ void function OnTitanfall( entity titan )
 		TakeTitanPassives(titan)
 		titan.TakeWeaponNow( weapon.GetWeaponClassName() )
 		titan.GiveWeapon( "mp_titanweapon_triplethreat", [ "rolling_rounds","burn_mod_titan_triple_threat","impact_fuse"] )
-		
-		titan.TakeOffhandWeapon( OFFHAND_ORDNANCE )
-		titan.TakeOffhandWeapon( OFFHAND_TITAN_CENTER )
-        titan.TakeOffhandWeapon( OFFHAND_SPECIAL )
-		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
 		
 		Replace_OFFHAND_LEFT( titan, "mp_ability_swordblock",["pm0"])
 		Replace_OFFHAND_RIGHT( titan, "mp_titanweapon_arc_wave")
