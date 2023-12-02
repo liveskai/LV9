@@ -1,6 +1,6 @@
 WeaponData
 {//弹群核心
-	"core_duration"								"7"
+	"core_duration"								"6"
 	Mods
 	{
 		fd_salvo_core
