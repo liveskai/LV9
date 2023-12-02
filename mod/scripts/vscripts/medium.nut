@@ -92,6 +92,7 @@ function TakeTitanPassives( entity titan )
 		]
 	foreach( passive in passives )
 		TakePassive( soul, passive )
+	titan.TakeWeaponNow( titan.GetMainWeapons()[0].GetWeaponClassName() )	
 }
 void function SetPlayerTitanTitle( entity player, entity titan )
 {
@@ -99,7 +100,7 @@ void function SetPlayerTitanTitle( entity player, entity titan )
 	if( IsValid( soul ) )
 		if( "titanTitle" in soul.s )
 			if( soul.s.titanTitle != "" )
-				player.SetTitle( soul.s.titanTitle )	//设置玩家的小血条上的标题（也就是你瞄准敌人时，顶上会显示泰坦名，玩家名，血量剩余的一个玩意，这里我们改的是泰坦名）
+				player.SetTitle( soul.s.titanTitle )	//设置泰坦名
 
 	if( titan.GetModelName() == $"models/titans/light/titan_light_locust.mdl"&& titan.GetCamo()== 1)
 		thread DelayEMPThread( soul )
@@ -137,36 +138,36 @@ void function OnTitanfall( entity titan )
 													//因为当泰坦死亡或者摧毁时，它的soul会变成null，理所应当的，soul.s里的内容也会null
 	if( !IsValid( soul ) )	//如果soul == null，我们应该直接return，防止执行后面的soul.s.TitanHasBeenChange <- true时报错
 		return
-	foreach ( entity weapon in titan.GetMainWeapons() )
-	if( titan.GetModelName() == $"models/titans/light/titan_light_northstar_prime.mdl" )	//检查泰坦的模型
-	{
-		soul.s.TitanHasBeenChange <- true
-		SendHudMessage(player, "已切换为野兽，取消至尊泰坦以使用原版北极星",  -1, 0.3, 200, 200, 225, 0, 0.15, 5, 1);
-		soul.s.titanTitle <- "野獸"	//众所周知，当玩家上泰坦时不会按照我们的意愿设置标题的，所以这边整个变量让玩家上泰坦时读取这个然后写上
-		soul.soul.titanLoadout.titanExecution = "execution_northstar_prime"
-		
-		TakeTitanPassives(titan)
-        titan.TakeWeaponNow( weapon.GetWeaponClassName() )
-        titan.GiveWeapon( "mp_titanweapon_rocketeer_rocketstream",["sp_s2s_settings"] )
-		
-		Replace_OFFHAND_RIGHT( titan, "mp_titanweapon_shoulder_rockets",["extended_smart_ammo_range"] )
-		Replace_OFFHAND_LEFT( titan, "mp_titanweapon_vortex_shield",["slow_recovery_vortex"] )
-	}
-	else if( titan.GetModelName() == $"models/titans/medium/titan_medium_vanguard.mdl" && titan.GetCamo() == -1 && titan.GetSkin() == 3 )
+
+	if( titan.GetModelName() == $"models/titans/medium/titan_medium_vanguard.mdl" && titan.GetCamo() == -1 && titan.GetSkin() == 3 )
 	{
 		soul.s.TitanHasBeenChange <- true
 		SendHudMessage(player, "已切换为远征，取消\"边境帝王\"皮肤以使用原版帝王",  -1, 0.3, 200, 200, 225, 0, 0.15, 12, 1);
-		soul.s.titanTitle <- "遠征"
+		soul.s.titanTitle <- "遠征"//泰坦名字
 		
 		TakeTitanPassives(titan)//移除所有被动
-        titan.TakeWeaponNow( weapon.GetWeaponClassName() )
+	    
 		titan.GiveWeapon( "mp_titanweapon_xo16_shorty",["fast_reload"] )
 		
-		Replace_OFFHAND_RIGHT( titan, "mp_titanweapon_shoulder_rockets",["extended_smart_ammo_range"] )
 		Replace_OFFHAND_LEFT( titan, "mp_titanweapon_vortex_shield",["slow_recovery_vortex"] )
+		Replace_OFFHAND_RIGHT( titan, "mp_titanweapon_shoulder_rockets",["extended_smart_ammo_range"] )
 		Replace_OFFHAND_ANTIRODEO( titan, "mp_titanability_smoke",["burn_mod_titan_smoke","maelstrom"] )
 		Replace_OFFHAND_EQUIPMENT( titan, "mp_titancore_amp_core" )		
 	}
+	else if( titan.GetModelName() == $"models/titans/light/titan_light_northstar_prime.mdl" )	//检查泰坦的模型
+	{
+		soul.s.TitanHasBeenChange <- true
+		SendHudMessage(player, "已切换为野兽，取消至尊泰坦以使用原版北极星",  -1, 0.3, 200, 200, 225, 0, 0.15, 5, 1);
+		soul.s.titanTitle <- "野獸"	
+		soul.soul.titanLoadout.titanExecution = "execution_northstar_prime"
+		
+		TakeTitanPassives(titan)
+        
+        titan.GiveWeapon( "mp_titanweapon_rocketeer_rocketstream",["sp_s2s_settings"] )
+		
+		Replace_OFFHAND_LEFT( titan, "mp_titanweapon_vortex_shield",["slow_recovery_vortex"] )
+		Replace_OFFHAND_RIGHT( titan, "mp_titanweapon_shoulder_rockets",["extended_smart_ammo_range"] )	
+	} 
 	else if( titan.GetModelName() == $"models/titans/heavy/titan_heavy_legion_prime.mdl" )
 	{
 		soul.s.TitanHasBeenChange <- true
@@ -174,7 +175,7 @@ void function OnTitanfall( entity titan )
 		soul.s.titanTitle <- "至尊軍團"
 		
 		TakeTitanPassives(titan)
-        titan.TakeWeaponNow( weapon.GetWeaponClassName() )
+        
 		titan.GiveWeapon( "mp_titanweapon_xo16_shorty", [ "accelerator","spread"] )
 		
 		Replace_OFFHAND_LEFT( titan, "mp_titanability_particle_wall" )
@@ -189,7 +190,7 @@ void function OnTitanfall( entity titan )
 		soul.s.titanTitle <- "至尊強力"
 		
 		TakeTitanPassives(titan)
-        titan.TakeWeaponNow( weapon.GetWeaponClassName() )
+        
 		titan.GiveWeapon( "mp_titanweapon_sticky_40mm", [ "splasher_rounds","extended_ammo","burn_mod_titan_40mm","fast_reload","sur_level_1"] )
 		
 		Replace_OFFHAND_LEFT( titan, "mp_titanweapon_vortex_shield_ion" )
@@ -204,7 +205,7 @@ void function OnTitanfall( entity titan )
 		soul.s.titanTitle <- "至尊離子"
 		
 		TakeTitanPassives(titan)
-        titan.TakeWeaponNow( weapon.GetWeaponClassName() )
+        
 		titan.GiveWeapon( "mp_titanweapon_arc_cannon",["capacitor"] )
 		
 		Replace_OFFHAND_LEFT( titan, "mp_titanweapon_vortex_shield",["burn_mod_titan_vortex_shield"] )
@@ -219,7 +220,7 @@ void function OnTitanfall( entity titan )
 		soul.s.titanTitle <- "疾風"
 		
 		TakeTitanPassives(titan)
-		titan.TakeWeaponNow( weapon.GetWeaponClassName() )		
+				
 		titan.GiveWeapon( "mp_titanweapon_xo16_vanguard",["battle_rifle","battle_rifle_icon"] )
 		
 		Replace_OFFHAND_LEFT( titan, "mp_titanweapon_vortex_shield",["vortex_extended_effect_and_no_use_penalty"] )
@@ -234,7 +235,7 @@ void function OnTitanfall( entity titan )
 		soul.s.titanTitle <- "BT離子"
 
 		TakeTitanPassives(titan)
-		titan.TakeWeaponNow( weapon.GetWeaponClassName() )	
+
 		titan.GiveWeapon( "mp_titanweapon_xo16_shorty",["electric_rounds","spread"] )
 		titan.GiveWeapon( "mp_titanweapon_particle_accelerator",["burn_mod_titan_particle_accelerator"] )		
 		titan.SetActiveWeaponByName("mp_titanweapon_particle_accelerator")
@@ -251,7 +252,7 @@ void function OnTitanfall( entity titan )
 		soul.s.titanTitle <- "BT強力"
 
 		TakeTitanPassives(titan)
-        titan.TakeWeaponNow( weapon.GetWeaponClassName() )
+        
 		titan.GiveWeapon( "mp_titanweapon_xo16_shorty",["extended_ammo"] )
 		titan.GiveWeapon( "mp_titanweapon_sticky_40mm",["mortar_shots","sur_level_3","fast_reload"] )
 		
@@ -267,7 +268,7 @@ void function OnTitanfall( entity titan )
 		soul.s.titanTitle <- "BT烈焰"
 
 		TakeTitanPassives(titan)
-		titan.TakeWeaponNow( weapon.GetWeaponClassName() )		
+				
 		titan.GiveWeapon( "mp_titanweapon_xo16_shorty",["burn_mod_titan_xo16"] )
 		titan.GiveWeapon( "mp_titanweapon_meteor",["fd_wpn_upgrade_1"] )
 		
@@ -284,7 +285,7 @@ void function OnTitanfall( entity titan )
 		soul.s.titanTitle <- "BT北極星"
 
 		TakeTitanPassives(titan)
-		titan.TakeWeaponNow( weapon.GetWeaponClassName() )
+		
 		titan.GiveWeapon( "mp_titanweapon_xo16_shorty",["burst","spread"] )
 		titan.GiveWeapon( "mp_titanweapon_sniper",["fd_upgrade_charge","power_shot","burn_mod_titan_sniper"] )
 		
@@ -316,7 +317,7 @@ void function OnTitanfall( entity titan )
 		soul.s.titanTitle <- "電弧"
 		
 		TakeTitanPassives(titan)
-		titan.TakeWeaponNow( weapon.GetWeaponClassName() )
+		
 		titan.GiveWeapon( "mp_titanweapon_leadwall",["sur_level_0"] )
 		
 		Replace_OFFHAND_LEFT( titan, "mp_ability_swordblock",["pm0"])
@@ -348,7 +349,7 @@ void function OnTitanfall( entity titan )
 		soul.s.titanTitle <- "影殺"
 
 		TakeTitanPassives(titan)
-		titan.TakeWeaponNow( weapon.GetWeaponClassName() )
+		
 		titan.GiveWeapon( "mp_titanweapon_triplethreat", [ "rolling_rounds","burn_mod_titan_triple_threat","impact_fuse"] )
 		
 		Replace_OFFHAND_LEFT( titan, "mp_ability_swordblock",["pm0"])
