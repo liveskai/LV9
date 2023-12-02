@@ -288,9 +288,9 @@ void function OnTitanfall( entity titan )
 		titan.GiveWeapon( "mp_titanweapon_xo16_shorty",["burst","spread"] )
 		titan.GiveWeapon( "mp_titanweapon_sniper",["fd_upgrade_charge","power_shot","burn_mod_titan_sniper"] )
 		
-		Replace_OFFHAND_LEFT( titan, "mp_titanability_tether_trap",["fd_trap_charges"])
-		Replace_OFFHAND_RIGHT( titan, "mp_titanweapon_dumbfire_rockets",["burn_mod_titan_dumbfire_rockets"])
 		Replace_OFFHAND_ANTIRODEO( titan, "mp_titanability_hover")
+		Replace_OFFHAND_LEFT( titan, "mp_titanability_tether_trap",["fd_trap_charges"])
+		Replace_OFFHAND_RIGHT( titan, "mp_titanweapon_dumbfire_rockets",["burn_mod_titan_dumbfire_rockets"])	
 		Replace_OFFHAND_EQUIPMENT( titan, "mp_titancore_flight_core")
 	}
 	else if( titan.GetModelName() == $"models/titans/heavy/titan_heavy_scorch_prime.mdl" )
