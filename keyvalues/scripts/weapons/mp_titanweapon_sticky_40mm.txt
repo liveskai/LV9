@@ -17,8 +17,15 @@ WeaponData
 		}
 		mortar_shots
 		{
-			"explosion_inner_radius"  						"400"
-			"explosionradius" 							"600"
+			"explosion_inner_radius"  						"500"
+			"explosionradius" 							"500"
+
+			"damage_near_value_titanarmor"					"*2"
+			"damage_far_value_titanarmor" 					"*2"
+			"explosion_damage"						"*2"
+			"explosion_damage_heavy_armor"					"*2"
+
+			"explosion_damages_owner"						"0"
 		}
 		burn_mod_titan_40mm
 		{
