@@ -255,12 +255,12 @@ void function OnTitanfall( entity titan )
 		TakeTitanPassives(titan)
         
 		titan.GiveWeapon( "mp_titanweapon_xo16_shorty",["extended_ammo"] )
-		titan.GiveWeapon( "mp_titanweapon_sticky_40mm",["mortar_shots","sur_level_3","fast_reload"] )
+		titan.GiveWeapon( "mp_titanweapon_sticky_40mm",["mortar_shots"] )
 		
 		Replace_OFFHAND_LEFT( titan, "mp_titanability_particle_wall",["pas_defensive_core"])
 		Replace_OFFHAND_RIGHT( titan, "mp_titanweapon_homing_rockets",["burn_mod_titan_homing_rockets"])
 		Replace_OFFHAND_ANTIRODEO( titan, "mp_titanability_sonar_pulse")
-		Replace_OFFHAND_EQUIPMENT( titan, "mp_titancore_salvo_core")					
+		Replace_OFFHAND_EQUIPMENT( titan, "mp_titancore_salvo_core")
 	}
 	else if( titan.GetModelName() == $"models/titans/medium/titan_medium_vanguard.mdl" && titan.GetCamo() ==  30 )
 	{//烈焰装备
