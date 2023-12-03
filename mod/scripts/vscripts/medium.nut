@@ -92,7 +92,8 @@ function TakeTitanPassives( entity titan )
 		]
 	foreach( passive in passives )
 		TakePassive( soul, passive )
-	titan.TakeWeaponNow( titan.GetMainWeapons()[0].GetWeaponClassName() )	
+	foreach ( entity weapon in titan.GetMainWeapons() )	
+		titan.TakeWeaponNow( weapon.GetWeaponClassName() )	
 }
 void function SetPlayerTitanTitle( entity player, entity titan )
 {
