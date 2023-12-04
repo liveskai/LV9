@@ -44,8 +44,54 @@ void function Replace_OFFHAND_EQUIPMENT( entity titan, string offhandName, array
 }
 function TakeTitanPassives( entity titan )
 {
-	entity player = titan.GetTitanSoul()
-	TakeAllTitanPassives(player)//移除所有被动
+	entity soul = titan.GetTitanSoul()
+	array<int> passives = [ 
+		ePassives.PAS_RONIN_WEAPON,
+		ePassives.PAS_NORTHSTAR_WEAPON,
+		ePassives.PAS_ION_WEAPON,
+		ePassives.PAS_TONE_WEAPON,
+		ePassives.PAS_SCORCH_WEAPON,
+		ePassives.PAS_LEGION_WEAPON,
+		ePassives.PAS_ION_TRIPWIRE,
+		ePassives.PAS_ION_VORTEX,
+		ePassives.PAS_ION_LASERCANNON,
+		ePassives.PAS_TONE_ROCKETS,
+		ePassives.PAS_TONE_SONAR,
+		ePassives.PAS_TONE_WALL,
+		ePassives.PAS_RONIN_ARCWAVE,
+		ePassives.PAS_RONIN_PHASE,
+		ePassives.PAS_RONIN_SWORDCORE,
+		ePassives.PAS_NORTHSTAR_CLUSTER,
+		ePassives.PAS_NORTHSTAR_TRAP,
+		ePassives.PAS_NORTHSTAR_FLIGHTCORE,
+		ePassives.PAS_SCORCH_FIREWALL,
+		ePassives.PAS_SCORCH_SHIELD,
+		ePassives.PAS_SCORCH_SELFDMG,
+		ePassives.PAS_LEGION_SPINUP,
+		ePassives.PAS_LEGION_GUNSHIELD,
+		ePassives.PAS_LEGION_SMARTCORE,
+		ePassives.PAS_ION_WEAPON_ADS,
+		ePassives.PAS_TONE_BURST,
+		ePassives.PAS_LEGION_CHARGESHOT,
+		ePassives.PAS_RONIN_AUTOSHIFT,
+		ePassives.PAS_NORTHSTAR_OPTICS,
+		ePassives.PAS_SCORCH_FLAMECORE,
+		ePassives.PAS_VANGUARD_COREMETER,
+		ePassives.PAS_VANGUARD_SHIELD,
+		ePassives.PAS_VANGUARD_REARM,
+		ePassives.PAS_VANGUARD_DOOM,
+		ePassives.PAS_VANGUARD_CORE1,
+		ePassives.PAS_VANGUARD_CORE2,
+		ePassives.PAS_VANGUARD_CORE3,
+		ePassives.PAS_VANGUARD_CORE4,
+		ePassives.PAS_VANGUARD_CORE5,
+		ePassives.PAS_VANGUARD_CORE6,
+		ePassives.PAS_VANGUARD_CORE7,
+		ePassives.PAS_VANGUARD_CORE8,
+		ePassives.PAS_VANGUARD_CORE9
+		]
+	foreach( passive in passives )
+		TakePassive( soul, passive )
 	
 	foreach ( entity weapon in titan.GetMainWeapons() )	
 		titan.TakeWeaponNow( weapon.GetWeaponClassName() )	
