@@ -243,7 +243,7 @@ void function OnTitanfall( entity titan )
 		titan.SetActiveWeaponByName("mp_titanweapon_particle_accelerator")
 		
 		Replace_OFFHAND_LEFT( titan, "mp_titanweapon_vortex_shield",["slow_recovery_vortex","pas_defensive_core","sur_level_3"])
-		Replace_OFFHAND_RIGHT( titan, "mp_titanweapon_laser_lite")
+		Replace_OFFHAND_RIGHT( titan, "mp_titanweapon_laser_lite",["dev_mod_low_recharge","burn_mod_titan_laser_lite"])
 		Replace_OFFHAND_ANTIRODEO( titan, "mp_titanability_laser_trip")
 		Replace_OFFHAND_EQUIPMENT( titan, "mp_titancore_laser_cannon",["super_laser_core"])			
 	}
