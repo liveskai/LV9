@@ -207,15 +207,12 @@ float function HandleBlockingAndCalcDamageScaleForHit( entity blockingEnt, var d
 		if ( shouldPassThroughDamage )
 			return 1.0
 			
-		if ( blockingEnt.GetOffhandWeapon( OFFHAND_SPECIAL ).HasMod( "pm0" ) && PlayerHasPassive( blockingEnt, ePassives.PAS_SHIFT_CORE ) )
+		if ( blockingEnt.GetOffhandWeapon( OFFHAND_LEFT ).HasMod( "pm0" ) )
 			return 0.5
 				
 		if ( blockingEnt.IsPlayer() && PlayerHasPassive( blockingEnt, ePassives.PAS_SHIFT_CORE ) )
 			return SWORD_CORE_BLOCK_DAMAGE_REDUCTION
 			
-		if( blockingEnt.GetOffhandWeapon( OFFHAND_SPECIAL ).HasMod( "pm0" ) )
-		return 0.5
-
 		return TITAN_BLOCK_DAMAGE_REDUCTION
 	}
 
