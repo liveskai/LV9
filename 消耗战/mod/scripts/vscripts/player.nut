@@ -11,8 +11,13 @@ void function OnPlayerChangeLoadout( entity player , PilotLoadoutDef p)
 	player.TakeWeaponNow("mp_weapon_autopistol")
 	player.TakeWeaponNow("mp_weapon_wingman")
 	
-	player.GiveWeapon( "mp_weapon_shotgun_doublebarrel_tfo")
-	
+	if (rand() % 2 == 0)
+	{
+	    player.GiveWeapon("mp_weapon_shotgun_doublebarrel_tfo");
+	} else 
+	{
+	    player.GiveWeapon("mp_weapon_peacekraber");
+	}
 	foreach (entity weapon in player.GetMainWeapons())
 	{
 		weapon.AddMod( "extended_ammo" )
