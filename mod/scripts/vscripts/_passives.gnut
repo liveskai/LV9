@@ -44,7 +44,7 @@ function Passives_Init()
 	AddCallback_OnTitanGetsNewTitanLoadout( ApplyTitanWeaponPassives )
 
 	#if MP
-	if ( GetCurrentPlaylistVarInt( "aegis_upgrades", 0 ) == 0 )
+	if ( GetCurrentPlaylistVarInt( "aegis_upgrades", 0 ) == 1 )
 		AddCallback_OnUpdateDerivedPlayerTitanLoadout( ApplyFDDerviedUpgrades ) //Half of the meta functions, the other half lives in passives.gnut This is used for class mods.
 	#endif
 
@@ -886,7 +886,7 @@ void function ApplyTitanWeaponPassives( entity titan, TitanLoadoutDef loadout )
 	}
 
 	#if MP
-	if ( GetCurrentPlaylistVarInt( "aegis_upgrades", 0 ) == 0 ) //Necessary to occur after normal weapon mods are assigned from passives.
+	if ( GetCurrentPlaylistVarInt( "aegis_upgrades", 0 ) == 1 ) //Necessary to occur after normal weapon mods are assigned from passives.
 		ApplyFDUpgradeWeaponPassives( titan, loadout )
 	#endif
 }
