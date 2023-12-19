@@ -306,6 +306,6 @@ void function PredatorCannon_DamagedTarget( entity target, var damageInfo )
 		return
 
 	if ( GetDoomedState( target ) )
-		DamageInfo_SetDamage( damageInfo, target.GetHealth() + 10 )
+		DamageInfo_SetDamage( damageInfo, target.GetHealth() + 1 )
 }
 #endif
