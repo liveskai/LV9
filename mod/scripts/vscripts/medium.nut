@@ -337,7 +337,7 @@ void function OnTitanfall( entity titan )
 		TakeAllWeapons( titan ) 
 		TakeTitanPassives(titan)
 		
-		titan.GiveWeapon( "mp_titanweapon_xo16_shorty",["electric_rounds","fast_reload"] )
+		titan.GiveWeapon( "mp_titanweapon_xo16_shorty",["electric_rounds"] )
 		titan.GiveOffhandWeapon( "mp_ability_swordblock", OFFHAND_SPECIAL )
 		titan.GiveOffhandWeapon( "mp_titanability_phase_dash", OFFHAND_TITAN_CENTER)
 		titan.GiveOffhandWeapon( "mp_titanweapon_arc_wave", OFFHAND_ORDNANCE,["burn_mod_titan_arc_wave"] )
