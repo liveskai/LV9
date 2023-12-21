@@ -266,7 +266,7 @@ void function HeatShieldDamage_Think( entity weapon )
 	int	attach_id = weapon.LookupAttachment( "muzzle_flash" )
 	int flags
 	if( !weapon.HasMod( "pas_scorch_shield" ) )
-		flags = damageTypes.explosive | DF_RODEO
+		flags = damageTypes.explosive | DF_RODEO | DF_BYPASS_SHIELD
 	else
 		flags = damageTypes.explosive
 	while( true )
