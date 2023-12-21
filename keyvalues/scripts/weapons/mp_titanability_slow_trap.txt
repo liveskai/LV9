@@ -1,0 +1,14 @@
+WeaponData
+{//煤气罐
+
+	Mods
+	{
+		fd_explosive_barrel
+		{
+		}
+		bt_super
+		{
+			"regen_ammo_refill_rate"			"*2"
+		}
+	}
+}

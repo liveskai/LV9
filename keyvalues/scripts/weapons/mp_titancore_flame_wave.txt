@@ -5,9 +5,12 @@ WeaponData
 		pas_scorch_flamecore
 		{
 		}
-		ground_slam	//此处应为调用DB大佬的Super.Mixed.Game中的野牛核心
+		ground_slam	//振地核心
 		{
 			"instant_swap_to"								"1"
+		}
+		bt_flamecore
+		{
 		}
 	}
 }
