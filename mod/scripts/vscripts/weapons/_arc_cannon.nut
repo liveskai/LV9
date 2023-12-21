@@ -553,7 +553,7 @@ function ZapTarget( zapInfo, target, beamStartPos, beamEndPos, chainNum = 1 )
 		else
 			wait 0.05
 
-		local deathPackage = damageTypes.arcCannon
+		local deathPackage = damageTypes.arcCannon | DF_RODEO
 
 		float damageAmount
 		int damageMin
