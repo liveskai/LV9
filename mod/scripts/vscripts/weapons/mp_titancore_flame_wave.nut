@@ -166,8 +166,14 @@ bool function CreateFlameWaveSegment( entity projectile, int projectileCount, en
 	array<string> mods = projectile.ProjectileGetMods()
 	projectile.SetOrigin( pos + < 0, 0, 100 > )
 	projectile.SetAngles( angles )
-
-	int flags = DF_EXPLOSION | DF_STOPS_TITAN_REGEN | DF_DOOM_FATALITY | DF_SKIP_DAMAGE_PROT
+	int flags
+	if (mods.find("bt_flamecore") >= 0) 
+	{
+		flags = DF_EXPLOSION | DF_STOPS_TITAN_REGEN | DF_DOOM_FATALITY | DF_SKIP_DAMAGE_PROT | DF_RODEO
+	} else 
+	{
+		flags = DF_EXPLOSION | DF_STOPS_TITAN_REGEN | DF_DOOM_FATALITY | DF_SKIP_DAMAGE_PROT
+	}
 
 	if( !( waveCount in inflictor.e.waveLinkFXTable ) )
 	{

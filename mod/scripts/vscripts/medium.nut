@@ -276,8 +276,8 @@ void function OnTitanfall( entity titan )
 		
 		Replace_OFFHAND_LEFT( titan, "mp_titanweapon_heat_shield")
 		Replace_OFFHAND_RIGHT( titan, "mp_titanweapon_flame_wall",["dev_mod_low_recharge"])
-		Replace_OFFHAND_ANTIRODEO( titan, "mp_titanability_slow_trap")
-		Replace_OFFHAND_EQUIPMENT( titan, "mp_titancore_flame_wave")		
+		Replace_OFFHAND_ANTIRODEO( titan, "mp_titanability_slow_trap",["bt_super"])
+		Replace_OFFHAND_EQUIPMENT( titan, "mp_titancore_flame_wave",["bt_flamecore"])
 		GivePassive( soul, ePassives.PAS_SCORCH_SELFDMG )
 	}
 	else if( titan.GetModelName() == $"models/titans/medium/titan_medium_vanguard.mdl" && titan.GetCamo()== 18 )
