@@ -521,12 +521,12 @@ function TitanEjectPlayer( entity ejectTitan, bool instant = false ) //TODO: Thi
 
 			float dist = Distance( guy.GetOrigin(), origin )
 			float result = Graph( dist, 750, 1500, 5.0, 0.0 )
-			Remote_CallFunction_Replay( guy, "ServerCallback_ScreenShake", result, frequency, duration )
+			// Remote_CallFunction_Replay( guy, "ServerCallback_ScreenShake", result, frequency, duration )移除核爆振动
 		}
 
 		e.needToClearNukeFX = true
 		e.nukeFXInfoTarget.SetParent( ejectTitan, "CHESTFOCUS" ) //Play FX and sound on entity since we need something that lasts across the player titan -> pilot transition
-		e.nukeFX.append( PlayFXOnEntity( TITAN_NUCLEAR_CORE_NUKE_FX, expect entity( e.nukeFXInfoTarget ) ) )
+		// e.nukeFX.append( PlayFXOnEntity( TITAN_NUCLEAR_CORE_NUKE_FX, expect entity( e.nukeFXInfoTarget ) ) )移除核爆亮瞎眼特效
 		e.nukeFX.append( e.nukeFXInfoTarget )
 		//ejectDuration += 0.5
 
