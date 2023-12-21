@@ -525,7 +525,7 @@ void function FireTrap_RadiusDamage( vector pos, entity owner, entity inflictor 
 	float METEOR_DAMAGE_TICK = meteorRadiusDamage.heavyArmorDamage
 	int flagss
 	if ( owner.GetOffhandWeapon(OFFHAND_ANTIRODEO) != null && owner.GetOffhandWeapon(OFFHAND_ANTIRODEO).HasMod( "bt_super" ) )
-		flagss = DF_EXPLOSION | DF_RODEO | DF_BYPASS_SHIELD
+		flagss = DF_EXPLOSION | DF_RODEO
 	else
 		flagss = DF_EXPLOSION
 		

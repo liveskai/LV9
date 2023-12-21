@@ -169,7 +169,7 @@ bool function CreateFlameWaveSegment( entity projectile, int projectileCount, en
 	int flags
 	if (mods.find("bt_flamecore") >= 0) 
 	{
-		flags = DF_EXPLOSION | DF_STOPS_TITAN_REGEN | DF_DOOM_FATALITY | DF_SKIP_DAMAGE_PROT | DF_RODEO | DF_BYPASS_SHIELD
+		flags = DF_EXPLOSION | DF_STOPS_TITAN_REGEN | DF_DOOM_FATALITY | DF_SKIP_DAMAGE_PROT | DF_RODEO
 	} else 
 	{
 		flags = DF_EXPLOSION | DF_STOPS_TITAN_REGEN | DF_DOOM_FATALITY | DF_SKIP_DAMAGE_PROT

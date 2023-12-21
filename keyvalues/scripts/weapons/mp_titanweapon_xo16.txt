@@ -28,6 +28,7 @@ WeaponData
 		{
 			"damage_near_value_titanarmor"					"*1.5"
 			"damage_far_value_titanarmor" 					"*1.5"
+			"damage_flags"	"DF_STOPS_TITAN_REGEN | DF_BULLET | DF_NO_SELF_DAMAGE | DF_KNOCK_BACK | DF_RODEO"
 		}
 		fire_rate_max_zoom
 		{
@@ -36,7 +37,7 @@ WeaponData
 		{
 			"damage_near_value_titanarmor"					"*1.5"
 			"damage_far_value_titanarmor" 					"*1.5"
-			"damage_flags"	"DF_STOPS_TITAN_REGEN | DF_BULLET | DF_NO_SELF_DAMAGE | DF_KNOCK_BACK | DF_RODEO | DF_BYPASS_SHIELD"
+			"damage_flags"	"DF_STOPS_TITAN_REGEN | DF_BULLET | DF_NO_SELF_DAMAGE | DF_KNOCK_BACK | DF_RODEO"
 		}
 		spread
 		{
