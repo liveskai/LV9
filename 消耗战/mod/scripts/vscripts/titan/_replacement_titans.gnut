@@ -829,9 +829,8 @@ void function CreateTitanForPlayerAndHotdrop( entity player, Point spawnPoint, T
 		impactTime += (WARPFALL_SOUND_DELAY + WARPFALL_FX_DELAY)
 		player.SetHotDropImpactDelay( impactTime )
 		foreach ( entity teamPlayer in GetPlayerArrayOfTeam( player.GetTeam() ) )//队友降落标识
-				{
-					Remote_CallFunction_Replay( teamPlayer, "ServerCallback_ReplacementTitanSpawnpoint", origin.x, origin.y, origin.z, Time() + impactTime )
-				}
+			Remote_CallFunction_Replay( teamPlayer, "ServerCallback_ReplacementTitanSpawnpoint", origin.x, origin.y, origin.z, Time() + impactTime )
+
 		EmitDifferentSoundsAtPositionForPlayerAndWorld( "Titan_1P_Warpfall_CallIn", "Titan_3P_Warpfall_CallIn", origin, player, playerTeam )
 
 		wait diff
@@ -861,9 +860,7 @@ void function CreateTitanForPlayerAndHotdrop( entity player, Point spawnPoint, T
 		float impactTime = GetHotDropImpactTime( titan, animation )
 		player.SetHotDropImpactDelay( impactTime )
 		foreach ( entity teamPlayer in GetPlayerArrayOfTeam( player.GetTeam() ) )//队友降落标识
-				{
-					Remote_CallFunction_Replay( teamPlayer, "ServerCallback_ReplacementTitanSpawnpoint", origin.x, origin.y, origin.z, Time() + impactTime )
-				}
+			Remote_CallFunction_Replay( teamPlayer, "ServerCallback_ReplacementTitanSpawnpoint", origin.x, origin.y, origin.z, Time() + impactTime )
 	}
 
 	SetActiveTitanLoadoutIndex( player, GetPersistentSpawnLoadoutIndex( player, "titan" ) )
