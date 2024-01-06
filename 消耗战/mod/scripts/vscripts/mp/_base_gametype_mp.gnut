@@ -10,6 +10,9 @@ global function RespawnAsPilot
 global function RespawnAsTitan
 global function TryGameModeAnnouncement
 
+// modified callback: allowing change something before player actually respawns
+global function AddCallback_OnPlayerDecideRespawn
+
 global function SetKillcamsEnabled
 global function KillcamsEnabled
 global function SetPlayerDeathsHidden
@@ -23,7 +26,7 @@ global function SetRecalculateRespawnAsTitanStartPointCallback
 
 // I want my game to have this
 global function PlayerWatchesKillReplayWrapper // this function should share with _gamestate_mp.nut
-global function PlayerClassChangeToSpectator // shared with other files such as _base_gametype.gnut and _spectator.gnut
+global function PlayerClassChangeToSpectator // shared with other files such _spectator.gnut
 global function SetPlayerCameraToIntermissionCam // shared
 global function GetReplayTimeSinceAttackerSpawned // shared with _gamestate_mp.nut
 global function StopKillReplayForPlayer // shared with _gamestate_mp.nut
@@ -72,6 +75,9 @@ struct
 	
 	entity intermissionCamera
 	array<entity> specCams
+
+	// modified callback: allowing change something before player actually respawns
+	array<void functionref( entity player )> playerDecideRespawnCallbacks
 
 	entity functionref( entity player, entity basePoint ) recalculateRespawnAsTitanStartPointCallback
 	
@@ -366,6 +372,10 @@ void function CodeCallback_OnPlayerRespawned( entity player )
 	
 	Loadouts_TryGivePilotLoadout( player )
 
+	// insure visibility that might be changed by executions, before calling other respawn callbacks
+	player.Show()
+	player.kv.VisibilityFlags = ENTITY_VISIBLE_TO_EVERYONE
+
 	// loadout grace period
 	if( IsLoadoutGracePeriodEnabled() )
 		GracePeriodThink( player ) // grace period done here
@@ -455,7 +465,10 @@ void function CodeCallback_OnPlayerKilled( entity player, var damageInfo )
 	player.SetPredictionEnabled( false )
 
 	// store last active weapon before death package drop player's weapon( gib or ragdoll )
-	file.playerActiveWeaponBeforeDeathPackage[ player ] = player.GetActiveWeapon()
+	if ( !player.IsTitan() )
+		file.playerActiveWeaponBeforeDeathPackage[ player ] = player.GetActiveWeapon()
+	else // store a null for titans, means they'll never compare and drop weapon
+		file.playerActiveWeaponBeforeDeathPackage[ player ] = null
 	//print( "playerActiveWeaponBeforeDeathPackage: " + string( file.playerActiveWeaponBeforeDeathPackage[ player ] ) )
 	
 	HandleDeathPackage( player, damageInfo )
@@ -510,9 +523,11 @@ void function PostDeathThread_MP( entity player, var damageInfo ) // based on ga
 	// ragdoll or gib will make player drop weapon before their actual death
 	// in this case we should remove all weapons for player
 	// so that they won't have screen sway from their weapons
+	bool shouldFixWeaponDrop = IsValid( file.playerActiveWeaponBeforeDeathPackage[ player ] ) // titan player will assign this as null, so drop weapon never happens
 	bool playerDroppedWeaponFromDeathPackage = file.playerActiveWeaponBeforeDeathPackage[ player ] != player.GetActiveWeapon()
+	//print( "shouldFixWeaponDrop: " + string( shouldFixWeaponDrop ) )
 	//print( "playerDroppedWeaponFromDeathPackage: " + string( playerDroppedWeaponFromDeathPackage ) )
-	if ( playerDroppedWeaponFromDeathPackage )
+	if ( shouldFixWeaponDrop && playerDroppedWeaponFromDeathPackage )
 		TakeAllWeapons( player )
 
 	// we're not delayed yet, get damage table from damageInfo, so we can use it in ShouldForceRespawnPlayer_FromDamageTable()
@@ -525,15 +540,13 @@ void function PostDeathThread_MP( entity player, var damageInfo ) // based on ga
 	if ( player.IsTitan() )
 		SoulDies( player.GetTitanSoul(), damageInfo ) // cleanup some titan stuff, no idea where else to put this
 	
-	// this is not accurate, as we'll get respawn availability after death cam delay
-	// doesn't seem featured in vanilla, but the death sound is surly better than normal one
-	// do it in OnPlayerKilled callbacks if needed
-	// now moved to below "ServerCallback_YouDied"
-	//if ( !RespawnsEnabled() )
-	//	SetPlayerEliminated( player ) // do a different death sound
-	
 	// re-exam for last death: hide respawn prompt during death cam
 	ClearRespawnAvailable( player )
+	// fix: get respawn avaibility before death cam delay
+	// set earlier than "ServerCallback_YouDied" to change death sound
+	bool respawnsEnableBeforeDeathCam = RespawnsEnabled()
+	if ( !respawnsEnableBeforeDeathCam )
+		SetPlayerEliminated( player ) // Change "Respawn" prompt to "Skip Replay", also changes death sound
 
 	OnThreadEnd( function() : ( player )
 	{
@@ -568,7 +581,7 @@ void function PostDeathThread_MP( entity player, var damageInfo ) // based on ga
 			Highlight_SetDeathRecapHighlight( attacker, "killer_outline" )
 
 		// fix for replay
-		if ( inflictorEHandle == -1 ) // invalid projectile ehandle!
+		if ( inflictorEHandle == -1 || !ShouldTryUseProjectileReplay( player, attacker, damageInfo, false ) ) // invalid projectile ehandle! or we've disabled projectile kill replay
 			inflictorEHandle = attackerEHandle // just assign attacker as inflictor!
 	}
 
@@ -609,7 +622,13 @@ void function PostDeathThread_MP( entity player, var damageInfo ) // based on ga
 	// modified here: only observers player or npc. projectile and mover stuffs can be attacker but we should never spec them
 	//if ( ShouldSetObserverTarget( attacker ) )
 	if ( ShouldSetObserverTarget( attacker ) && ( attacker.IsPlayer() || attacker.IsNPC() ) )
+	{
 		player.SetObserverTarget( attacker )
+		// adding for modified death cam: enemy can respawn before player deathcam ends
+		// if that ever happens, we need to clear player's observer target
+		if ( attacker.IsPlayer() )
+			thread TrackPlayerDeathCamTargetRespawn( player, attacker )
+	}
 	else
 		player.SetObserverTarget( null ) // can't spec ourselves, spec nothing is good enough
 	
@@ -649,16 +668,14 @@ void function PostDeathThread_MP( entity player, var damageInfo ) // based on ga
 						  && ShouldDoReplay( player, attacker, replayLength, methodOfDeath )
 						  && inflictorEHandle != -1 // a proper inflictor is always needed. by default they'll be attacker themselves
 						  && attackerIndex != -1
-
-	// fix: get respawn avaibility before death cam delay
-	bool respawnsEnableBeforeDeathCam = RespawnsEnabled()
-	if ( !respawnsEnableBeforeDeathCam )
-		SetPlayerEliminated( player ) // Change "Respawn" prompt to "Skip Replay", also changes death sound
 	
 	if ( shouldDoReplay )
 	{
 		table replayTracker = { validTime = null } // required to track replay victim destroy time
-		thread TrackDestroyTimeForReplay( attacker, replayTracker )
+		// due we added modified death cam, for players we'll need to track respawn time and end replay by then
+		// using modified function now
+		//thread TrackDestroyTimeForReplay( attacker, replayTracker ) // shared from base_gametype.gnut
+		thread TrackRespawnOrDestroyTimeForReplay( attacker, replayTracker )
 		// try to do delayed replay	
 		float actualReplayStartDelay = replayStartDelay + deathcamLength // always wait for death cam to end before we do any replay
 		// debug
@@ -692,7 +709,7 @@ void function PostDeathThread_MP( entity player, var damageInfo ) // based on ga
 	*/
 
 	// BecomeRagdoll() seems weird with short deathCam
-	// now setting these in DoRespawnPlayer() to prevent crash
+	// now setting these in DecideRespawnPlayer() to prevent crash
 	//player.SetPlayerSettings( "spectator" ) // prevent a crash with going from titan => pilot on respawn
 	//player.StopPhysics() // need to set this after SetPlayerSettings
 	// vanilla seems never change player to spectator on death...
@@ -701,7 +718,7 @@ void function PostDeathThread_MP( entity player, var damageInfo ) // based on ga
 
 	// because death cam can be modified, player may not have chance to drop weapon during death animation
 	// if that ever happens, manually drop player's weapon
-	if ( deathCamModified && !playerDroppedWeaponFromDeathPackage )
+	if ( deathCamModified && ( shouldFixWeaponDrop && !playerDroppedWeaponFromDeathPackage ) )
 	{
 		entity activeWeapon = player.GetActiveWeapon()
 		// activeWeapon will become invalid if player is dropping weapon from death animation
@@ -862,6 +879,44 @@ void function ForcedRespawnThink( entity player, float waitBeforeRespawn, float 
 
 	result.repsawnIsForced = true
 }
+
+// adding for modified death cam: enemy can respawn before player deathcam ends
+// if that ever happens, we need to clear player's observer target
+void function TrackPlayerDeathCamTargetRespawn( entity player, entity target )
+{
+	player.EndSignal( "OnDestroy" )
+	target.EndSignal( "OnDestroy" ) // target gets destroyed will clear observer automatically
+
+	// END on player's respawn
+	player.EndSignal( "RespawnMe" )
+	player.EndSignal( "OnRespawned" )
+	player.EndSignal( "PlayerRespawnStarted" )
+
+	// Clear Target on target's respawn
+	WaitSignal( target, "RespawnMe", "OnRespawned", "PlayerRespawnStarted" )
+	player.SetObserverTarget( null )
+}
+
+// due we added modified death cam, for players we'll need to track respawn time
+// identically same as TrackDestroyTimeForReplay(), but adding player respawn signals
+void function TrackRespawnOrDestroyTimeForReplay( entity attacker, table replayTracker )
+{
+	float startTime = Time()
+	// tracks the time until the attacker respawn
+	EndSignal( replayTracker, "OnDestroy" )
+
+	OnThreadEnd(
+		function () : ( replayTracker, startTime )
+		{
+			replayTracker.validTime = Time() - startTime
+		}
+	)
+
+	if ( IsAlive( attacker ) )
+		WaitSignal( attacker, "OnDestroy", "RespawnMe", "OnRespawned", "PlayerRespawnStarted" )
+	else
+		WaitSignalOnDeadEnt( attacker, "OnDestroy", "RespawnMe", "OnRespawned", "PlayerRespawnStarted" )
+}
 //
 
 float function GetReplayTimeSinceAttackerSpawned( entity attacker )
@@ -932,17 +987,68 @@ void function StopKillReplayForPlayer( entity player )
 	player.Signal( "KillCamOver" )
 }
 
-void function DecideRespawnPlayer( entity player )
+// modified to add spawnpointOverride
+//void function DecideRespawnPlayer( entity player )
+void function DecideRespawnPlayer( entity player, entity spawnpointOverride = null )
 {
 	// this isn't even used atm, could likely be removed if some vanilla code didn't rely on it
+	// REWORK: this is a wrapped function, should be used to replace all player.RespawnPlayer() calls
+	if ( !IsValid( player ) ) 
+		return
+	if ( IsAlive( player ) ) // player already alive! bad usage happened
+		return
+
+	// prevent a crash with going from titan => pilot on respawn
+	// normally this is handled by killreplay or intermission cam
+	// but we want to support modified death cam that allows player to completely skip kill replay
+	// EDIT: compare to r5s3 code, this behavior is good be handled here, not always in replay or intermission cam
+	if ( player.GetPlayerSettings() != "spectator" )
+	{
+		if ( !player.IsTitan() )
+		{
+			// non-titan case, changing to spectator
+			// reverted: do nothing for non-titan respawn. this will mess up player's weapon flyout after replay
+			/*
+			string setFile = player.GetPlayerSettings()
+			PlayerClassChangeToSpectator( player )
+			player.SetPlayerSettings( setFile )
+			*/
+		}
+		else // dying as titan, shouldn't reset player settings immedialely
+			PlayerClassChangeToSpectator( player )
+	}
+
+	// if we don't clear spec delay before respawn, player will receive a bad visual effect in the rest of game
+	Spectator_StopPlayerSpectating( player )
+	
+	// HACK for modified death cam: 
+	// dissolving will delay 2s to hide player, but player may respawn earlier than 2s, making them being hide after respawn!
+	// have to manully clear dissolving effect for player before player.RespawnPlayer() is called
+	// this should be enough. also made a defensive fix in sh_death_package.gnut, EnsureDissolveEffectIsClearedForPlayer()
+	player.DissolveStop()
+
+	entity spawnpoint = FindSpawnPoint( player, false, ShouldStartSpawn( player ) )
+	// modified to add spawnpointOverride
+	if ( spawnpointOverride != null )
+		spawnpoint = spawnpointOverride
+
+	// modified callback: allowing change something before player actually respawns
+	// Added via AddCallback_OnPlayerDecideRespawn
+	foreach ( callbackFunc in file.playerDecideRespawnCallbacks )
+		callbackFunc( player )
+	
+	// all pre-setups done, it's now safe to respawn player
+	DoRespawnPlayer( player, spawnpoint )
 }
 
-void function RespawnAsPilot( entity player )
+// modified to add spawnpointOverride
+void function RespawnAsPilot( entity player, entity spawnpointOverride = null )
 {
-	DoRespawnPlayer( player, FindSpawnPoint( player, false, ( ShouldStartSpawn( player ) || Flag( "ForceStartSpawn" ) ) && !IsFFAGame() ) )
+	DecideRespawnPlayer( player, spawnpointOverride )
 }
 
-void function RespawnAsTitan( entity player, bool manualPosition = false, entity spawnPointOverride = null )
+// manualPosition is unused... just keep here to avoid conflict with other Northstar scripts
+void function RespawnAsTitan( entity player, bool manualPosition = false, entity spawnpointOverride = null )
 {
 	if( IsAlive( player ) )
 		return
@@ -954,10 +1060,10 @@ void function RespawnAsTitan( entity player, bool manualPosition = false, entity
 	PlayerClassChangeToSpectator( player )
 	
 	player.isSpawning = true
-	entity spawnpoint = FindSpawnPoint( player, true, ( ShouldStartSpawn( player ) || Flag( "ForceStartSpawn" ) ) && !IsFFAGame() )
-	if ( manualPosition && spawnPointOverride != null ) // modified to add: spawnpoint override
-		spawnpoint = spawnPointOverride
-	else if ( file.recalculateRespawnAsTitanStartPointCallback != null )
+	entity spawnpoint = FindSpawnPoint( player, true, ShouldStartSpawn( player ) )
+	if ( spawnpointOverride != null ) // modified to add: spawnpoint override
+		spawnpoint = spawnpointOverride
+	else if ( file.recalculateRespawnAsTitanStartPointCallback != null ) // spawnpoint re-calculate callbacks
 		spawnpoint = file.recalculateRespawnAsTitanStartPointCallback( player, spawnpoint )
 
  	TitanLoadoutDef titanLoadout = GetTitanLoadoutForPlayer( player )
@@ -970,11 +1076,21 @@ void function RespawnAsTitan( entity player, bool manualPosition = false, entity
 	DispatchSpawn( titan )
 	// removed. prompt won't show when player is dead
 	//player.SetPetTitan( null ) // prevent embark prompt from showing up
+	// titan setup
 	player.SetPetTitan( titan ) // required for marking this player having a pet titan
+	// I think vanilla DO set titan to invulnerable for RespawnAsTitan... 
+	// at least I spec this behavior in TTDM, while titan respawning
+	titan.SetInvulnerable()
+	titan.SetNoTarget( true ) // shouldn't let npcs target an invulnerable entity
+	titan.SetNoTargetSmartAmmo( true )
 
 	ClearPlayerEliminated( player ) // mark as player not eliminated
 	ClearRespawnAvailable( player ) // need so the respawn icon doesn't show
-	
+
+	// titan cleanup
+	ClearTitanAvailable( player ) // clear titan availability once it's created, to avoid we failed transfering into titan and softlock our earnmeter
+	PlayerEarnMeter_Reset( player ) // pet titan has spawned but player haven't, needs to reset earnmeter
+
 	AddCinematicFlag( player, CE_FLAG_CLASSIC_MP_SPAWNING ) // hide hud
 	// do titanfall scoreevent
 	if ( !level.firstTitanfall )
@@ -1011,24 +1127,50 @@ void function RespawnAsTitan( entity player, bool manualPosition = false, entity
 	camera.Fire( "Enable", "!activator", 0, player )
 	
 	player.EndSignal( "OnDestroy" )
+	//titan.EndSignal( "OnDeath" ) // titan already alive, they can sometimes die( reverted, invulnerability is all good with it )
 	titan.EndSignal( "OnDestroy" )
-	OnThreadEnd( function() : ( player, titan, camera )
-	{
-		if ( IsValid( player ) )
+
+	OnThreadEnd
+	( 
+		function() : ( player, titan, camera, spawnpoint )
 		{
-			RemoveCinematicFlag( player, CE_FLAG_CLASSIC_MP_SPAWNING ) // show hud
-			player.isSpawning = false
-			ClearTitanAvailable( player ) // we've done everything, considering clear titan available
+			if ( IsValid( player ) )
+			{
+				RemoveCinematicFlag( player, CE_FLAG_CLASSIC_MP_SPAWNING ) // show hud
+				player.isSpawning = false
+
+				// clean up player stuffs
+				// titan's gonna be destroyed soon, we don't have to clean up
+				player.ClearInvulnerable()
+				player.SetNoTarget( false )
+				player.SetNoTargetSmartAmmo( false )
+			}
+		
+			// should use IsAlive() because we've added "OnDeath" as endsignal
+			// reverted, invulnerability is all good with that
+			//if ( IsAlive( titan ) )
+			if ( IsValid( titan ) )
+				titan.Destroy() // pilotbecomestitan leaves an npc titan that we need to delete
+			else if ( IsValid( player ) ) // titan died for some reason...
+			{
+				// if this ever happens, player earnmeter will stuck forever!
+				// but due we added invulnerability for titan, should be less possible to happen
+				// unless we drop the titan into trigger_hurt or manually killed them
+				printt( "RespawnAsTitan() assembly failed. Did you drop the titan into trigger_hurt?" )
+
+				RespawnAsPilot( player, spawnpoint ) // this is 100% an edgecase, just avoid softlocking if we ever hit it in playable gamestates
+				// this edgecase can be triggered due to bad spawnpoints...
+				// we'd better ragdoll kill player like dropships ragdolling npcs inside of it on death
+				// using worldspawn is to keep identical with _gamestate_mp.nut's cleanup
+				// damagedef_suicide will trigger death package, using DF_RAGDOLL as scriptType is enough
+				// reverted, invulnerability is all good with that, needs re-exam
+				//thread DelayedKillRespawnAsTitanFailedPlayer( player )
+			}
+
+			camera.Fire( "Disable", "!activator", 0, player )
+			camera.Destroy()
 		}
-	
-		if ( IsValid( titan ) )
-			titan.Destroy() // pilotbecomestitan leaves an npc titan that we need to delete
-		else
-			RespawnAsPilot( player ) // this is 100% an edgecase, just avoid softlocking if we ever hit it in playable gamestates
-			
-		camera.Fire( "Disable", "!activator", 0, player )
-		camera.Destroy()
-	})
+	)
 	
 	waitthread TitanHotDrop( titan, "at_hotdrop_01", spawnpoint.GetOrigin(), spawnpoint.GetAngles(), player, camera ) // do hotdrop anim
 		
@@ -1036,7 +1178,7 @@ void function RespawnAsTitan( entity player, bool manualPosition = false, entity
 	if( IsAlive( player ) )
 		return
 
-	player.RespawnPlayer( null ) // spawn player as pilot so they get their pilot loadout on embark
+	DecideRespawnPlayer( player ) // spawn player as pilot so they get their pilot loadout on embark
 	player.SetOrigin( titan.GetOrigin() )
 	
 	// don't make player titan when entity batteryContainer is not valid.
@@ -1045,6 +1187,13 @@ void function RespawnAsTitan( entity player, bool manualPosition = false, entity
 		PilotBecomesTitan( player, titan ) // make player titan
 	else
 		print( "batteryContainer is not a valid entity in RespawnAsTitan(). Skipping PilotBecomesTitan()." )
+}
+
+void function DelayedKillRespawnAsTitanFailedPlayer( entity player )
+{
+	WaitFrame() // wait for any other "OnDeath" signal triggered function go through
+	if ( IsAlive( player ) )
+		player.Die( svGlobal.worldspawn, svGlobal.worldspawn, { damageSourceId = damagedef_suicide, scriptType = DF_RAGDOLL } )
 }
 
 void function TryGameModeAnnouncement( entity player ) // only putting this here because it's here in gametype_sp lol
@@ -1325,28 +1474,41 @@ void function CodeCallback_PlayerHasBeenConnectedForDuration( entity player, flo
 	}
 }
 
+// modified callbacks
+void function AddCallback_OnPlayerDecideRespawn( void functionref( entity player ) callbackFunc )
+{
+	if ( !file.playerDecideRespawnCallbacks.contains( callbackFunc ) )
+		file.playerDecideRespawnCallbacks.append( callbackFunc )
+}
+
 // vanilla missing AddCallbacks
 void function AddCallback_OnWeaponAttack( void functionref( entity player, entity weapon, string weaponName, int ammoUsed ) callbackFunc )
 {
-	file.onWeaponAttackCallbacks.append( callbackFunc )
+	// NOTE: this callback isn't called at all!
+	if ( !file.onWeaponAttackCallbacks.contains( callbackFunc ) )
+		file.onWeaponAttackCallbacks.append( callbackFunc )
 }
 
 void function AddCallback_OnPlayerMatchmakingChanged( void functionref( entity player ) callbackFunc )
 {
-	file.onPlayerMatchmakingChangedCallbacks.append( callbackFunc )
+	if ( !file.onPlayerMatchmakingChangedCallbacks.contains( callbackFunc ) )
+		file.onPlayerMatchmakingChangedCallbacks.append( callbackFunc )
 }
 
 void function AddCallback_OnWeaponTouch( void functionref( entity player, entity weapon, int ammoRecieved ) callbackFunc )
 {
-	file.onWeaponTouchCallbacks.append( callbackFunc )
+	if ( !file.onWeaponTouchCallbacks.contains( callbackFunc ) )
+		file.onWeaponTouchCallbacks.append( callbackFunc )
 }
 
 void function AddCallback_WeaponDropped( void functionref( entity weapon ) callbackFunc )
 {
-	file.weaponDroppedCallbacks.append( callbackFunc )
+	if ( !file.weaponDroppedCallbacks.contains( callbackFunc ) )
+		file.weaponDroppedCallbacks.append( callbackFunc )
 }
 
 void function AddCallback_PlayerHasBeenConnectedForDuration( void functionref( entity player, float durationInSeconds ) callbackFunc )
 {
-	file.playerHasBeenConnectedForDurationCallbacks.append( callbackFunc )
+	if ( !file.playerHasBeenConnectedForDurationCallbacks.contains( callbackFunc ) )
+		file.playerHasBeenConnectedForDurationCallbacks.append( callbackFunc )
 }

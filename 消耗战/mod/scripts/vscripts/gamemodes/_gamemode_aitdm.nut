@@ -42,10 +42,10 @@ void function GamemodeAITdm_Init()
 
 	AddCallback_OnNPCKilled( HandleScoreEvent )
 	AddCallback_OnPlayerKilled( HandleScoreEvent )
-	
-	AddCallback_OnClientConnected( OnPlayerConnected )
 
-	AddCallback_NPCLeeched( OnSpectreLeeched )
+	AddCallback_OnClientConnected( OnPlayerConnected )
+	
+	AddCallback_NPCLeeched( AITdm_OnNPCLeeched )
 	
 	//添加得分事件
 	SetApplyBatteryCallback( OnPilotAddsBatteryToFriendlyTitan )// 给队友装电池
@@ -59,8 +59,8 @@ void function GamemodeAITdm_Init()
 	if ( GetCurrentPlaylistVarInt( "aitdm_archer_grunts", 0 ) == 0 )
 	{
 		AiGameModes_SetNPCWeapons( "npc_soldier", [ "mp_weapon_rspn101", "mp_weapon_dmr", "mp_weapon_r97", "mp_weapon_lmg" ] )
-			AiGameModes_SetNPCWeapons( "npc_spectre", [ "mp_weapon_hemlok_smg", "mp_weapon_doubletake", "mp_weapon_mastiff" ] )
-			AiGameModes_SetNPCWeapons( "npc_stalker", [ "mp_weapon_epg" ] )
+		AiGameModes_SetNPCWeapons( "npc_spectre", [ "mp_weapon_hemlok_smg", "mp_weapon_doubletake", "mp_weapon_mastiff" ] )
+		AiGameModes_SetNPCWeapons( "npc_stalker", [ "mp_weapon_epg" ] )
 	}
 	else
 	{
@@ -127,13 +127,14 @@ void function OnPlayerConnected( entity player )
 	//增加伤害判定
 	player.s.totalTitanDamage <- 0
 	player.s.trackedTitanDamage <- 0
-	// 结束		
+	// 结束
 	Remote_CallFunction_NonReplay( player, "ServerCallback_AITDM_OnPlayerConnected" )
 }
 
 // Used to handle both player and ai events
 void function HandleScoreEvent( entity victim, entity attacker, var damageInfo )
 {
+	// if victim is a non-titan npc that owned by players, don't add score
 	if ( !VictimIsValidForAITdmScore( victim ) )
 		return
 	
@@ -167,7 +168,6 @@ void function HandleScoreEvent( entity victim, entity attacker, var damageInfo )
 				playerScore = 0
 				break	
 		}
-		
 		// Titan kills get handled bellow this
 		if ( eventName != "KillNPCTitan"  && eventName != "" )
 			playerScore = ScoreEvent_GetPointValue( GetScoreEvent( eventName ) )
@@ -188,7 +188,7 @@ bool function AttackerIsValidForAITdmScore( entity victim, entity attacker, var 
 	// Basic checks
 	if ( !IsValid( attacker ) )
 		return false
-	if ( victim == attacker || !( attacker.IsPlayer() || attacker.IsTitan() ))
+	if ( victim == attacker || !( attacker.IsPlayer() || attacker.IsTitan() ) )
 		return false
 	
 	// Hacked spectre and pet titan filter
@@ -215,6 +215,11 @@ bool function VictimIsValidForAITdmScore( entity victim )
 		if ( IsValid( bossPlayer ) )
 		{
 			if ( bossPlayer.IsPlayer() )
+				return false
+		}
+		if ( IsValid( owner ) )
+		{
+			if ( owner.IsPlayer() )
 				return false
 		}
 	}
@@ -323,7 +328,7 @@ void function SpawnIntroBatch_Threaded( int team )
 				startIndex = i // save where we started
 			
 			node = shipNodes[ i - startIndex ]
-			thread AiGameModes_SpawnDropShip( node.GetOrigin(), node.GetAngles(), team, 4, SquadHandler )
+			thread AiGameModes_SpawnDropShip( node.GetOrigin(), node.GetAngles(), team, SQUAD_SIZE, SquadHandler )
 			
 			ships--
 		}
@@ -405,7 +410,7 @@ void function Spawner_Threaded( int team )
 					if ( RandomInt( points.len() ) )
 					{
 						entity node = points[ GetSpawnPointIndex( points, team ) ]
-						thread AiGameModes_SpawnDropShip( node.GetOrigin(), node.GetAngles(), team, 4, SquadHandler )
+						thread AiGameModes_SpawnDropShip( node.GetOrigin(), node.GetAngles(), team, SQUAD_SIZE, SquadHandler )
 						continue
 					}
 				}
@@ -651,12 +656,43 @@ void function SquadHandler( array<entity> guys )
 }
 
 // Award for hacking
-void function OnSpectreLeeched( entity spectre, entity player )
+// can't name it "OnNPCLeeched()" because there's a deprecated function with same name... and it's globalized. yay.
+void function AITdm_OnNPCLeeched( entity npc, entity player )
 {
 	// Set Owner so we can filter in HandleScore
-	spectre.SetOwner( player )
-	// Add score + update network int to trigger the "Score +n" popup
-	AddAITdmPlayerTeamScore( player, 1 )
+	// not a good idea. score could be handled by GetBossPlayer()
+	// setting an owner will make entity have no collision with their owner
+	//npc.SetOwner( player )
+	npc.ai.preventOwnerDamage = true // this is required so we don't kill our spectres
+
+	// adding score
+	// they can be re-hacked and we need to prevent gain score multiple times
+	if ( !( "givenAttritionScore" in npc.s ) )
+	{
+		int playerScore = 0
+		switch ( npc.GetClassName() )
+		{
+			case "npc_soldier":
+			case "npc_spectre":
+			case "npc_stalker":
+				playerScore = 1
+				break
+			case "npc_super_spectre":
+				playerScore = 3
+				break
+			default:
+				playerScore = 0
+				break
+		}
+		// Add score + update network int to trigger the "Score +n" popup
+		AddAITdmPlayerTeamScore( player, playerScore )
+		npc.s.givenAttritionScore <- true // mark the npc as already given score to player
+	}
+	
+	// disable leech on this spectre, don't let them to be multiple-leeched by diffrent team...
+	// reverted. it is vanilla behavior! and it's pretty funny
+	//DisableLeeching( npc )
+	//npc.UnsetUsable()
 }
 
 // Same as SquadHandler, just for reapers
@@ -807,7 +843,7 @@ void function AITdm_CleanupBoredNPCThread( entity guy )
 	guy.Destroy()
 }
 
-//添加
+//#添加内容
 void function OnPilotAddsBatteryToFriendlyTitan( entity rider, entity titan, entity battery )
 {
 	AITdm_AddPlayerScore( rider, 4 )
@@ -896,7 +932,3 @@ void function AITdm_AddPlayerScore( entity player, int score )
 	}
 	player.AddToPlayerGameStat( PGS_ASSAULT_SCORE, playerScore )
 }
-
-
-
-

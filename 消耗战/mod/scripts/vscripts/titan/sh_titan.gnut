@@ -526,7 +526,7 @@ function TitanEjectPlayer( entity ejectTitan, bool instant = false ) //TODO: Thi
 
 		e.needToClearNukeFX = true
 		e.nukeFXInfoTarget.SetParent( ejectTitan, "CHESTFOCUS" ) //Play FX and sound on entity since we need something that lasts across the player titan -> pilot transition
-		// e.nukeFX.append( PlayFXOnEntity( TITAN_NUCLEAR_CORE_NUKE_FX, expect entity( e.nukeFXInfoTarget ) ) )移除核爆亮瞎眼特效
+		// e.nukeFX.append( PlayFXOnEntity( TITAN_NUCLEAR_CORE_NUKE_FX, expect entity( e.nukeFXInfoTarget ) ) )移除核爆特效
 		e.nukeFX.append( e.nukeFXInfoTarget )
 		//ejectDuration += 0.5
 
@@ -706,20 +706,20 @@ function TitanEjectPlayer( entity ejectTitan, bool instant = false ) //TODO: Thi
 		e.player.SetAngles( player_look_angles )
 
 		thread EjectFlightTracker( expect entity( e.player ) )
-
+		
 		if(nuclearPayload)//核爆后技能重新开始CD
-				{
-					array<int> offhandIndices = [ OFFHAND_LEFT, OFFHAND_RIGHT ]
-					entity player = expect entity( e.player )
-					foreach ( index in offhandIndices )
-					{
-						player.p.lastPilotOffhandUseTime[ index ]=Time()
-						player.p.lastPilotOffhandChargeFrac[ index ]=0
-						player.p.lastPilotClipFrac[ index ]=0
-						SetPlayerCooldowns(player)
-					}
-				}
-			
+		{
+			array<int> offhandIndices = [ OFFHAND_LEFT, OFFHAND_RIGHT ]
+			entity player = expect entity( e.player )
+			foreach ( index in offhandIndices )
+			{
+				player.p.lastPilotOffhandUseTime[ index ]=Time()
+				player.p.lastPilotOffhandChargeFrac[ index ]=0
+				player.p.lastPilotClipFrac[ index ]=0
+				SetPlayerCooldowns(player)
+			}
+		}
+		
 		entity rider = expect entity( e.singleRodeoPilot )
 		if ( IsAlive( rider ) && e.player.GetTeam() != rider.GetTeam() )
 			thread LookAtEachOther( rider, expect entity( e.player ) )
@@ -1121,17 +1121,35 @@ function TempAirControl( entity player )
 	player.EndSignal( "TempAirControl" )
 	player.EndSignal( "OnDeath" )
 
-	player.kv.airSpeed = 200
-	player.kv.airAcceleration = 800
+	// modified to remove hardcode
+	// player's default airSpeed is 60, increase to 200 means *3.333333
+	// player's default airAcceleration is 500, increase to 800 means *1.6
+	//player.kv.airSpeed = 200
+	//player.kv.airAcceleration = 800
+
+	const float ejectAirSpeedScale = 3.333333
+	const float ejectAirAccelScale = 1.6
+	// reset air speed and air accel before applying new one
+	player.kv.airSpeed = player.GetPlayerSettingsField( "airSpeed" )
+	player.kv.airAcceleration = GetCurrentPlaylistVarInt( "custom_air_accel_pilot", int( player.GetPlayerSettingsField( "airAcceleration" ) ) )
+	player.kv.airSpeed = int( player.kv.airSpeed ) * ejectAirSpeedScale
+	player.kv.airAcceleration = int( player.kv.airAcceleration ) * ejectAirAccelScale
 
 	wait 1.5
 
-	player.kv.airSpeed = 100
+	// modified to remove hardcode
+	// player's default airSpeed is 60, increase to 100 means *1.666667
+	//player.kv.airSpeed = 100
+	const float ejectAirSpeedScale_Late = 1.666667
+	player.kv.airSpeed = player.GetPlayerSettingsField( "airSpeed" )// reset air speed before apply new one
+	player.kv.airSpeed = int( player.kv.airSpeed ) * ejectAirSpeedScale_Late
 
 	wait 3.5
 
 	player.kv.airSpeed = player.GetPlayerSettingsField( "airSpeed" )
-	player.kv.airAcceleration = player.GetPlayerSettingsField( "airAcceleration" )
+	// removing hardcode, adding custom air acceleration support
+	//player.kv.airAcceleration = player.GetPlayerSettingsField( "airAcceleration" )
+	player.kv.airAcceleration = GetCurrentPlaylistVarInt( "custom_air_accel_pilot", int( player.GetPlayerSettingsField( "airAcceleration" ) ) )
 }
 
 
@@ -1145,7 +1163,7 @@ function TempLossOfAirControl( entity player, float time )
 	wait time
 
 	player.kv.airSpeed = player.GetPlayerSettingsField( "airSpeed" )
-	player.kv.airAcceleration = player.GetPlayerSettingsField( "airAcceleration" )
+	player.kv.airAcceleration = GetCurrentPlaylistVarInt( "custom_air_accel_pilot", int( player.GetPlayerSettingsField( "airAcceleration" ) ) )
 }
 
 
