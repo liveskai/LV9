@@ -19,7 +19,6 @@ void function medium_Init()
 	AddSpawnCallback( "npc_titan", OnTitanfall )
 	AddCallback_OnPilotBecomesTitan( SetPlayerTitanTitle )
 	AddCallback_OnTitanBecomesPilot( OnTitanBecomesPilot )
-	AddCallback_OnTitanGetsNewTitanLoadout( TitanEnhance )
 }
 
 void function Replace_OFFHAND_RIGHT( entity titan, string offhandName, array<string> mods = [] )
@@ -108,23 +107,6 @@ void function SetPlayerTitanTitle( entity player, entity titan )
 		thread DelayEMPThread( soul )
 }
 
-void function TitanEnhance( entity titan, TitanLoadoutDef loadout )
-{
-    entity soul = titan.GetTitanSoul()
-	if ( !IsValid( soul ) )
-		return
-    if ( SoulHasPassive( soul, ePassives.PAS_MOBILITY_DASH_CAPACITY  ) )
-    {
-		loadout.setFileMods.fastremovebyvalue( "pas_mobility_dash_capacity" )
-		loadout.setFileMods.append( "sflag_bc_dash_capacity" )
-		loadout.setFileMods.append( "pas_dash_recharge" )
-    }	
-    if ( !SoulHasPassive( soul, ePassives.PAS_MOBILITY_DASH_CAPACITY  ) )
-    {
-		loadout.setFileMods.append( "pas_mobility_dash_capacity" )
-    }
- }
- 
 void function OnTitanfall( entity titan )
 {
 	entity player = titan
@@ -140,7 +122,18 @@ void function OnTitanfall( entity titan )
 													//因为当泰坦死亡或者摧毁时，它的soul会变成null，理所应当的，soul.s里的内容也会null
 	if( !IsValid( soul ) )	//如果soul == null，我们应该直接return，防止执行后面的soul.s.TitanHasBeenChange <- true时报错
 		return
-
+		
+	if ( SoulHasPassive( soul, ePassives.PAS_MOBILITY_DASH_CAPACITY  ) )
+	{
+		titan.ai.titanSpawnLoadout.setFileMods.fastremovebyvalue( "pas_mobility_dash_capacity" )
+		titan.ai.titanSpawnLoadout.setFileMods.append( "sflag_bc_dash_capacity" )
+		titan.ai.titanSpawnLoadout.setFileMods.append( "pas_dash_recharge" )
+	}	
+	if ( !SoulHasPassive( soul, ePassives.PAS_MOBILITY_DASH_CAPACITY  ) )
+	{
+		titan.ai.titanSpawnLoadout.setFileMods.append( "pas_mobility_dash_capacity" )
+	}
+	
 	if( titan.GetModelName() == $"models/titans/medium/titan_medium_vanguard.mdl" && titan.GetCamo() == -1 && titan.GetSkin() == 3 )
 	{
 		soul.s.TitanHasBeenChange <- true
